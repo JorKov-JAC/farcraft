@@ -1,0 +1,164 @@
+@startuml
+
+abstract Serializable {
+  {abstract}{static} ClassId: int Enum
+}
+
+abstract Entity {
+  - traits: Trait[]
+  update(dt: number) -> void
+  render() -> void
+  fire<T>(trigger: Trigger<T>) -> T
+  getTraits(): Trait[]
+}
+Serializable <|--- Entity
+
+note right of Entity::fire
+Fires the given Trigger on an entity.
+Any "reaction" within the traits which listens
+for the given Trigger is called.
+end note
+
+interface Trait {
+  {field}{abstract}{static} reactions: Map<{new(...args: any[]) -> Trigger<any>}, (any) -> any>
+}
+Serializable <|--- Trait
+note left of Trait::reactions
+Basically maps from a Trigger
+type to a callback. When a Trigger
+is fired, the corresponding
+callback is called.
+end note
+note top of Trait
+Traits implement the Visitor pattern and
+may not be used in the final version.
+end note
+
+Entity::traits "1" *-left- "*" Trait
+Entity::staticTraits "1" o-left- "*" Trait
+
+
+interface Trigger<T>
+note left of Trigger: When a Reaction is triggered,\nit is passed a Trigger object\ncontaining information for that\nReaction.\nT is the expected return type\nof the trigger.
+Trait::reactions o-- Trigger
+
+abstract ArmyEntity {
+  health: number
+  owner: Player
+  pos: [number, number]
+  {abstract} onSpawn(): void
+  {abstract} onDeath(): void
+}
+Entity <|-- ArmyEntity
+Player "1" *-- "*" ArmyEntity::owner
+
+abstract ArmyEntityFactory {
+  player: Player
+  ArmyEntityFactory(player: Player)
+  {abstract} buy(): ArmyEntity
+  {abstract} canBuy(): boolean
+  {abstract} getMoneyCost(): number
+  {abstract} getCrystalCost(): number
+  {abstract} getBuildTime(): number
+  {abstract} isUnlocked(): boolean
+}
+
+abstract UnitFactory {
+  UnitFactory(player: Player)
+  {abstract} buy(): Unit
+  {abstract} getSupplyCost(): number
+  canBuy(): boolean
+}
+ArmyEntityFactory <|-- UnitFactory
+
+abstract StructureFactory {
+  StructureFactory(player: Player)
+  {abstract} buy(): Unit
+  {abstract} previewStructure(): Structure
+  canBuy(): boolean
+}
+ArmyEntityFactory <|-- StructureFactory 
+
+abstract Structure {
+  size: [number, number]
+  collisionGrid: boolean[]
+  trainingQueue: UnitFactory[]
+  update(dt)
+  getTrainableUnits(): UnitFactory[]
+}
+ArmyEntity <|-- Structure
+Structure::trainingQueue "*" o--- "*" UnitFactory
+
+abstract Unit {
+  commandQueue: Command[]
+  currentAnimation: Animation
+  state: State
+  angle: number
+  radius: number
+  update(dt)
+  {abstract} getMoveSpeed(): number
+  {abstract} getSupplyCost(): number
+}
+ArmyEntity <|-- Unit
+
+note right of Unit::state
+May be merged into traits.
+It would still be a state
+machine if so.
+end note
+
+interface Command
+Serializable <|--- Command
+Unit::commandQueue "1" *-- "*" Command
+
+abstract Worker {
+  constructing: StructureFactory?
+  getConstructableBuildings(): StructureFactory[]
+}
+Unit <|-- Worker
+Worker::constructing "1" o--- "1" StructureFactory
+
+
+class Player {
+  money: number
+  crystals: number
+  supply: number
+  supplyCap: number
+  upgrades: Upgrade[]
+  Player(money: number, crystals: number, upgrades: Upgrade[] = [])
+}
+Serializable <|--- Player
+
+interface Upgrade {
+  moneyCost: number
+  crystalCost: number
+  Upgrade(moneyCost: number, crystalCost: number)
+}
+Serializable <|--- Upgrade
+Player::upgrades "*" o-- "*" Upgrade
+
+class Marine {
+  Marine(player: Player, pos: [number, number])
+}
+Unit <|---- Marine
+
+class MarineFactory {
+  MarineFactory(player: Player)
+  buy(): Marine
+  canBuy(): boolean
+  getMoneyCost(): number
+  getCrystalCost(): number
+  getBuildTime(): number
+  isUnlocked(): boolean
+  getSupplyCost(): number
+}
+UnitFactory <|---- MarineFactory
+Marine <- MarineFactory::buy
+
+note top of Marine
+Note:
+There will be other types of Units,
+Marines are just used here as an example.
+end note
+
+@enduml

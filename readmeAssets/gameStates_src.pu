@@ -1,0 +1,15 @@
+@startuml
+
+state "Milestone 4" as m4 {
+  state CustomGameMenuState
+  note right of CustomGameMenuState: Allows the user to launch a custom game
+}
+
+[*] --> MainMenuState
+MainMenuState --> GameState : New game or load game
+MainMenuState --> CustomGameMenuState
+GameState --> GameReviewState : Victory or defeat
+CustomGameMenuState --> GameState : Start custom game
+GameReviewState --> MainMenuState
+
+@enduml

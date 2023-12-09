@@ -1,155 +1,159 @@
-# Project
-
-- 💯 **Worth**:
-  - **Proposal**: 5%
-  - **Implementation**: 25%
-- 📅 **Due**:
-  - **Proposal**: November 26, 2023 @ 23:59
-  - **Implementation Demo**: TBD @ your demo appointment time
-- 🚫 **Penalty**: Late submissions lose 10% per day to a maximum of 3 days. Nothing is accepted after 3 days and a grade of 0% will be given.
-
-## 🎯 Objectives
-
-- Combine everything you've learned during this course to create your own video game.
+# RTS Game (working name: FarCraft) by Jordan Kovacs
 
 ## ✒️ Description
+This will be a RTS game inspired by StarCraft, wherein players command an army from a top-down perspective. The goal varies by level, and may be to destroy all of your opponent's units or to survive for an amount of time.
 
-This is it - the culmination of all the skills and knowledge about game development over this past semester. It's like fighting the [final boss](https://img-9gag-fun.9cache.com/photo/awMrL1D_460s.jpg) at the end of a game. I know you have everything it takes to conquer it! 😉
+## 🕹️ Gameplay
+Gameplay depends on how many milestones are completed (see below). It consists of giving commands to units in real-time, including army units designed for combat, worker units who build and harvest (Milestone 2), and structures which produce units (Milestone 2) and research upgrades (Milestone 4). Units and structures have health and die once they run out. Units can be ordered to navigate to locations on a map and attack enemy units/structures.
 
-This project can be done, at most, in pairs. The project scope should scale with the number of people. In other words, I expect a bigger game with more features from pairs than from individuals. I will try to ensure this as best as possible based on your proposal. No, you do not have to work with someone from your own section.
+## 📃 Requirements / Milestones
+As this project is ambitious, the game will be developed in milestones to ensure that there is always a submittable project.
 
-The game itself is largely up to you - I want you to get creative!
+### 1 - Micro gameplay
+On each level, the Player is given a starter set of units and must clear the level of enemy units. This would mimic the design of StarCraft's "installation" missions (see: [The Jacobs Installation](https://strategywiki.org/wiki/StarCraft/Terran_mission_4:_The_Jacobs_Installation)). This would be submittable if I run out of time but is less than I want this project to be.
+- The level consists of a tilemap grid, however units themselves are not bound to the grid and can be positioned between tiles.
+- There are premade levels (created in [Tiled](https://www.mapeditor.org)) which will be played through sequentially.
+- Player can scroll their view of the map with the arrow keys.
+- Player can select units, either individually by clicking them or as a group by dragging a box around them with their cursor. The UI will show which units are selected and how much health they have.
+- Player can command units to move and attack.
+- Units die when they run out of health.
+- There is a basic set of units, likely a ranged unit akin to the Marine, a melee unit akin to the Zealot, and a crowd-control unit like the Firebat.
+- The enemy will consist of preplaced units. They will remain idle until aggrevated, at which point they will begin to attack the player's units.
+- If the game is submitted at this stage:
+	- The player will be able to rescue other units scattered throughout the levels and add them to their army.
+	- The player loses when they lose all of their units.
+- Technical requirements:
+	- Pathfinding (using A*) and collision (likely using a grid to split the world into smaller chunks)
+		- Problem: Multiple units moving along the same path are likely to clump up and conflict with each other. This led to infamously poor pathfinding in StarCraft. The solution will likely include treating units as "soft bodies" as StarCraft 2 seems to do.
+	- Basic UI showing unit health and control group information
+	- Basic title screen
+	- Win/loss screen showing basic stats (enemies killed, units lost, time taken, points, etc)
+	- Serialization: The game can be saved. Ideally this would include saving an ongoing game (complicated serialization), though simply saving the current level's number would also work.
 
-> [!tip]
-> If you're having trouble thinking of ideas, try browsing game assets from [itch.io](https://itch.io/game-assets) and [opengameart.org](https://opengameart.org/). Sometimes finding a cool asset pack helps spark ideas!
->
-> Another strategy is to mash 2 genres together and see if that sparks anything. Maybe you'll make a 2D side-scrolling platformer with puzzle elements? Maybe you'll make an endless runner dungeon-crawler with a physics engine?
->
-> [The sky is the limit](https://en.wikipedia.org/wiki/List_of_video_game_genres)!
+### 2 - Macro gameplay
+The player now controls worker units and buildings in addition to army units.
+- Workers can build structures; the player selects a worker unit, selects the Build option from a "command card" UI, selects the building they wish to construct, and selects a location where the building should be placed (a "wireframe" of the building will be displayed to show the player where the building will be placed).
+- At minimum, structures will include:
+	- A "town hall" structure which produces worker units and where worker units can deposit harvested resources.
+	- A factory structure from which army units can be produced.
+- Buildings and units cost resources and take time to build/train; For this milestone, there will only be one resource (like "money" or something).
+- Workers can harvest resources from caches and will return them to the nearest town hall.
+- Player loses if all of their structures are destroyed (they can have remaining units and still lose).
+- If the game is submitted at this stage:
+	- In addition to levels with pre-placed idle units, there will be "survival" levels in which the player must survive enemy waves for a given amount of time (see [StarCraft Terran Mission 3: Desperate Alliance](https://strategywiki.org/wiki/StarCraft/Terran_mission_3:_Desperate_Alliance)).
+- Technical requirements:
+	- UI to handle making buildings and creating units (command card)
 
-## 📐 Proposal
+### 3 - Enemy AI
+A rudementary AI will manage bases and create units just like the player does.
+- Enemy AI will be extremely rudementary. It will involve:
+	- Building town-hall structures in appropriate locations.
+	- Building other structures in reasonable locations.
+	- Producing worker units and commanding them to harvest resources.
+	- Producing army units and sending them to the player's base in waves.
+	- Macro logic which determines when the AI should expand to a new base.
 
-I ask that you go about your design and architecture in a meaningful and purpose-driven way. For this reason, I'm asking you to first write a proposal for your game. This will make you think about the different states, classes, relationships, design patterns, etc. that you will have to adhere to when it comes time for the implementation.
+### 4 - Variety
+Gameplay is expanded upon to add depth.
+- A second resource
+- A supply system (units contribute to supply usage, the amount of supply available can only be increased by building certain structures) 
+- A tech tree (certain buildings can only be built if other specific buildings currently exist)
+- Research (certain buildings research upgrades or unlock abilities)
+- Casting (certain units can use special abilities)
+- More AI macro logic to make it progress along the tech tree.
+- More AI micro logic to let it use specialty/caster units.
 
-> [!warning]
-> While the due date for the proposal is **November 26**, this is a soft deadline. You will not get penalized for a late proposal, however, the longer you wait, the less time you'll have to work on your implementation. I must look your proposal over and confirm that you're planning to meet all the criteria for the implementation phase. If there are things you're missing or need to fix, I will let you know so that you can incorporate my feedback. I can then give you the green light to get started.
+### 5  - Polish
+- Add main-menu UI allowing the user to start a game with customized settings
+- Add minimap
+- Add standard RTS controls for selecting units
+	- Control groups
+	- Select by unit type with Ctrl-Click
+	- Add/Remove units with Shift-Click
+- Full-screen
+- Dragging the map around with middle click
+- Ordering units to stop
+- Hotkeys
+- Options menu (ex. for audio settings)
+- General polish
 
-- The proposal document should be the `README.md` for your repo.
-  - **Please look in the `Sample-Proposal` folder** of this repo to get an idea of how your proposal should look.
-  - If you're not familiar with writing markdown (`.md`) then please do this [short tutorial](https://www.markdowntutorial.com/). You can also look at any of the `README.md` files I've written for you over the course of this semester for reference.
-- The proposal must include the following sections:
-  1. **Description** including the premise, the genre (ex. puzzle/action/adventure/shooter/etc.), the control scheme (ex. `mouse` to shoot, `w` `a` `s` `d` to move, `spacebar` to jump, etc.), and the gameplay.
-  2. **Requirements** about what the player should be able to do in your game.
-  3. **Diagrams**
-     - [**State Diagrams**](https://www.youtube.com/watch?v=_6TFVzBW7oo) including game states (ex. [Breakout]((https://jac-cs-game-programming-f23.github.io/Notes/#/2-Breakout/?id=breakout-state-flow))) and entity states (ex. [_Mario_](https://jac-cs-game-programming-f23.github.io/Notes/#/3-Mario/?id=state-diagram) or [_Zelda_](https://jac-cs-game-programming-f23.github.io/Notes/#/4-Zelda/?id=state-diagram)).
-     - [**Class Diagram**](https://www.youtube.com/watch?v=3cmzqZzwNDM&list=RDCMUCwRXb5dUK4cvsHbx-rGzSgw&index=3) where you outline:
-       - All (important) classes in your game and the relationships between the classes
-       - Inheritance and polymorphism
-       - [Factory pattern]((https://refactoring.guru/design-patterns/factory-method))
-     - If you're curious how I do mine, I use [PlantUML](https://plantuml.com/) to write out my diagrams in plaintext and then render them using [PlantText](https://www.planttext.com/).
-     - If you'd rather use a GUI, [app.diagrams.net](https://app.diagrams.net/) and [Lucidchart](https://www.lucidchart.com/pages/) are good free tools. You could even use PowerPoint like I did for the [Breakout state diagram](https://jac-cs-game-programming-f23.github.io/Notes/#/2-Breakout/?id=breakout-state-flow)!
-  4. **Wireframes** to give yourself a rough idea of what the game will look like and to give me a preview of what to expect.
-     - These can be hand drawn (paper or tablet) or digitally drawn using tools like MSPaint, Photoshop - whatever is easiest for you!
-       - If you go hand drawn then please scan in photos of your drawings to include in the proposal document.
-     - [Here's a great example video](https://www.youtube.com/watch?v=GE_ozc2BhMo) of game wireframes.
-  5. **Assets** describing which images, sounds, and fonts you'll be using for your game and **where** you'll get them from.
-     - It's imperative to **always cite your sources**!
-  6. **And any other sections** you think are relevant to explain the implementation details of your game.
-     - Maybe you're using an [external library](https://confettijs.org/)?
-     - Maybe you're not using canvas/JS and using something else like [Godot](https://godotengine.org/)?
-     - Maybe you're implementing an [interesting algorithm](https://youtu.be/0ZONMNUKTfU)?
-     - Make sure to explain it all in detail here!
+### 6 - Multiplayer
+Players can host sessions and connect to another player's session to fight in 1v1 matches.
+- Peer-to-peer connection will be done through WebRTC, using Firebase to handle [ICE](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols).
+- Connection will only be possible through IP addresses. One player opens a game lobby, and the other player needs to join the lobby by entering the player's IP.
 
-Yes, the final implementation will probably not be 100% accurate based on the proposal, **and that's fine**. Things change along the way, that's just how development works. What's important is that you start from a place of intentionality and don't immediately start by writing code. My goal is for you to satisfy all the grading critera!
+### 🤖 State Diagram
 
-## 🔨 Implementation
+![State Diagram](./readmeAssets/gameStates.png)
 
-This is where the fun begins! As I said, the game itself is all up to you, however, I want to see specific elements in your code that show me you've progressed as a developer and aren't writing [first-year](https://gist.github.com/pixeldesu/f6c8bd3c2d2b09f177c196a826b18dd2) level code! 🙈
+### 🗺️ Class Diagram
+> [!NOTE]
+> I am considering using the Visitor pattern for my entities. This pattern uses composition rather than inheritance. It is similar to the component-based design encouraged by engines like Godot, and works vaguely like a state machine. It also justifies the use of the factory pattern.
+> If I go with this pattern, Entities will likely stop using inheritance.
 
-> [!important]
-> Depending on the game you decide to make, you may not be able to fulfill all of the requirements just by the very nature of the game itself. If this is the case, **come talk to me and we can figure out a compromise**.
+![Class Diagram](./readmeAssets/classes.png)
 
-### 📃 Requirements
+### 🧵 Wireframes
 
-- 🤖 **State Machines**
-  - At the very least, you should have one [global state machine](https://jac-cs-game-programming-f23.github.io/Notes/#/1-Flappy-Bird/?id=%f0%9f%a4%96-flappy-bird-7-the-quotstate-machinequot-update) that controls the state of the game.
-  - The bare minimum for states are `TitleScreenState`, `PlayState`, `VictoryState`, and `GameOverState`, (you can rename them if you wish) though I expect you'll have more for your game.
-  - As we saw in [_Mario_](https://jac-cs-game-programming-f23.github.io/Notes/#/3-Mario/?id=%f0%9f%a4%96-mario-5-the-stateful-hero-update) and [_Zelda_](https://jac-cs-game-programming-f23.github.io/Notes/#/4-Zelda/?id=state-diagram), individual entities can have their own state machines as well.
-- 🧱 **Inheritance & Polymorphism**
-  - I want to see good object-oriented practices in your code. As soon as you have different "types" of anything in your game, that's the telltale sign that you need to use inheritance and polymorphism.
-  - Check out my feedback on your _Breakout_ assignment on Gradescope for reference.
-- 🏭 **Factory Design Pattern**
-  - To create all of the aforementioned "types" of something in your game, a good idea is to stick the creation logic inside its own dedicated [Factory](https://refactoring.guru/design-patterns/factory-method) class.
-  - See [`EnemyFactory` from _Zelda_](https://jac-cs-game-programming-f23.github.io/Notes/#/4-Zelda/?id=the-factory-design-pattern) or [`BirdFactory` from _Angry Birds_](https://jac-cs-game-programming-f23.github.io/Notes/#/5-Angry-Birds/?id=important-code-3) as an example.
-- 🔢 **Enums**
-  - Get rid of any magic numbers or strings from your code using enums.
-  - Almost every game we've done has had at least some enums so refer to those as an example.
-- ⭐ **Game Entities & Game Objects**
-  - Starting from _Mario_ we learned about [entities](https://jac-cs-game-programming-f23.github.io/Notes/#/3-Mario/?id=entities) and [objects](https://jac-cs-game-programming-f23.github.io/Notes/#/3-Mario/?id=game-objects). Usually, entities are more "intelligent" than objects. Entities can interact with objects that are collidable, solid, or consumable. You should know the deal by now!
-- 🎯 **Collision Detection & Hitboxes**
-  - Whether it's [AABB](https://jac-cs-game-programming-f23.github.io/Notes/#/0-Pong/?id=aabb-collision-detection), [tilemap collision](https://jac-cs-game-programming-f23.github.io/Notes/#/3-Mario/?id=tile-collision), or using a [physics engine](https://jac-cs-game-programming-f23.github.io/Notes/#/5-Angry-Birds/?id=physics-engines), I want to see some form of collision detection in your game.
-  - To make your collisions more realistic and interesting, feel free to use the [`Hitbox`](https://jac-cs-game-programming-f23.github.io/Notes/#/4-Zelda/?id=hitboxes) library class.
-- 💾 **Persistance**
-  - [Remember in Breakout where we persisted high scores](https://jac-cs-game-programming-f23.github.io/Notes/#/1-Breakout/?id=%f0%9f%8e%89-breakout-6-the-high-score-update)? I want your game to use persistance as well. You can save scores, game options, or even the entire state of your game so that a player can come back and start off where they left!
-- 🎉 **Win & Loss Conditions**
-  - The fundamental thing that makes a game a game is the fact that you can win or lose. This should be pretty self-explanatory.
-- 🏆 **Score/Points/Prizes**
-  - Maybe your character gains points as they kill enemies, maybe they accumulate a number of wins per round or level, maybe they're awarded some kind of medal or trophy at the end - who knows! It's all up to you.
-- 👾 **Sprites**
-  - Your game should be nice to look at - no coloured canvas shapes! There is tons of free sprite work you can find online.
-  - A lot of the sprites for the games in this course have come from [itch.io](https://itch.io/game-assets) and [opengameart.org](https://opengameart.org/).
-  - Be sure to provide the proper credit to the creators of the art! This can be done like I did for all the games so far at the top of the `main.js` files.
-- 🏃🏾‍♂️ **Animations**
-  - Give the appearance that your sprites/entities have life by iterating over multiple sprites in a sprite sheet.
-  - Use the `Animation.js` library class to achieve this and go back to the [notes](https://jac-cs-game-programming-f23.github.io/Notes/#/3-Mario/?id=%f0%9f%8f%83%e2%99%82%ef%b8%8f-mario-4-the-animated-hero-update) if you need a refresher.
-- ➡️ **Tweens**
-  - There should be elements in your game whose values need to be changed over a given period of time. These can be things like the `Pot` position from the _Zelda_ assignment or the [`Tile` elements](https://jac-cs-game-programming-f23.github.io/Notes/#/2-Match-3/?id=important-code-8) from Match 3.
-  - Use the `Timer.js` library class to achieve this and go back to the [notes](https://jac-cs-game-programming-f23.github.io/Notes/#/2-Match-3/?id=tweens) if you need a refresher.
-- 🎵 **Sounds & Music**
-  - Sounds always adds that extra bit of polish to a game. I want to see sound effects for things like UI element selection, walking, fighting, shooting, jumping, winning, losing, you name it, whatever makes sense for your game!
-  - The sounds for the games in this course were largely taken from [freesound.org](https://freesound.org) and [opengameart.org](https://opengameart.org/).
-  - Be sure to provide the proper credit to the creators of the sounds! This can be done like I did for all the games so far at the top of all `main.js` files.
-- 🖋️ **Fonts**
-  - Like sounds, fonts also contribute to the polish factor of your game. Have different fonts for your title screen and the various UI elements in the game.
-  - I got mine from [dafont](https://www.dafont.com/) and [Google Fonts](https://fonts.google.com/).
-  - Be sure to provide the proper credit to the creators of the fonts! This can be done like I did for all the games so far at the top of the `main.js` files.
+#### Main Menu
+![Main Menu](./readmeAssets/mainMenu.png)
+- *Continue* will load the player's most recent game, if there is one.
+- *New Game* will start the player in the first level.
 
-### 🫥 Template
+#### In-game HUD
+![Game HUD](./readmeAssets/gameHud.png)
+- The display in the bottom middle shows the currently selected units and their health.
+- The command map shows the possible actions for the selected units (Milestone 3).
+- The minimap shows dots for any units/structures within the map (Milestone 5).
+- The resource display above the minimap shows the player's current resources (Milestones 3 & 4).
+- The menu button pauses the game and opens a menu which allows the player to, at the least, save and quit.
 
-I've provided a [Game-Template](./Game-Template/) that you can use as the base of your game. It's up to you if you want to use it or not, but I think it's a great starting point!
+## 🎨 Assets
 
-> [!important]
-> All the code should be contained in this repo regardless of which game engine you decide to use.
+### 🖼️ Sprites and Images
+- Unit and terrain sprites will likely come from Trevor Pupkin's [Outer Buddies](https://trevor-pupkin.itch.io/outer-buddies) and [Tech Dungeon: Roguelite](https://trevor-pupkin.itch.io/tech-dungeon-roguelite) sets.
+- If needed, further sprites for effects may be taken from BDragon1727's [Free Effect Bullet Impact Explosion 32x32](https://bdragon1727.itch.io/free-effect-bullet-impact-explosion-32x32) and [Fire Pixel Bullet 16x16](https://bdragon1727.itch.io/fire-pixel-bullet-16x16) sets.
+- UI sprites will likely come from BDragon1727's [Basic Pixel Health bar and Scroll bar](https://bdragon1727.itch.io/basic-pixel-health-bar-and-scroll-bar) set.
+- Structure sprites will likely be made by myself matching Trevor Pupkin's style. These will probably look ugly/plain. No time, don't care.
+- Main menu background image will be ["Merging Star Clusters in 30 Doradus" by Nasa](https://science.nasa.gov/image-detail/41156165560-4438592e93-o/) ([no copyright](https://www.nasa.gov/nasa-brand-center/images-and-media/))
 
-## 🌿 Git
+### 🎵 Music
+More songs may be added a development goes on (ex. if a new race is added).
+- [Spritz-Therapy by Koi-discovery](https://freemusicarchive.org/music/koi-discovery/single/spritz-therapy/)
+- Any number of songs by [Darkfluxx](https://freemusicarchive.org/music/darkfluxx/)
+	- [DARKFLUXX_Theme.mp3 by Darkfluxx](https://freemusicarchive.org/music/darkfluxx/single/darkfluxx-thememp3/)
+	- [A Step Closer by Darkfluxx](https://freemusicarchive.org/music/darkfluxx/single/a-step-closermp3/)
+- Any number of songs by [bent wyre](https://freemusicarchive.org/music/bent-wyre/)
 
-You can use either the Git CLI or you can also use VSC's built-in Git GUI client.
+### ✏️ Fonts
+As I'm going for a sci-fi feel, fonts will likely include:
+- [Share Tech](https://fonts.google.com/specimen/Share+Tech)
+- [Orbitron](https://fonts.google.com/specimen/Orbitron)
+- May also include fonts from the public domain [Not Jam Font Pack](https://not-jam.itch.io/not-jam-font-pack)
 
-### 🖱️ GUI
+### 🔊 Sounds
+#### Gun shots:
+- [M41A Pulse rifle by Balcoran](https://freesound.org/people/Balcoran/sounds/478185/)
+- Sound effects from [ZapSplat](https://www.zapsplat.com/sound-effect-category/lasers-and-weapons/):
+	- [Flamethrower sound effects](https://www.zapsplat.com/sound-effect-category/flame-thrower/)
+	- [Lazer weapon sound effects](https://www.zapsplat.com/sound-effect-category/lasers-and-weapons/)
 
-1. In VSC, click on the third icon down in the left navigation bar to see a list of files that have changed and are ready to be staged.
-2. Hover over where it says _Changes_ (right below the commit textbox) and click `+` to stage all the modified files to be committed. Alternatively, you can add specific files by clicking the `+` next to the individual file.
-3. Type a commit message into the textbox and click the checkmark above it to commit all the files that were just staged.
-4. Click `...` and then `push` to push the commit(s) up to GitHub.
+#### Deaths:
+- [Male Scream in Fear by UNIVERSFIELD](https://pixabay.com/sound-effects/male-scream-in-fear-123079/)
 
-### ⌨️ CLI
-
-1. Run `git status` to see a list of files that have changed and are ready to be staged.
-2. Run `git add .` to stage all the modified files to be committed. Alternatively, you can add specific files like this: `git add src/Project.js`.
-3. Run `git commit -m "A descriptive message here."` (including the quotes) to commit all the files that were just staged.
-4. Run `git push` to push the commit(s) up to GitHub.
-
-Regardless of the method you choose, it is very important that you commit frequently because:
-
-- If you end up breaking your code, it is easy to revert back to a previous commit and start over.
-- It provides a useful log of your work so that you (and your teammates if/when you're on a team) can keep track of the work that was done.
-
-## 📥 Submission
-
-Once you've made your final `git push` to GitHub, here's what you have to do to submit:
-
-1. Ensure that the `README.md` for your repo is the proposal document.
-2. Notify me via Teams as soon as you push so that I can take a look and give you the green light to start implementation.
-3. Ensure that the game folders are at the root of the repo directory. In other words, I don't want to see a `Game-Template` folder in the final submission.
-4. Schedule an (online, on Teams) demonstration appointment with me where I'll be grading your submission on the spot using a grading rubric.
-   - Details for how to schedule the demo will be available closer to the deadline. **You don't have to wait until the official slots are available to demo**. If you're done earlier, let me know, and we'll find a time to demo so you can get this class off your plate and focus on the 42 other things you have to do for school!
+## Criteria Summary
+Ways in which every criteria is met:
+- 🤖 State Machines: There is a global game state. Entities will have their own states.
+- 🧱 Inheritance & Polymorphism: Factories use inheritance. Entities may use inheritance unless composition is used instead.
+- 🏭 Factory Design Pattern: Factories are used to create units / structures.
+- 🔢 Enums: Enum is used to (de)serialize the game state. Will likely find other use cases as development continues.
+- ⭐ Game Entities & Game Objects: All units/structures are considered an Entity. "Game Objects" are a weird distinction and will not be used (criteria states they are optional).
+- 🎯 Collision Detection & Hitboxes: World is collidable. Entities have hitboxes (circles for Units, grids for Structures).
+- 💾 Persistance: At least current level's number can be saved. Ideally save entire game state.
+- 🎉 Win & Loss Conditions: Player wins if they kill all enemy units (Milestone 1 only), survive a given amount of time (Milestone 2 only), or destroy all enemy structures (Milestone 3+). Player loses if they lose all units (Milestone 1 only) or structures (Milstone 2+).
+- 🏆 Score/Points/Prizes: Player is shown a stats screen at the end of every level (win or lose) which includes scores.
+- 👾 Sprites: Everything is a sprite.
+- 🏃🏾‍♂️ Animations: Units have animations.
+- ➡️ Tweens: Menus will tween. Factory structures will also tween when producing units. Worker units will likely also tween while harvesting resources. Tweens will not be used for any other game logic because using tweens outside of visuals is extremely error prone.
+- 🎵 Sounds & Music: See 🎨 Assets. Units/Structures will play sounds when they attack/spawn/die.
+- 🖋️ Fonts: See 🎨 Assets.
