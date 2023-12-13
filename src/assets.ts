@@ -1,12 +1,14 @@
 export default {
 	images: {
-		bigInfantry: "bigInfantry.png",
-		infantry: "infantry.png",
-		techTiles: "techTiles.png",
-		worker: "worker.png",
-		workerOutlined: "workerOutlined.png",
+		bigInfantry: "sprites/bigInfantry.png",
+		infantry: "sprites/infantry.png",
+		techTiles: "sprites/techTiles.png",
+		worker: "sprites/worker.png",
+		workerOutlined: "sprites/workerOutlined.png",
 	},
 	sounds: {
-		death: "death.mp3",
+		death: "sounds/death.mp3",
+		music_aStepCloser: "music/aStepCloser.mp3",
+		music_darkfluxxTheme: "music/darkfluxxTheme.mp3",
 	}
 }

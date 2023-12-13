@@ -1,1 +1,1 @@
-// export function getSprites
+export function getSprites

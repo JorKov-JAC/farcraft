@@ -86,6 +86,14 @@ export class SoundManager {
         });
         return soundEntry.totallyPlayedPromise;
     }
+    playSoundtrackUntilStopped(names) {
+        let index = 0;
+        const playNext = () => {
+            void this.playMusic(names[index++ % names.length])
+                .then(playNext);
+        };
+        playNext();
+    }
     stopMusic() {
         if (this.music) {
             this.music.resolveTotallyPlayedPromise = null;

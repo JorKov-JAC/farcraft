@@ -1,3 +1,5 @@
+import { irlDelay } from "./util.js"
+
 export async function loadSound(audioContext: AudioContext, src: string) {
 	const response = await fetch(src)
 	const buffer = await response.arrayBuffer()
@@ -124,6 +126,17 @@ export class SoundManager<T extends Record<string, string>> {
 		})
 
 		return soundEntry.totallyPlayedPromise
+	}
+
+	playSoundtrackUntilStopped(names: (keyof T)[]) {
+		let index = 0
+
+		const playNext = () => {
+			void this.playMusic(names[index++ % names.length]!)
+				.then(playNext)
+		}
+
+		playNext()
 	}
 
 	stopMusic() {
