@@ -1,8 +1,4 @@
-import assets from "../assets.js"
-
-const assetImages: Record<keyof typeof assets["images"], Promise<HTMLImageElement>> = Object.create(null)
-
-function loadImage(src: string): Promise<HTMLImageElement> {
+export function loadImage(src: string): Promise<HTMLImageElement> {
 	const img = new Image()
 
 	const promise = new Promise((resolve, reject) => {
@@ -15,9 +11,36 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 	return promise
 }
 
-/**
- * Gets the image asset with the given name.
- */
-export function getImage(name: keyof typeof assets["images"]): Promise<HTMLImageElement> {
-	return assetImages[name] ??= loadImage("assets/" + assets.images[name])
+export class ImageManager<T extends Record<string, string>> {
+	private namesToImages: Map<keyof T, HTMLImageElement>
+
+	private constructor(namesToImages: Map<keyof T, HTMLImageElement>) {
+		this.namesToImages = namesToImages
+	}
+
+	static async create<T extends Record<string, string>>(imageAssets: T): Promise<ImageManager<T>> {
+		const names: string[] = []
+		const promises: Promise<HTMLImageElement>[] = []
+
+		for (const assetName in imageAssets) {
+			names.push(assetName)
+			const path = "assets/" + imageAssets[assetName]!
+			promises.push(loadImage(path))
+		}
+		const images = await Promise.all(promises)
+
+		const namesToImages = new Map()
+		for (let i = 0; i < names.length; ++i) {
+			namesToImages.set(names[i], images[i])
+		}
+
+		return new ImageManager(namesToImages)
+	}
+
+	/**
+	 * Gets the image asset with the given name.
+	 */
+	getImage(name: keyof T): HTMLImageElement {
+		return this.namesToImages.get(name)!
+	}
 }
