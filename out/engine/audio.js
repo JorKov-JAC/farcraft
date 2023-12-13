@@ -1,7 +1,13 @@
+const loadedSounds = Object.create(null);
 export async function loadSound(audioContext, src) {
-    const response = await fetch(src);
-    const buffer = await response.arrayBuffer();
-    return audioContext.decodeAudioData(buffer);
+    if (!loadedSounds[src]) {
+        let resolver;
+        loadedSounds[src] = new Promise(resolve => resolver = resolve);
+        const response = await fetch(src);
+        const buffer = await response.arrayBuffer();
+        resolver(audioContext.decodeAudioData(buffer));
+    }
+    return loadedSounds[src];
 }
 export class SoundManager {
     audioContext;

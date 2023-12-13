@@ -1,7 +1,3 @@
-import assets from "./assets.js"
-import { SoundManager } from "./engine/audio.js"
-import { ImageManager } from "./engine/images.js"
-
 const canvas = document.getElementById("game") as HTMLCanvasElement
 canvas.width = 640
 canvas.height = canvas.width / 4 * 3
@@ -9,9 +5,27 @@ canvas.height = canvas.width / 4 * 3
 const context = canvas.getContext("2d")!
 context.imageSmoothingEnabled = false
 
-const images = await ImageManager.create(assets.images)
-const sounds = await SoundManager.create(assets.sounds)
+/** The max delta time for updates (for stability). */
+const MAX_UPDATE_DT = 1/15
 
-context.drawImage(images.getImage("infantry"), 0, 0)
+/** Performs a single tick (update, render) */
+function tick(dt: number) {
+}
 
-sounds.playSoundtrackUntilStopped(["music_aStepCloser", "music_darkfluxxTheme"])
+let lastTime = 0
+/** Repeatedly {@link tick} on each animation frame indefinitely */
+function tickLoop(time: number) {
+	const dt = (time - lastTime) * .001
+	lastTime = time
+
+	tick(Math.min(dt, MAX_UPDATE_DT))
+
+	requestAnimationFrame(tickLoop)
+}
+
+// Begin ticks
+requestAnimationFrame(time => {
+	lastTime = time
+	tickLoop(time)
+})
+

@@ -1,9 +1,17 @@
-import { irlDelay } from "./util.js"
+const loadedSounds: Record<string, AudioBuffer|Promise<AudioBuffer>> = Object.create(null)
 
 export async function loadSound(audioContext: AudioContext, src: string) {
-	const response = await fetch(src)
-	const buffer = await response.arrayBuffer()
-	return audioContext.decodeAudioData(buffer)
+	if (!loadedSounds[src]) {
+		let resolver
+		loadedSounds[src] = new Promise(resolve => resolver = resolve)
+
+		const response = await fetch(src)
+		const buffer = await response.arrayBuffer()
+		
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+		resolver!(audioContext.decodeAudioData(buffer))
+	}
+	return loadedSounds[src]!
 }
 
 interface SoundEntry {
