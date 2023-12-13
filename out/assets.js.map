@@ -1,0 +1,1 @@
+{"version":3,"file":"assets.js","sourceRoot":"","sources":["../src/assets.ts"],"names":[],"mappings":"AAAA,eAAe;IACd,MAAM,EAAE;QACP,WAAW,EAAE,iBAAiB;QAC9B,QAAQ,EAAE,cAAc;QACxB,SAAS,EAAE,eAAe;QAC1B,MAAM,EAAE,YAAY;QACpB,cAAc,EAAE,oBAAoB;KACpC;CACD,CAAA"}
