@@ -1,7 +1,7 @@
 export function loadImage(src) {
     const img = new Image();
     const promise = new Promise((resolve, reject) => {
-        img.onload = () => resolve(img);
+        img.onload = () => { resolve(img); };
         img.onerror = reject;
     });
     img.src = src;

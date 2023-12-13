@@ -1,10 +1,10 @@
 export function loadImage(src: string): Promise<HTMLImageElement> {
 	const img = new Image()
 
-	const promise = new Promise((resolve, reject) => {
-		img.onload = () => resolve(img)
+	const promise = new Promise<HTMLImageElement>((resolve, reject) => {
+		img.onload = () => { resolve(img) }
 		img.onerror = reject
-	}) as Promise<HTMLImageElement>
+	})
 
 	img.src = src
 
@@ -29,9 +29,9 @@ export class ImageManager<T extends Record<string, string>> {
 		}
 		const images = await Promise.all(promises)
 
-		const namesToImages = new Map()
+		const namesToImages: Map<string, HTMLImageElement> = new Map()
 		for (let i = 0; i < names.length; ++i) {
-			namesToImages.set(names[i], images[i])
+			namesToImages.set(names[i]!, images[i]!)
 		}
 
 		return new ImageManager(namesToImages)

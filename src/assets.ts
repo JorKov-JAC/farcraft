@@ -5,5 +5,8 @@ export default {
 		techTiles: "techTiles.png",
 		worker: "worker.png",
 		workerOutlined: "workerOutlined.png",
+	},
+	sounds: {
+		death: "death.mp3",
 	}
 }
