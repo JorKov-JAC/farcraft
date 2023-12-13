@@ -4,9 +4,18 @@ export async function loadSound(audioContext: AudioContext, src: string) {
 	return audioContext.decodeAudioData(buffer)
 }
 
+interface SoundEntry {
+	sound: AudioBufferSourceNode
+	totallyPlayedPromise: Promise<void>
+	resolveTotallyPlayedPromise: (() => void) | null
+}
+
 export class SoundManager<T extends Record<string, string>> {
 	audioContext: AudioContext
 	private namesToSounds: Map<keyof T, AudioBuffer>
+
+	private namesToOngoingSounds: Map<keyof T, SoundEntry[]> = new Map()
+	private music: SoundEntry | null = null
 
 	private constructor(audioContext: AudioContext, namesToSounds: Map<keyof T, AudioBuffer>) {
 		this.audioContext = audioContext
@@ -34,18 +43,94 @@ export class SoundManager<T extends Record<string, string>> {
 		return new SoundManager(audioContext, namesToSounds)
 	}
 
-	/**
-	 * Gets the image asset with the given name.
-	 */
-	playSound(name: keyof T): Promise<void> {
+	private soundNode(name: keyof T, options?: Omit<AudioBufferSourceOptions, "buffer">): SoundEntry {
 		const buffer = this.namesToSounds.get(name)!
-		const sound = new AudioBufferSourceNode(this.audioContext, { buffer })
+
+		// const soundEntry: Partial<SoundEntry> = {}
+
+		const sound = new AudioBufferSourceNode(this.audioContext, { ...options, buffer })
+		let resolveTotallyPlayedPromise: (() => void) | null = null
+		const totallyPlayedPromise = new Promise<void>(resolve => {
+			resolveTotallyPlayedPromise = resolve
+		})
+		
+		const soundEntry = {
+			sound,
+			totallyPlayedPromise,
+			resolveTotallyPlayedPromise
+		}
+
+		sound.addEventListener("ended", () => {
+			// @ts-expect-error Doesn't know that it isn't null anymore
+			soundEntry.resolveTotallyPlayedPromise?.()
+		})
+
+		return soundEntry
+	}
+
+	private play(sound: AudioBufferSourceNode): Promise<void> {
 		sound.connect(this.audioContext.destination)
 
-		const promise = new Promise<void>(resolve => sound.onended = () => { resolve() })
-
+		const promise = new Promise<void>(resolve => {
+			sound.addEventListener("ended", () => { resolve() })
+		})
 		sound.start()
-
 		return promise
+	}
+
+	playSound(name: keyof T): Promise<void> {
+		const soundEntry = this.soundNode(name)
+		
+		// Play the sound
+		const endPromise = this.play(soundEntry.sound)
+
+		// Add to ongoing sounds
+		let ongoingSounds = this.namesToOngoingSounds.get(name)
+		if (!ongoingSounds) {
+			this.namesToOngoingSounds.set(name, ongoingSounds = [])
+		}
+		ongoingSounds.push(soundEntry)
+
+		// Remove from ongoing sounds when done
+		void endPromise.then(() => {
+			const index = ongoingSounds!.indexOf(soundEntry)
+			ongoingSounds!.splice(index, 1)
+		})
+
+		return soundEntry.totallyPlayedPromise
+	}
+
+	stopSounds() {
+		const soundEntries = Array.from(this.namesToOngoingSounds.values()).flat()
+		for (const entry of soundEntries) {
+			entry.resolveTotallyPlayedPromise = null
+			entry.sound.stop()
+		}
+		this.namesToOngoingSounds.clear()
+	}
+
+	playMusic(name: keyof T): Promise<void> {
+		// Stop current music
+		this.stopMusic()
+
+		// Play song
+		const soundEntry = this.soundNode(name)
+		this.music = soundEntry
+		const endPromise = this.play(this.music.sound)
+
+		// Remove song when done
+		void endPromise.then( () => {
+			if (this.music === soundEntry) this.music = null
+		})
+
+		return soundEntry.totallyPlayedPromise
+	}
+
+	stopMusic() {
+		if (this.music) {
+			this.music.resolveTotallyPlayedPromise = null
+			this.music.sound.stop()
+			this.music = null
+		}
 	}
 }

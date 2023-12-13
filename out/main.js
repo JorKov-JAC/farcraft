@@ -9,7 +9,12 @@ context.imageSmoothingEnabled = false;
 const images = await ImageManager.create(assets.images);
 const sounds = await SoundManager.create(assets.sounds);
 context.drawImage(images.getImage("infantry"), 0, 0);
+setInterval(() => {
+    sounds.stopMusic();
+    console.log("Stopped!!!!!");
+}, 2000);
 while (true) {
-    await sounds.playSound("death");
+    await sounds.playMusic("death");
+    console.log("Sounded!");
 }
 //# sourceMappingURL=main.js.map

@@ -6,6 +6,8 @@ export async function loadSound(audioContext, src) {
 export class SoundManager {
     audioContext;
     namesToSounds;
+    namesToOngoingSounds = new Map();
+    music = null;
     constructor(audioContext, namesToSounds) {
         this.audioContext = audioContext;
         this.namesToSounds = namesToSounds;
@@ -26,13 +28,70 @@ export class SoundManager {
         }
         return new SoundManager(audioContext, namesToSounds);
     }
-    playSound(name) {
+    soundNode(name, options) {
         const buffer = this.namesToSounds.get(name);
-        const sound = new AudioBufferSourceNode(this.audioContext, { buffer });
+        const sound = new AudioBufferSourceNode(this.audioContext, { ...options, buffer });
+        let resolveTotallyPlayedPromise = null;
+        const totallyPlayedPromise = new Promise(resolve => {
+            resolveTotallyPlayedPromise = resolve;
+        });
+        const soundEntry = {
+            sound,
+            totallyPlayedPromise,
+            resolveTotallyPlayedPromise
+        };
+        sound.addEventListener("ended", () => {
+            soundEntry.resolveTotallyPlayedPromise?.();
+        });
+        return soundEntry;
+    }
+    play(sound) {
         sound.connect(this.audioContext.destination);
-        const promise = new Promise(resolve => sound.onended = () => { resolve(); });
+        const promise = new Promise(resolve => {
+            sound.addEventListener("ended", () => { resolve(); });
+        });
         sound.start();
         return promise;
+    }
+    playSound(name) {
+        const soundEntry = this.soundNode(name);
+        const endPromise = this.play(soundEntry.sound);
+        let ongoingSounds = this.namesToOngoingSounds.get(name);
+        if (!ongoingSounds) {
+            this.namesToOngoingSounds.set(name, ongoingSounds = []);
+        }
+        ongoingSounds.push(soundEntry);
+        void endPromise.then(() => {
+            const index = ongoingSounds.indexOf(soundEntry);
+            ongoingSounds.splice(index, 1);
+        });
+        return soundEntry.totallyPlayedPromise;
+    }
+    stopSounds() {
+        const soundEntries = Array.from(this.namesToOngoingSounds.values()).flat();
+        for (const entry of soundEntries) {
+            entry.resolveTotallyPlayedPromise = null;
+            entry.sound.stop();
+        }
+        this.namesToOngoingSounds.clear();
+    }
+    playMusic(name) {
+        this.stopMusic();
+        const soundEntry = this.soundNode(name);
+        this.music = soundEntry;
+        const endPromise = this.play(this.music.sound);
+        void endPromise.then(() => {
+            if (this.music === soundEntry)
+                this.music = null;
+        });
+        return soundEntry.totallyPlayedPromise;
+    }
+    stopMusic() {
+        if (this.music) {
+            this.music.resolveTotallyPlayedPromise = null;
+            this.music.sound.stop();
+            this.music = null;
+        }
     }
 }
 //# sourceMappingURL=audio.js.map
