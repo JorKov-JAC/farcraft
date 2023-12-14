@@ -1,6 +1,9 @@
 export function v2(x, y) {
     return [x, y];
 }
+export function rectFromV2s(pos, size) {
+    return [...pos, ...size];
+}
 Array.prototype.mut = function () { return this; };
 Array.prototype.lock = function () { return this; };
 Array.prototype.set = function (x, y) {
@@ -62,5 +65,9 @@ Array.prototype.min = function () {
 };
 Array.prototype.max = function () {
     return Math.max(this[0], this[1]);
+};
+Array.prototype.aabbV2 = function (v) {
+    return v[0] >= this[0] && v[0] <= this[0] + this[2]
+        && v[1] >= this[1] && v[1] <= this[1] + this[3];
 };
 //# sourceMappingURL=vector.js.map

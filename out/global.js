@@ -1,4 +1,5 @@
 import assets from "./assets.js";
+import UiTree from "./engine/UiTree.js";
 import { SoundManager } from "./engine/audio.js";
 import { ImageManager } from "./engine/images.js";
 export const images = await ImageManager.create(assets.images);
@@ -6,6 +7,7 @@ export const uiSounds = await SoundManager.create(assets.sounds);
 await uiSounds.audioContext.suspend();
 export const gameSounds = await SoundManager.create(assets.sounds);
 await gameSounds.audioContext.suspend();
+export const ui = new UiTree();
 const ASPECT_RATIO = 4 / 3;
 export const canvas = document.getElementById("game");
 canvas.tabIndex = 0;
@@ -16,6 +18,8 @@ ctx.imageSmoothingEnabled = false;
 export const keys = Object.create(null);
 canvas.addEventListener("keydown", e => keys[e.key] = { justPressed: true });
 canvas.addEventListener("keyup", e => delete keys[e.key]);
+canvas.addEventListener("mousedown", e => { ui.mouseDown(e); });
+canvas.addEventListener("mouseup", e => { ui.mouseUp(e); });
 const userGestureEvents = ["keydown", "mousedown", "pointerup"];
 const startAudioContexts = () => {
     void uiSounds.audioContext.resume();

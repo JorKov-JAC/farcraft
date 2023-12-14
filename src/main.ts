@@ -1,8 +1,9 @@
 import Clock from "./engine/clock.js"
 import { ScreenCoord } from "./engine/ui.js"
 import "./engine/vector.js"
-import { ctx, images, keys, uiSounds } from "./global.js"
+import { ctx, images, keys, ui, uiSounds } from "./global.js"
 import TechPanel from "./ui/TechPanel.js"
+import TextButton from "./ui/buttons/TextButton.js"
 
 /** The max delta time for updates (for stability). */
 const MAX_UPDATE_DT = 1/15
@@ -38,6 +39,8 @@ void clock.tween(a, {x: 200, y: 150}, 5).then(offset => {
 void clock.tween(a, {sub: {w: 200, h: 200}}, 15)
 
 const techPanel = new TechPanel(ScreenCoord.rect(0.5, 0.5).setSq(-.25, -.25), ScreenCoord.sq(.5, .5))
+techPanel.children.push(new TextButton("Hello", () => { console.log("clicked!") }, ScreenCoord.rect(.25, .5).setSq(0, -.125), ScreenCoord.rect(.5, 0).setSq(0, .25)))
+ui.panels.push(techPanel)
 
 /** Performs a single tick (update, render) */
 function tick(dt: number) {
@@ -47,8 +50,8 @@ function tick(dt: number) {
 	ctx.fillStyle = "#F00"
 	ctx.fillRect(a.x, a.y, a.sub.w, a.sub.h)
 
-	techPanel.recompose()
-	techPanel.render()
+	ui.update(dt)
+	ui.render()
 
 	clock.update(dt)
 }

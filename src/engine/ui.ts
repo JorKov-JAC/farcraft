@@ -106,14 +106,7 @@ export abstract class Panel {
 	}
 
 	private recompose() {
-		this.actualPos = this.pos.canvasPos
-		this.actualSize = this.size.canvasSize
 
-		provide(containerPosKey, this.actualPos, () => {
-		provide(containerSizeKey, this.actualSize, () => {
-			this.children.forEach(e => { e.recompose() })
-		})
-		})
 	}
 
 	private render() {
@@ -132,9 +125,45 @@ export abstract class Panel {
 		ctx.restore()
 	}
 
+	private update(dt: number) {
+		this.updateImpl(dt)
+
+		// Update screen coordinates
+		this.actualPos = this.pos.canvasPos
+		this.actualSize = this.size.canvasSize
+
+		// Update children
+		provide(containerPosKey, this.actualPos, () => {
+		provide(containerSizeKey, this.actualSize, () => {
+			this.children.forEach(e => { e.update(dt) })
+		})
+		})
+	}
+
+	private *childrenBackward(): Generator<Panel> {
+		for (let i = this.children.length; i --> 0;) {
+			const child = this.children[i]!
+			yield* child.childrenBackward()
+		}
+		yield this
+	}
+
 	abstract renderImpl(): void
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	update(_dt: number): void {}
+	updateImpl(_dt: number): void {}
+
+	/** Called when the mouse begins to press on this panel. */
+	onPress() {}
+	/** Called when the mouse is released somewhere other than this panel after this panel has been pressed. */
+	onUnpress() {}
+	/** Called when the mouse is released on this panel regardless of whether it was pressed before. */
+	onDrop() {}
+	/** Called when the mouse is pressed and released on this panel. */
 	onClick() {}
+}
+
+export const enum MouseEventType {
+	DOWN,
+	UP
 }

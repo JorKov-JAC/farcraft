@@ -4,6 +4,10 @@ export function v2(x: number, y: number) {
 	return [x, y] as V2
 }
 
+export function rectFromV2s(pos: V2, size: V2) {
+	return [...pos, ...size] as Rect
+}
+
 declare global {
 	type V2 = [number, number]
 	// type V3 = [...V2, number]
@@ -11,6 +15,8 @@ declare global {
 	type MutV2 = Mut<V2>
 	// type MutV3 = Mut<V3>
 	// type MutV4 = Mut<V4>
+	type Rect = [...V2, ...V2]
+	type MutRect = Mut<Rect>
 
 	// type M3 = [...V3, ...V3, ...V3]
 	// type M4 = [...V4, ...V4, ...V4, ...V4]
@@ -38,6 +44,7 @@ declare global {
 		rectArea(this: V2): number
 		min(this: V2): number
 		max(this: V2): number
+		aabbV2(this: Rect, v: V2): boolean
 	}
 }
 
@@ -127,4 +134,9 @@ Array.prototype.min = function() {
 
 Array.prototype.max = function() {
 	return Math.max(this[0], this[1])
+}
+
+Array.prototype.aabbV2 = function(v) {
+	return v[0] >= this[0] && v[0] <= this[0] + this[2]
+		&& v[1] >= this[1] && v[1] <= this[1] + this[3]
 }
