@@ -88,16 +88,17 @@ export default class Clock {
 	 * @param obj The object to tween.
 	 * @param target The target values to tween to.
 	 * @param duration How long the tween will last.
+	 * @param timeOffset The initial amount to fast forward the tween by.
 	 * @return A promise which resolves when the duration has expired with the
 	 * tween's excess seconds.
 	 */
-	tween<T>(obj: T, target: TweenTarget<T>, duration: number): Promise<number> {
-		this.tweenRecursive(obj, target, duration)
+	tween<T>(obj: T, target: TweenTarget<T>, duration: number, timeOffset = 0): Promise<number> {
+		this.tweenRecursive(obj, target, duration, timeOffset)
 
 		return this.wait(duration)
 	}
 
-	private tweenRecursive<T>(obj: T, target: TweenTarget<T>, duration: number) {
+	private tweenRecursive<T>(obj: T, target: TweenTarget<T>, duration: number, timeOffset: number) {
 		for (const key in target) {
 			const targetVal = target[key]!
 
@@ -109,17 +110,18 @@ export default class Clock {
 				if (existingTweenIdx >= 0) this.tweens.splice(existingTweenIdx, 1)
 
 				// Add new tween
+				const offsetTime = this.time - timeOffset
 				this.tweens.push(
 					new Tween(
-						this.time,
-						this.time + duration,
+						offsetTime,
+						offsetTime + duration,
 						obj,
 						key,
 						targetVal
 					)
 				)
 			} else {
-				this.tweenRecursive(obj[key], targetVal, duration)
+				this.tweenRecursive(obj[key], targetVal, duration, timeOffset)
 			}
 		}
 	}

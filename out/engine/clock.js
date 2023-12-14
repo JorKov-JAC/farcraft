@@ -44,11 +44,11 @@ export default class Clock {
             this.waits.push({ finishTime: this.time + duration, resolve });
         });
     }
-    tween(obj, target, duration) {
-        this.tweenRecursive(obj, target, duration);
+    tween(obj, target, duration, timeOffset = 0) {
+        this.tweenRecursive(obj, target, duration, timeOffset);
         return this.wait(duration);
     }
-    tweenRecursive(obj, target, duration) {
+    tweenRecursive(obj, target, duration, timeOffset) {
         for (const key in target) {
             const targetVal = target[key];
             if (typeof targetVal === "number") {
@@ -57,10 +57,11 @@ export default class Clock {
                 });
                 if (existingTweenIdx >= 0)
                     this.tweens.splice(existingTweenIdx, 1);
-                this.tweens.push(new Tween(this.time, this.time + duration, obj, key, targetVal));
+                const offsetTime = this.time - timeOffset;
+                this.tweens.push(new Tween(offsetTime, offsetTime + duration, obj, key, targetVal));
             }
             else {
-                this.tweenRecursive(obj[key], targetVal, duration);
+                this.tweenRecursive(obj[key], targetVal, duration, timeOffset);
             }
         }
     }

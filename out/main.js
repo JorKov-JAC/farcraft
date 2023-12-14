@@ -1,10 +1,40 @@
+import Clock from "./engine/clock.js";
 import "./engine/vector.js";
 import { context, images, keys, uiSounds } from "./global.js";
 const MAX_UPDATE_DT = 1 / 15;
 void uiSounds.playMusic("music_aStepCloser");
+const clock = new Clock();
+const a = {
+    x: 5,
+    y: 3,
+    name: "hi",
+    useless: {
+        date: "today"
+    },
+    sub: {
+        w: 20,
+        h: 10,
+        subname: "sub",
+        subsub: {
+            z: 30,
+            subsubname: "subsub"
+        },
+        useless: {
+            g: "hiii"
+        }
+    }
+};
+void clock.tween(a, { x: 200, y: 150 }, 5).then(offset => {
+    console.log("with offset: " + offset);
+    void clock.tween(a, { sub: { w: 5 } }, 2);
+});
+void clock.tween(a, { sub: { w: 200, h: 200 } }, 15);
 function tick(dt) {
     const anim = images.getAnim("marine", "die");
     context.drawImage(anim.frames[3].bitmap, 0, 0);
+    context.fillStyle = "#F00";
+    context.fillRect(a.x, a.y, a.sub.w, a.sub.h);
+    clock.update(dt);
 }
 let lastTime = 0;
 function tickLoop(time) {
