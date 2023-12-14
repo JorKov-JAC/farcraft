@@ -1,6 +1,8 @@
-export type TweenTarget<T> = {
-	[K in keyof T]?: T[K] extends number ? number : TweenTarget<T[K]>
-}
+type CanBeTweenTarget<T> = T extends number ? true : T extends object ? (true extends CanBeTweenTarget<T[keyof T]> ? true : never) : never
+
+export type TweenTarget<T> = RemoveNever<{
+	[K in keyof T]?: true extends CanBeTweenTarget<T[K]> ? (T[K] extends number ? number : TweenTarget<T[K]>) : never
+}>
 
 class Tween {
 	startTime: number
@@ -43,10 +45,10 @@ class Tween {
 }
 
 export default class Clock {
-	time = 0
+	private time = 0
 
-	tweens: Tween[] = []
-	waits: { finishTime: number, resolve: (excessTime: number) => void }[] = []
+	private tweens: Tween[] = []
+	private waits: { finishTime: number, resolve: (excessTime: number) => void }[] = []
 
 	update(dt: number) {
 		this.time += dt

@@ -23,9 +23,14 @@ export interface SpritesDef {
 	actualOffset: V2
 	/** The dimensions of the actual sprite itself. */
 	actualSize: V2
-	/** The offset to pretend this sprite has when position. */
+
+	// A sprite has a "base", a rectangle considered to be the sprite's overall
+	// size. Some of its individual sprites may be bigger or smaller, but these
+	// are the dimensions used when scaling the sprite to be an appropriate
+	// size, for example.
+	/** The offset to the sprite's base. */
 	baseOffset: V2
-	/** The size to pretend this sprite has when scaling. */
+	/** The size of the sprite's base. */
 	baseSize: V2
 	/** Each span is a rectangle of grid cells. */
 	spans: Array<{

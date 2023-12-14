@@ -25,7 +25,6 @@ canvas.addEventListener("keyup", e => delete keys[e.key])
 const userGestureEvents = ["keydown", "mousedown", "pointerup"]
 
 const startAudioContexts = () => {
-	console.log("Hiya")
 	void uiSounds.audioContext.resume()
 	void gameSounds.audioContext.resume()
 	userGestureEvents.forEach(name => { canvas.removeEventListener(name, startAudioContexts) })
