@@ -22,10 +22,7 @@ async function createSpriteInfo(image, imageAsset) {
                         break getTiles;
                     coord.mut()
                         .set(...span.start)
-                        .add([
-                        spritesDef.gridSize[0] * col,
-                        spritesDef.gridSize[1] * row
-                    ])
+                        .add(spritesDef.gridSize.slice().mul2(col, row))
                         .add(spritesDef.actualOffset);
                     const bitmap = await createImageBitmap(image, ...coord, ...spritesDef.actualSize, { resizeQuality: "pixelated" });
                     const offset = spritesDef.baseOffset.slice().neg().lock();

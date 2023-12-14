@@ -1,5 +1,8 @@
-export function createProviderKey() {
-    return Symbol();
+export function createProviderKey(defaultValue) {
+    const symbol = Symbol();
+    if (defaultValue !== undefined)
+        currentProvidedObjects.set(symbol, defaultValue);
+    return symbol;
 }
 const currentProvidedObjects = new Map();
 export function current(type) {

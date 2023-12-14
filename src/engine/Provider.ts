@@ -2,9 +2,14 @@
 
 declare const providerSymbolTag: unique symbol
 export type ProviderKey<T> = symbol & {[providerSymbolTag]: T}
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function createProviderKey<T>() {
-	return Symbol() as ProviderKey<T>
+
+/**
+ * @param defaultValue Must not be explicitly undefined.
+ */
+export function createProviderKey<T>(defaultValue?: T) {
+	const symbol = Symbol() as ProviderKey<T>
+	if (defaultValue !== undefined) currentProvidedObjects.set(symbol, defaultValue)
+	return symbol
 }
 
 type Providable = Newable | ProviderKey<unknown>
@@ -18,7 +23,7 @@ type ProvidedTypeOf<T extends Providable>
 /**
  * Maps classes and symbols to their currently provided instances.
  */
-const currentProvidedObjects: Map<Newable | ProviderKey<any>, object> = new Map()
+const currentProvidedObjects: Map<Newable | ProviderKey<any>, any> = new Map()
 
 /**
  * Gets the currently provided instance of {@link class}.
@@ -33,7 +38,7 @@ export function current<T extends Providable>(type: T) : ProvidedTypeOf<T> {
 	if (instance === undefined) throw Error("No provided value")
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-	return instance as any
+	return instance
 }
 
 /**

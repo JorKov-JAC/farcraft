@@ -52,10 +52,7 @@ async function createSpriteInfo<T extends ImageAsset>(image: HTMLImageElement, i
 
 					coord.mut()
 						.set(... span.start)
-						.add([
-							spritesDef.gridSize[0] * col,
-							spritesDef.gridSize[1] * row
-						])
+						.add(spritesDef.gridSize.slice().mul2(col, row))
 						.add(spritesDef.actualOffset)
 
 					// TODO Parallel processing

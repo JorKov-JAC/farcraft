@@ -18,6 +18,11 @@ Array.prototype.add = function (o) {
     this[1] += o[1];
     return this;
 };
+Array.prototype.add2 = function (x, y) {
+    this[0] += x;
+    this[1] += y;
+    return this;
+};
 Array.prototype.sub = function (o) {
     this[0] -= o[0];
     this[1] -= o[1];
@@ -27,6 +32,14 @@ Array.prototype.mul = function (s) {
     this[0] *= s;
     this[1] *= s;
     return this;
+};
+Array.prototype.mul2 = function (x, y) {
+    this[0] *= x;
+    this[1] *= y;
+    return this;
+};
+Array.prototype.mulV2 = function (o) {
+    return this.mul2(o[0], o[1]);
 };
 Array.prototype.dot = function (o) {
     return this[0] * o[0] + this[1] * o[1];
@@ -43,5 +56,11 @@ Array.prototype.rot90 = function () {
 };
 Array.prototype.rectArea = function () {
     return this[0] * this[1];
+};
+Array.prototype.min = function () {
+    return Math.min(this[0], this[1]);
+};
+Array.prototype.max = function () {
+    return Math.max(this[0], this[1]);
 };
 //# sourceMappingURL=vector.js.map

@@ -27,12 +27,17 @@ declare global {
 		set(this: MutV2, x: number, y: number): MutV2
 		neg(this: MutV2): MutV2
 		add(this: MutV2, o: V2): MutV2
+		add2(this: MutV2, x: number, y: number): MutV2
 		sub(this: MutV2, o: V2): MutV2
 		mul(this: MutV2, s: number): MutV2
+		mul2(this: MutV2, x: number, y: number): MutV2
+		mulV2(this: MutV2, o: V2): MutV2
 		dot(this: V2, o: V2): number
 		norm(this: MutV2): MutV2
 		rot90(this: MutV2): MutV2
 		rectArea(this: V2): number
+		min(this: V2): number
+		max(this: V2): number
 	}
 }
 
@@ -62,6 +67,13 @@ Array.prototype.add = function(o: V2) {
 	return this
 }
 
+Array.prototype.add2 = function(x: number, y: number) {
+	this[0] += x
+	this[1] += y
+
+	return this
+}
+
 Array.prototype.sub = function(o: V2) {
 	this[0] -= o[0]
 	this[1] -= o[1]
@@ -74,6 +86,17 @@ Array.prototype.mul = function(s: number) {
 	this[1] *= s
 
 	return this
+}
+
+Array.prototype.mul2 = function(x, y) {
+	this[0] *= x
+	this[1] *= y
+
+	return this
+}
+
+Array.prototype.mulV2 = function(o) {
+	return this.mul2(o[0], o[1])
 }
 
 Array.prototype.dot = function(o: V2) {
@@ -96,4 +119,12 @@ Array.prototype.rot90 = function() {
 
 Array.prototype.rectArea = function() {
 	return this[0] * this[1]
+}
+
+Array.prototype.min = function() {
+	return Math.min(this[0], this[1])
+}
+
+Array.prototype.max = function() {
+	return Math.max(this[0], this[1])
 }
