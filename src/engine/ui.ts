@@ -154,16 +154,30 @@ export abstract class Panel {
 	updateImpl(_dt: number): void {}
 
 	/** Called when the mouse begins to press on this panel. */
-	onPress() {}
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	onPress(_pos: V2) {}
 	/** Called when the mouse is released somewhere other than this panel after this panel has been pressed. */
-	onUnpress() {}
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	onUnpress(_pos: V2) {}
 	/** Called when the mouse is released on this panel regardless of whether it was pressed before. */
-	onDrop() {}
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	onDrop(_pos: V2) {}
 	/** Called when the mouse is pressed and released on this panel. */
-	onClick() {}
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	onClick(_pos: V2) {}
 }
 
 export const enum MouseEventType {
 	DOWN,
 	UP
+}
+
+export class GameMouseEvent {
+	type: MouseEventType
+	pos: V2
+
+	constructor(type: MouseEventType, pos: V2) {
+		this.type = type
+		this.pos = pos
+	}
 }

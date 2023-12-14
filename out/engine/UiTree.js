@@ -1,4 +1,4 @@
-import { rectFromV2s, v2 } from "./vector.js";
+import { rectFromV2s } from "./vector.js";
 export default class UiTree {
     panels = [];
     mouseEventsToHandle = [];
@@ -13,29 +13,31 @@ export default class UiTree {
             const actualPos = child.actualPos;
             const actualSize = child.actualSize;
             const childBounds = rectFromV2s(actualPos, actualSize);
-            for (const mouseEvent of this.mouseEventsToHandle) {
-                if (!childBounds.aabbV2(mouseEvent.pos))
+            for (const handlableMouseEvent of this.mouseEventsToHandle) {
+                const event = handlableMouseEvent.event;
+                if (!childBounds.aabbV2(event.pos))
                     continue;
-                mouseEvent.handled = true;
-                switch (mouseEvent.type) {
+                handlableMouseEvent.handled = true;
+                switch (event.type) {
                     case 0: {
-                        child.onPress();
+                        child.onPress(event.pos);
                         this.ongoingMouseHolds.push(child);
                         break;
                     }
                     case 1: {
                         const clickedChild = this.ongoingMouseHolds.find(e => e === child);
-                        this.emptyOngoingMouseHolds();
-                        child.onDrop();
-                        clickedChild?.onClick();
+                        this.emptyOngoingMouseHolds(event);
+                        child.onDrop(event.pos);
+                        clickedChild?.onClick(event.pos);
                         break;
                     }
                 }
             }
             this.mouseEventsToHandle = this.mouseEventsToHandle.filter(e => !e.handled);
         }
-        if (this.mouseEventsToHandle.some(e => e.type === 1)) {
-            this.emptyOngoingMouseHolds();
+        const unhandledUpEvent = this.mouseEventsToHandle.find(e => e.event.type === 1);
+        if (unhandledUpEvent) {
+            this.emptyOngoingMouseHolds(unhandledUpEvent.event);
         }
         this.mouseEventsToHandle.length = 0;
     }
@@ -44,9 +46,9 @@ export default class UiTree {
             e.render();
         });
     }
-    emptyOngoingMouseHolds() {
+    emptyOngoingMouseHolds(mouseUpEvent) {
         this.ongoingMouseHolds.forEach(e => {
-            e.onUnpress();
+            e.onUnpress(mouseUpEvent.pos);
         });
         this.ongoingMouseHolds.length = 0;
     }
@@ -57,18 +59,11 @@ export default class UiTree {
             yield* childBackward;
         }
     }
-    addMouseEvent(event, type) {
+    addMouseEvent(event) {
         this.mouseEventsToHandle.push({
-            type: type,
-            pos: v2(event.offsetX, event.offsetY),
+            event,
             handled: false
         });
-    }
-    mouseDown(event) {
-        this.addMouseEvent(event, 0);
-    }
-    mouseUp(event) {
-        this.addMouseEvent(event, 1);
     }
 }
 //# sourceMappingURL=UiTree.js.map

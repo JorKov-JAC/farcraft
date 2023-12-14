@@ -9,18 +9,18 @@ export abstract class Button extends Panel {
 		this.clickCallback = clickCallback
 	}
 
-	override onClick() {
-		super.onClick()
+	override onClick(pos: V2) {
+		super.onClick(pos)
 		this.clickCallback()
 	}
 
-	override onPress(): void {
-		super.onPress()
+	override onPress(pos: V2): void {
+		super.onPress(pos)
 		this.beingHeld = true
 	}
 
-	override onUnpress(): void {
-		super.onUnpress()
+	override onUnpress(pos: V2): void {
+		super.onUnpress(pos)
 		this.beingHeld = false
 	}
 }

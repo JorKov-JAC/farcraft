@@ -6,16 +6,16 @@ export class Button extends Panel {
         super(pos, size);
         this.clickCallback = clickCallback;
     }
-    onClick() {
-        super.onClick();
+    onClick(pos) {
+        super.onClick(pos);
         this.clickCallback();
     }
-    onPress() {
-        super.onPress();
+    onPress(pos) {
+        super.onPress(pos);
         this.beingHeld = true;
     }
-    onUnpress() {
-        super.onUnpress();
+    onUnpress(pos) {
+        super.onUnpress(pos);
         this.beingHeld = false;
     }
 }

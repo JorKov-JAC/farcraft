@@ -99,9 +99,17 @@ export class Panel {
         yield this;
     }
     updateImpl(_dt) { }
-    onPress() { }
-    onUnpress() { }
-    onDrop() { }
-    onClick() { }
+    onPress(_pos) { }
+    onUnpress(_pos) { }
+    onDrop(_pos) { }
+    onClick(_pos) { }
+}
+export class GameMouseEvent {
+    type;
+    pos;
+    constructor(type, pos) {
+        this.type = type;
+        this.pos = pos;
+    }
 }
 //# sourceMappingURL=ui.js.map
