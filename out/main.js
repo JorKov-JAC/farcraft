@@ -1,11 +1,9 @@
-"use strict";
-const canvas = document.getElementById("game");
-canvas.width = 640;
-canvas.height = canvas.width / 4 * 3;
-const context = canvas.getContext("2d");
-context.imageSmoothingEnabled = false;
+import "./engine/vector.js";
+import { context, images } from "./global.js";
 const MAX_UPDATE_DT = 1 / 15;
 function tick(dt) {
+    const anim = images.getAnim("marine", "spawn");
+    context.drawImage(anim.frames[3].bitmap, 0, 0);
 }
 let lastTime = 0;
 function tickLoop(time) {

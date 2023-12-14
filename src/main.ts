@@ -1,15 +1,13 @@
-const canvas = document.getElementById("game") as HTMLCanvasElement
-canvas.width = 640
-canvas.height = canvas.width / 4 * 3
-
-const context = canvas.getContext("2d")!
-context.imageSmoothingEnabled = false
+import "./engine/vector.js"
+import { context, images } from "./global.js"
 
 /** The max delta time for updates (for stability). */
 const MAX_UPDATE_DT = 1/15
 
 /** Performs a single tick (update, render) */
 function tick(dt: number) {
+	const anim = images.getAnim("marine", "spawn")
+	context.drawImage(anim.frames[3]!.bitmap, 0, 0)
 }
 
 let lastTime = 0
