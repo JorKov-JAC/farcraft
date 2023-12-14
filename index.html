@@ -5,6 +5,27 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>FarCraft</title>
 	<script type="module" defer src="out/main.js"></script>
+	<style>
+		:root {
+			box-sizing: border-box;
+		}
+		* {
+			box-sizing: inherit;
+		}
+		html, body {
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: #000;
+		}
+		#game {
+			box-shadow: #fff 0 0 1vmin 1vmin;
+		}
+	</style>
 </head>
 <body>
 	<canvas id="game"></canvas>
