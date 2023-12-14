@@ -1,12 +1,14 @@
 import "./engine/vector.js"
-import { context, images } from "./global.js"
+import { context, images, keys, uiSounds } from "./global.js"
 
 /** The max delta time for updates (for stability). */
 const MAX_UPDATE_DT = 1/15
 
+void uiSounds.playMusic("music_aStepCloser")
+
 /** Performs a single tick (update, render) */
 function tick(dt: number) {
-	const anim = images.getAnim("marine", "spawn")
+	const anim = images.getAnim("marine", "die")
 	context.drawImage(anim.frames[3]!.bitmap, 0, 0)
 }
 
@@ -17,6 +19,10 @@ function tickLoop(time: number) {
 	lastTime = time
 
 	tick(Math.min(dt, MAX_UPDATE_DT))
+
+	for (const keyName in keys) {
+		keys[keyName]!.justPressed = false
+	}
 
 	requestAnimationFrame(tickLoop)
 }
