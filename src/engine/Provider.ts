@@ -26,7 +26,7 @@ type ProvidedTypeOf<T extends Providable>
 const currentProvidedObjects: Map<Newable | ProviderKey<any>, any> = new Map()
 
 /**
- * Gets the currently provided instance of {@link class}.
+ * Gets the currently provided instance of {@link type}.
  * 
  * Part of the provider pattern.
  * 

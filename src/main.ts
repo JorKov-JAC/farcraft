@@ -1,6 +1,8 @@
-import Clock, { TweenTarget } from "./engine/clock.js"
+import Clock from "./engine/clock.js"
+import { ScreenCoord } from "./engine/ui.js"
 import "./engine/vector.js"
-import { context, images, keys, uiSounds } from "./global.js"
+import { ctx, images, keys, uiSounds } from "./global.js"
+import TechPanel from "./ui/TechPanel.js"
 
 /** The max delta time for updates (for stability). */
 const MAX_UPDATE_DT = 1/15
@@ -35,13 +37,18 @@ void clock.tween(a, {x: 200, y: 150}, 5).then(offset => {
 })
 void clock.tween(a, {sub: {w: 200, h: 200}}, 15)
 
+const techPanel = new TechPanel(ScreenCoord.rect(0.5, 0.5).setSq(-.25, -.25), ScreenCoord.sq(.5, .5))
+
 /** Performs a single tick (update, render) */
 function tick(dt: number) {
 	const anim = images.getAnim("marine", "die")
-	context.drawImage(anim.frames[3]!.bitmap, 0, 0)
+	ctx.drawImage(anim.frames[3]!.bitmap, 0, 0)
 
-	context.fillStyle = "#F00"
-	context.fillRect(a.x, a.y, a.sub.w, a.sub.h)
+	ctx.fillStyle = "#F00"
+	ctx.fillRect(a.x, a.y, a.sub.w, a.sub.h)
+
+	techPanel.recompose()
+	techPanel.render()
 
 	clock.update(dt)
 }
