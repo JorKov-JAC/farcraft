@@ -1,7 +1,7 @@
 import { canvas } from "../context.js";
 import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
 import { v2 } from "../engine/vector.js";
-import { keys, mousePos } from "../global.js";
+import { captureInput, keys, mousePos } from "../global.js";
 import Camera from "./Camera.js";
 import World from "./World.js";
 import Hud from "./ui/Hud.js";
@@ -28,14 +28,16 @@ export default class Game {
             moveVec[1] -= 1;
         if (keys["ArrowDown"])
             moveVec[1] += 1;
-        if (mousePos[0] <= 3)
-            moveVec[0] -= 1;
-        if (mousePos[0] >= canvas.width - 3)
-            moveVec[0] += 1;
-        if (mousePos[1] <= 3)
-            moveVec[1] -= 1;
-        if (mousePos[1] >= canvas.height - 3)
-            moveVec[1] += 1;
+        if (captureInput) {
+            if (mousePos[0] <= 3)
+                moveVec[0] -= 1;
+            if (mousePos[0] >= canvas.width - 3)
+                moveVec[0] += 1;
+            if (mousePos[1] <= 3)
+                moveVec[1] -= 1;
+            if (mousePos[1] >= canvas.height - 3)
+                moveVec[1] += 1;
+        }
         this.camera.moveBy(moveVec, dt);
     }
     startDrag(pos) {

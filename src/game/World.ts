@@ -2,6 +2,7 @@ import { rect } from "../engine/vector.js"
 import { images } from "../global.js"
 import { ctx } from "../context.js"
 import assets from "../assets.js"
+import Direction from "../engine/Direction.js"
 
 interface TilemapData {
 	width: number
@@ -29,8 +30,6 @@ class Tilemap {
 		this.tilemapLayers = tilemap
 		this.tileset = tileset
 	}
-
-
 }
 
 export default class World {
@@ -120,6 +119,104 @@ export default class World {
 	}
 
 	isSolid(x: number, y: number): boolean {
-		// return this.collisionGrid[y * this.width + x] ?? true
+		return this.collisionGrid[Math.floor(y) * this.tilemap.width + Math.floor(x)] ?? true
 	}
+
+	pathfind(a: V2, b: V2): V2[] | null {
+		try {
+			a[0] = Math.floor(a[0])
+			a[1] = Math.floor(a[1])
+
+			b[0] = Math.floor(b[0])
+			b[1] = Math.floor(b[1])
+
+			const width = this.tilemap.width
+
+			type Node = {dist: number, traveled: number, from: Node|null, pos: V2, currDirection: Direction}
+			const distAtExploredTile: number[] = []
+
+			const startNode: Node = {
+				dist: a.taxiDist(b),
+				traveled: 0,
+				from: null,
+				pos: a,
+				currDirection: 0 as Direction
+			}
+
+			const nodes: Node[] = [startNode]
+			distAtExploredTile[a[1] * width + a[0]] = startNode.dist
+
+			let currentNode: Node
+			while (true) {
+				currentNode = nodes[nodes.length - 1]!
+				if (!currentNode) return null
+				if (currentNode.pos.equals(b)) break
+				if (currentNode.currDirection >= Direction.SIZE) {
+					nodes.pop()
+					continue
+				}
+
+				const newNodePos = currentNode.pos.slice()
+				switch (currentNode.currDirection) {
+					case Direction.RIGHT:
+						newNodePos.add2(1, 0)
+						break;
+					case Direction.UP:
+						newNodePos.add2(0, -1)
+						break;
+					case Direction.LEFT:
+						newNodePos.add2(-1, 0)
+						break;
+					case Direction.DOWN:
+						newNodePos.add2(0, 1)
+						break;
+					case Direction.SIZE:
+						throw Error("Tried to go past all possible directions")
+				}
+				++currentNode.currDirection
+
+				if (this.isSolid(...newNodePos.lock())) continue
+
+				const traveled = currentNode.traveled + 1
+				const newNode: Node = {
+					dist: newNodePos.taxiDist(b) + traveled,
+					traveled,
+					from: currentNode,
+					pos: newNodePos,
+					currDirection: 0 as Direction
+				}
+
+				const newNodeCoord1D = newNodePos[1] * width + newNodePos[0]
+				const existingDist = distAtExploredTile[newNodeCoord1D]
+				if (existingDist !== undefined && existingDist <= newNode.dist) {
+					continue
+				}
+				distAtExploredTile[newNodeCoord1D] = newNode.dist
+
+				// Insert the new node in its sorted place
+				let insertion = 0
+				for (let i = nodes.length; i --> 0; ) {
+					if (nodes[i]!.dist >= newNode.dist) {
+						insertion = i+1
+						break
+					}
+				}
+				nodes.splice(insertion, 0, newNode)
+			}
+
+			const path: V2[] = []
+			while (currentNode) {
+				path.push(currentNode.pos)
+				currentNode = currentNode.from!
+			}
+			path.reverse()
+
+			return path
+		} catch (e) {
+			console.group("Exception while trying to find path!")
+			console.dir(e)
+			console.groupEnd()
+			return null
+		}
+	} 
 }

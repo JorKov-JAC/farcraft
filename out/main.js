@@ -6,6 +6,7 @@ import { ctx } from "./context.js";
 import TechPanel from "./game/ui/TechPanel.js";
 import TextButton from "./game/ui/buttons/TextButton.js";
 import Game from "./game/Game.js";
+import { v2 } from "./engine/vector.js";
 const MAX_UPDATE_DT = 1 / 15;
 uiSounds.playSoundtrackUntilStopped(["music_aStepCloser", "music_darkfluxxTheme"]);
 const clock = new Clock();
@@ -46,6 +47,7 @@ function nextSprite(offset = 0) {
 }
 nextSprite();
 const game = await Game.create("m1");
+console.dir(game.world.pathfind(v2(6, 9), v2(6, 5)));
 ui.panels.push(game.panel);
 function tick(dt) {
     ctx.clearRect(0, 0, ...ScreenCoord.rect(1, 1).canvasSize);

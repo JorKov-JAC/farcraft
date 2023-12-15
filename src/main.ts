@@ -6,6 +6,7 @@ import { ctx } from "./context.js"
 import TechPanel from "./game/ui/TechPanel.js"
 import TextButton from "./game/ui/buttons/TextButton.js"
 import Game from "./game/Game.js"
+import { v2 } from "./engine/vector.js"
 
 /** The max delta time for updates (for stability). */
 const MAX_UPDATE_DT = 1/15
@@ -57,6 +58,7 @@ function nextSprite(offset = 0) {
 nextSprite()
 
 const game = await Game.create("m1")
+console.dir(game.world.pathfind(v2(6, 9), v2(6, 5)))
 ui.panels.push(game.panel)
 
 
@@ -83,7 +85,7 @@ function tick(dt: number) {
 	ui.update(dt)
 	ui.render()
 	if (captureInput) {
-		images.getAnim("cursor", "default").frames[0]!.render(...mousePos!)
+		images.getAnim("cursor", "default").frames[0]!.render(...mousePos)
 	}
 
 	clock.update(dt)

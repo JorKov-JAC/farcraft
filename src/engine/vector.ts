@@ -34,6 +34,7 @@ declare global {
 		// slice(this: V4): MutV4
 		mut(this: V2): MutV2
 		lock(this: MutV2): V2
+		equals(this: V2, o: V2): boolean
 		set(this: MutV2, x: number, y: number): MutV2
 		neg(this: MutV2): MutV2
 		add(this: MutV2, o: V2): MutV2
@@ -43,11 +44,15 @@ declare global {
 		mul2(this: MutV2, x: number, y: number): MutV2
 		mulV2(this: MutV2, o: V2): MutV2
 		dot(this: V2, o: V2): number
-		norm(this: MutV2): MutV2
+		mag(this: V2): number
+		dist(this: V2, o: V2): number
+		taxiDist(this: V2, o:V2): number
+		normOr(this: MutV2, fallbackX: number, fallbackY: number): MutV2
 		rot90(this: MutV2): MutV2
 		rectArea(this: V2): number
 		min(this: V2): number
 		max(this: V2): number
+
 		iAabbV2(this: Rect, v: V2): boolean
 	}
 }
@@ -56,6 +61,10 @@ declare global {
 Array.prototype.mut = function() { return this as any }
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
 Array.prototype.lock = function() { return this as any }
+
+Array.prototype.equals = function(o) {
+	return this[0] === o[0] && this[1] === o[1]
+}
 
 Array.prototype.set = function(x, y) {
 	this[0] = x
@@ -114,10 +123,30 @@ Array.prototype.dot = function(o: V2) {
 	return this[0] * o[0] + this[1] * o[1]
 }
 
-Array.prototype.norm = function() {
-	const len = this.dot(this)
-	this[0] /= len
-	this[1] /= len
+Array.prototype.mag = function() {
+	return Math.sqrt(this[0] * this[0] + this[1] * this[1])
+}
+
+Array.prototype.dist = function(o: V2) {
+	const diffX = this[0] - o[0]
+	const diffY = this[1] - o[1]
+	return Math.sqrt(diffX * diffX + diffY * diffY)
+}
+
+Array.prototype.taxiDist = function(o) {
+	return Math.abs(this[0] - o[0]) + Math.abs(this[1] - o[1])
+}
+
+Array.prototype.normOr = function(x, y) {
+	const mag = this.mag()
+	if (mag === 0) {
+		this[0] = x
+		this[1] = y
+		return this
+	}
+
+	this[0] /= mag
+	this[1] /= mag
 
 	return this
 }

@@ -9,6 +9,9 @@ export function rectFromV2s(pos, size) {
 }
 Array.prototype.mut = function () { return this; };
 Array.prototype.lock = function () { return this; };
+Array.prototype.equals = function (o) {
+    return this[0] === o[0] && this[1] === o[1];
+};
 Array.prototype.set = function (x, y) {
     this[0] = x;
     this[1] = y;
@@ -50,10 +53,26 @@ Array.prototype.mulV2 = function (o) {
 Array.prototype.dot = function (o) {
     return this[0] * o[0] + this[1] * o[1];
 };
-Array.prototype.norm = function () {
-    const len = this.dot(this);
-    this[0] /= len;
-    this[1] /= len;
+Array.prototype.mag = function () {
+    return Math.sqrt(this[0] * this[0] + this[1] * this[1]);
+};
+Array.prototype.dist = function (o) {
+    const diffX = this[0] - o[0];
+    const diffY = this[1] - o[1];
+    return Math.sqrt(diffX * diffX + diffY * diffY);
+};
+Array.prototype.taxiDist = function (o) {
+    return Math.abs(this[0] - o[0]) + Math.abs(this[1] - o[1]);
+};
+Array.prototype.normOr = function (x, y) {
+    const mag = this.mag();
+    if (mag === 0) {
+        this[0] = x;
+        this[1] = y;
+        return this;
+    }
+    this[0] /= mag;
+    this[1] /= mag;
     return this;
 };
 Array.prototype.rot90 = function () {

@@ -69,6 +69,93 @@ export default class World {
         ctx.restore();
     }
     isSolid(x, y) {
+        return this.collisionGrid[Math.floor(y) * this.tilemap.width + Math.floor(x)] ?? true;
+    }
+    pathfind(a, b) {
+        try {
+            a[0] = Math.floor(a[0]);
+            a[1] = Math.floor(a[1]);
+            b[0] = Math.floor(b[0]);
+            b[1] = Math.floor(b[1]);
+            const width = this.tilemap.width;
+            const distAtExploredTile = [];
+            const startNode = {
+                dist: a.taxiDist(b),
+                traveled: 0,
+                from: null,
+                pos: a,
+                currDirection: 0
+            };
+            const nodes = [startNode];
+            distAtExploredTile[a[1] * width + a[0]] = startNode.dist;
+            let currentNode;
+            while (true) {
+                currentNode = nodes[nodes.length - 1];
+                if (!currentNode)
+                    return null;
+                if (currentNode.pos.equals(b))
+                    break;
+                if (currentNode.currDirection >= 4) {
+                    nodes.pop();
+                    continue;
+                }
+                const newNodePos = currentNode.pos.slice();
+                switch (currentNode.currDirection) {
+                    case 0:
+                        newNodePos.add2(1, 0);
+                        break;
+                    case 1:
+                        newNodePos.add2(0, -1);
+                        break;
+                    case 2:
+                        newNodePos.add2(-1, 0);
+                        break;
+                    case 3:
+                        newNodePos.add2(0, 1);
+                        break;
+                    case 4:
+                        throw Error("Tried to go past all possible directions");
+                }
+                ++currentNode.currDirection;
+                if (this.isSolid(...newNodePos.lock()))
+                    continue;
+                const traveled = currentNode.traveled + 1;
+                const newNode = {
+                    dist: newNodePos.taxiDist(b) + traveled,
+                    traveled,
+                    from: currentNode,
+                    pos: newNodePos,
+                    currDirection: 0
+                };
+                const newNodeCoord1D = newNodePos[1] * width + newNodePos[0];
+                const existingDist = distAtExploredTile[newNodeCoord1D];
+                if (existingDist !== undefined && existingDist <= newNode.dist) {
+                    continue;
+                }
+                distAtExploredTile[newNodeCoord1D] = newNode.dist;
+                let insertion = 0;
+                for (let i = nodes.length; i-- > 0;) {
+                    if (nodes[i].dist >= newNode.dist) {
+                        insertion = i + 1;
+                        break;
+                    }
+                }
+                nodes.splice(insertion, 0, newNode);
+            }
+            const path = [];
+            while (currentNode) {
+                path.push(currentNode.pos);
+                currentNode = currentNode.from;
+            }
+            path.reverse();
+            return path;
+        }
+        catch (e) {
+            console.group("Exception while trying to find path!");
+            console.dir(e);
+            console.groupEnd();
+            return null;
+        }
     }
 }
 //# sourceMappingURL=World.js.map
