@@ -69,7 +69,7 @@ Array.prototype.min = function () {
 Array.prototype.max = function () {
     return Math.max(this[0], this[1]);
 };
-Array.prototype.aabbV2 = function (v) {
+Array.prototype.iAabbV2 = function (v) {
     return v[0] >= this[0] && v[0] <= this[0] + this[2]
         && v[1] >= this[1] && v[1] <= this[1] + this[3];
 };

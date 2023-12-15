@@ -28,7 +28,7 @@ export default class UiTree {
 			for (const handlableMouseEvent of this.mouseEventsToHandle) {
 				const event = handlableMouseEvent.event
 
-				if (!childBounds.aabbV2(event.pos)) continue
+				if (!childBounds.iAabbV2(event.pos)) continue
 
 				// Handle event
 				handlableMouseEvent.handled = true

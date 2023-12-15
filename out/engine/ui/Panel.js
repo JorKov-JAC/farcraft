@@ -27,6 +27,8 @@ export class Panel {
         ctx.restore();
     }
     update(dt) {
+        this.actualPos = this.pos.canvasPos;
+        this.actualSize = this.size.canvasSize;
         this.updateImpl(dt);
         this.actualPos = this.pos.canvasPos;
         this.actualSize = this.size.canvasSize;
@@ -42,6 +44,12 @@ export class Panel {
             yield* child.descendantsBackward();
         }
         yield this;
+    }
+    getActualPos() {
+        return this.actualPos;
+    }
+    getActualSize() {
+        return this.actualSize;
     }
     updateImpl(_dt) { }
     onPress(_pos) { }

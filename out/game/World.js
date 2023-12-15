@@ -47,11 +47,11 @@ export default class World {
         const startTileXRem = startTileX - startTileXFloor;
         const startTileYFloor = Math.floor(startTileY);
         const startTileYRem = startTileY - startTileYFloor;
-        const tileBoundsRect = rect(0, 0, this.tilemap.width, this.tilemap.height);
+        const tileBoundsRect = rect(0, 0, this.tilemap.width - 1, this.tilemap.height - 1);
         for (const layer of this.tilemap.tilemapLayers) {
             for (let screenY = startY - startTileYRem * tileLen, tileY = startTileYFloor; screenY < startY + h; screenY += tileLen, ++tileY) {
                 for (let screenX = startX - startTileXRem * tileLen, tileX = startTileXFloor; screenX < startX + w; screenX += tileLen, ++tileX) {
-                    if (!tileBoundsRect.aabbV2([tileX, tileY])) {
+                    if (!tileBoundsRect.iAabbV2([tileX, tileY])) {
                         ctx.fillStyle = "#000";
                         ctx.fillRect(screenX, screenY, tileLen, tileLen);
                         continue;
@@ -60,6 +60,7 @@ export default class World {
                     if (bitmapId === 0)
                         continue;
                     const bitmap = this.tilemap.tileset[bitmapId - 1];
+                    ctx.drawImage(bitmap, screenX, screenY, tileLen + 1, tileLen + 1);
                     ctx.drawImage(bitmap, screenX, screenY, tileLen, tileLen);
                 }
             }

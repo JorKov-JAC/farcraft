@@ -38,6 +38,10 @@ export abstract class Panel {
 	}
 
 	private update(dt: number) {
+		// Update coordinates before so that they're available in the update
+		this.actualPos = this.pos.canvasPos;
+		this.actualSize = this.size.canvasSize;
+
 		this.updateImpl(dt);
 
 		// Update screen coordinates
@@ -58,6 +62,13 @@ export abstract class Panel {
 			yield* child.descendantsBackward();
 		}
 		yield this;
+	}
+
+	getActualPos() {
+		return this.actualPos
+	}
+	getActualSize() {
+		return this.actualSize
 	}
 
 	abstract renderImpl(): void;

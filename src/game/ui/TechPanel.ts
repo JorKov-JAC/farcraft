@@ -1,6 +1,6 @@
-import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
-import { Panel } from "../engine/ui/Panel.js";
-import { ctx } from "../global.js";
+import { ScreenCoord } from "../../engine/ui/ScreenCoord.js";
+import { Panel } from "../../engine/ui/Panel.js";
+import { ctx } from "../../global.js";
 
 export default class TechPanel extends Panel {
 	override renderImpl(): void {
@@ -13,7 +13,12 @@ export default class TechPanel extends Panel {
 
 		ctx.save()
 		ctx.fillStyle = gradient
-		ctx.fillRect(...pos, ...size)
+		ctx.strokeStyle = "#0F0"
+		ctx.lineWidth = 4
+		ctx.beginPath()
+		ctx.roundRect(...pos, ...size, 6)
+		ctx.fill()
+		ctx.stroke()
 		ctx.restore()
 	}
 }
