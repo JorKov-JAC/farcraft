@@ -1,6 +1,9 @@
 export function v2(x, y) {
     return [x, y];
 }
+export function rect(x, y, w, h) {
+    return [x, y, w, h];
+}
 export function rectFromV2s(pos, size) {
     return [...pos, ...size];
 }

@@ -19,4 +19,10 @@ export default class Camera extends Panel {
 		this.worldPos = pos.slice()
 		this.maxLen = maxLen
 	}
+
+	override renderImpl(): void {
+		this.game.world.render(
+			...ScreenCoord.rect(0, 0).canvasPos, 
+			...ScreenCoord.rect(1, 1).canvasSize,
+	}
 }

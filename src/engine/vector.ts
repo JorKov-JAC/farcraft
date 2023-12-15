@@ -4,6 +4,10 @@ export function v2(x: number, y: number) {
 	return [x, y] as V2
 }
 
+export function rect(x: number, y: number, w: number, h: number) {
+	return [x, y, w, h] as Rect
+}
+
 export function rectFromV2s(pos: V2, size: V2) {
 	return [...pos, ...size] as Rect
 }

@@ -4,6 +4,7 @@ import "./engine/vector.js"
 import { canvas, ctx, images, keys, ui, uiSounds } from "./global.js"
 import TechPanel from "./game/TechPanel.js"
 import TextButton from "./game/ui/buttons/TextButton.js"
+import World from "./game/World.js"
 
 /** The max delta time for updates (for stability). */
 const MAX_UPDATE_DT = 1/15
@@ -54,12 +55,17 @@ function nextSprite(offset = 0) {
 
 nextSprite()
 
+const world = await World.create("m1")
+
 
 
 
 /** Performs a single tick (update, render) */
 function tick(dt: number) {
 	ctx.clearRect(0, 0, ...ScreenCoord.rect(1, 1).canvasSize)
+	ctx.fillStyle = "#f00"
+	ctx.fillRect(0, 0, 640, 480)
+	world.render(10, 10, 620, 460, -1.5, -1.5, 10)
 	const anim = images.getAnim("marine", "die")
 	ctx.drawImage(anim.frames[3]!.bitmap, 0, 0)
 
