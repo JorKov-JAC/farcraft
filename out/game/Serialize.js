@@ -15,6 +15,7 @@ export function serializableIdToClass(id) {
         case 4:
             throw Error("Tried to serialize 1 past the number of IDs");
     }
+    throw Error("Invalid serializable ID");
 }
 export function serialize(root) {
     const classToId = new Map();
@@ -61,5 +62,35 @@ export function serialize(root) {
         .from(instanceToIdx.keys())
         .map(e => e.classId?.() ?? -1);
     return JSON.stringify([instanceClassIds, instances]);
+}
+export async function deserialize(json) {
+    const obj = JSON.parse(json);
+    const classIds = obj[0];
+    const serializationInstances = obj[1];
+    const instances = [];
+    for (let i = 0; i < classIds.length; ++i) {
+        const serializationInstance = serializationInstances[i];
+        const id = classIds[i];
+        if (id === -1) {
+            instances.push(serializationInstance);
+            continue;
+        }
+        const proto = serializableIdToClass(id).prototype;
+        if (proto.deserialize) {
+            instances[i] = await proto.deserialize(serializationInstance);
+            continue;
+        }
+        Object.setPrototypeOf(serializationInstance, proto);
+        instances[i] = serializationInstance;
+    }
+    for (const instance of instances) {
+        for (const key in instance) {
+            const ref = instance[key]._;
+            if (ref !== undefined) {
+                instance[key] = instances[ref];
+            }
+        }
+    }
+    return instances[0];
 }
 //# sourceMappingURL=Serialize.js.map

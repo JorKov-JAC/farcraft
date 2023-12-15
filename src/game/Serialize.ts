@@ -21,6 +21,8 @@ export function serializableIdToClass(id: SerializableId): unknown {
 		case SerializableId._SIZE:
 			throw Error("Tried to serialize 1 past the number of IDs")
 	}
+
+	throw Error("Invalid serializable ID")
 }
 
 type SerializationSafe = number|string|boolean|{_:number}|undefined
@@ -85,4 +87,47 @@ export function serialize(root: Serializable | Array<any>): string {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 		.map(e => (e.classId?.() as number | undefined) ?? -1)
 	return JSON.stringify([instanceClassIds, instances])
+}
+
+export async function deserialize(json: string): Promise<object | unknown[]> {
+	const obj = JSON.parse(json)
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+	const classIds = obj[0] as number[]
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+	const serializationInstances = obj[1] as SerializationSafe[]
+
+	const instances = [] as any[]
+
+	for (let i = 0; i < classIds.length; ++i) {
+		const serializationInstance = serializationInstances[i]!
+		const id = classIds[i]!
+
+		if (id === -1) {
+			instances.push(serializationInstance)
+			continue
+		}
+
+		const proto = (serializableIdToClass(id) as Newable).prototype as Serializable<any>
+		if (proto.deserialize) {
+			instances[i] = await proto.deserialize(serializationInstance)
+			continue
+		}
+
+		Object.setPrototypeOf(serializationInstance, proto)
+		instances[i] = serializationInstance
+	}
+
+	for (const instance of instances) {
+		for (const key in instance) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			const ref = instance[key]._
+			if (ref !== undefined) {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				instance[key] = instances[ref]
+			}
+		}
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	return instances[0]
 }
