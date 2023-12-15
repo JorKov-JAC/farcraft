@@ -1,6 +1,7 @@
-import assets from "../assets.js";
 import { rect } from "../engine/vector.js";
-import { ctx, images } from "../global.js";
+import { images } from "../global.js";
+import { ctx } from "../context.js";
+import assets from "../assets.js";
 async function loadTilemapData(path) {
     const response = await fetch(path);
     return response.json();

@@ -32,7 +32,8 @@ export default class Camera extends Panel {
 		)
 	}
 
-	override updateImpl(dt: number): void {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	override updateImpl(_dt: number): void {
 		const actualSize = this.getActualSize()
 		const vMin = Math.min(actualSize[0], actualSize[1])
 		const scale = this.minLen / vMin

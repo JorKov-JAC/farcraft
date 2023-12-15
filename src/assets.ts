@@ -122,6 +122,27 @@ const images = {
 		],
 		anims: {}
 	},
+	cursor: {
+		path: "sprites/cursor.png",
+		spritesDefs: [
+				{
+				gridSize: [16, 16],
+				actualOffset: [0, 0],
+				actualSize: [16, 16],
+				baseOffset: [0, 0],
+				baseSize: [16, 16],
+				spans: [
+					{
+						start: [0, 0],
+						gridRect: [1, 1]
+					}
+				]
+			}
+		],
+		anims: {
+			"default": {frames: [0]}
+		}
+	}
 	// worker: {
 	// 	path: "sprites/worker.png"
 	// },

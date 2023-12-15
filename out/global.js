@@ -1,27 +1,73 @@
 import assets from "./assets.js";
+import { canvas } from "./context.js";
 import { SoundManager } from "./engine/audio.js";
 import { ImageManager } from "./engine/images.js";
 import { GameMouseEvent } from "./engine/ui/GameMouseEvent.js";
+import UiTree from "./engine/ui/UiTree.js";
 import { v2 } from "./engine/vector.js";
+export let mousePos = v2(canvas.width / 2, canvas.height / 2);
+export let captureInput = false;
+const techFont = new FontFace("tech", "url(assets/fonts/orbitron.ttf)");
+await techFont.load();
+document.fonts.add(techFont);
 export const images = await ImageManager.create(assets.images);
 export const uiSounds = await SoundManager.create(assets.sounds);
 await uiSounds.audioContext.suspend();
 export const gameSounds = await SoundManager.create(assets.sounds);
 await gameSounds.audioContext.suspend();
-const UiTree = (await import("./engine/ui/UiTree.js")).default;
 export const ui = new UiTree();
-const ASPECT_RATIO = 4 / 3;
-export const canvas = document.getElementById("game");
-canvas.tabIndex = 0;
-canvas.width = 640;
-canvas.height = canvas.width / ASPECT_RATIO;
-export const ctx = canvas.getContext("2d");
-ctx.imageSmoothingEnabled = false;
 export const keys = Object.create(null);
-canvas.addEventListener("keydown", e => keys[e.key] = { justPressed: true });
-canvas.addEventListener("keyup", e => delete keys[e.key]);
-canvas.addEventListener("mousedown", e => { ui.addMouseEvent(new GameMouseEvent(0, v2(e.offsetX, e.offsetY))); });
-canvas.addEventListener("mouseup", e => { ui.addMouseEvent(new GameMouseEvent(1, v2(e.offsetX, e.offsetY))); });
+canvas.addEventListener("keydown", e => {
+    if (captureInput) {
+        keys[e.key] = { justPressed: true };
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    else if (e.key === "Enter" || e.key === " ")
+        canvas.requestPointerLock();
+});
+canvas.addEventListener("keyup", e => {
+    if (captureInput) {
+        delete keys[e.key];
+        e.preventDefault();
+        e.stopPropagation();
+    }
+});
+addEventListener("pointerlockchange", () => {
+    if (document.pointerLockElement === canvas) {
+        captureInput = true;
+    }
+    else {
+        captureInput = false;
+        for (const key in keys) {
+            delete keys[key];
+        }
+    }
+});
+canvas.addEventListener("mousedown", e => {
+    let pos;
+    if (!captureInput) {
+        canvas.requestPointerLock();
+        pos = v2(e.offsetX, e.offsetY);
+    }
+    else {
+        pos = mousePos.slice();
+    }
+    ui.addMouseEvent(new GameMouseEvent(0, pos));
+});
+canvas.addEventListener("mouseup", e => {
+    ui.addMouseEvent(new GameMouseEvent(1, v2(e.offsetX, e.offsetY)));
+});
+canvas.addEventListener("pointermove", e => {
+    if (captureInput) {
+        mousePos.mut().add2(e.movementX, e.movementY);
+        mousePos[0] = Math.min(Math.max(0, mousePos[0]), canvas.width);
+        mousePos[1] = Math.min(Math.max(0, mousePos[1]), canvas.height);
+    }
+    else {
+        mousePos = v2(e.offsetX, e.offsetY);
+    }
+});
 const userGestureEvents = ["keydown", "mousedown", "pointerup"];
 const startAudioContexts = () => {
     void uiSounds.audioContext.resume();

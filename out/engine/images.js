@@ -1,3 +1,4 @@
+import { ctx } from "../context.js";
 import { raise } from "./util.js";
 import { v2 } from "./vector.js";
 export function loadImage(src) {
@@ -8,6 +9,21 @@ export function loadImage(src) {
     });
     img.src = src;
     return promise;
+}
+export class Sprite {
+    bitmap;
+    offset;
+    size;
+    constructor(bitmap, offset, size) {
+        this.bitmap = bitmap;
+        this.offset = offset.slice();
+        this.size = size.slice();
+    }
+    render(x, y, w = this.size[0], h = this.size[1]) {
+        w = this.bitmap.width * w / this.size[0];
+        h = this.bitmap.height * h / this.size[1];
+        ctx.drawImage(this.bitmap, x + this.offset[0], y + this.offset[1], w, h);
+    }
 }
 async function createSpriteInfo(image, imageAsset) {
     const sprites = [];
@@ -27,7 +43,7 @@ async function createSpriteInfo(image, imageAsset) {
                     const bitmap = await createImageBitmap(image, ...coord, ...spritesDef.actualSize, { resizeQuality: "pixelated" });
                     const offset = spritesDef.baseOffset.slice().neg().lock();
                     const size = spritesDef.baseSize.slice().lock();
-                    sprites.push({ bitmap, offset, size });
+                    sprites.push(new Sprite(bitmap, offset, size));
                 }
             }
         }

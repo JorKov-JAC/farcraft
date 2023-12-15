@@ -1,5 +1,5 @@
 import { ScreenCoord } from "../../../engine/ui/ScreenCoord.js";
-import { ctx } from "../../../global.js";
+import { ctx } from "../../../context.js";
 import { Button } from "../../../engine/ui/Button.js";
 
 export default class TextButton extends Button {
@@ -29,7 +29,7 @@ export default class TextButton extends Button {
 		ctx.fillStyle = this.beingHeld ? "#040" : "#0B0"
 		ctx.textAlign = "center"
 		ctx.textBaseline = "middle"
-		ctx.font = textHeight + "px sans-serif"
+		ctx.font = textHeight + "px tech"
 		ctx.fillText(this.text, ...ScreenCoord.rect(.5, .5).canvasPos)
 
 		ctx.restore()

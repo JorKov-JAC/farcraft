@@ -1,10 +1,10 @@
 import Clock from "./engine/clock.js"
 import { ScreenCoord } from "./engine/ui/ScreenCoord.js"
 import "./engine/vector.js"
-import { canvas, ctx, images, keys, ui, uiSounds } from "./global.js"
+import { captureInput, images, keys, mousePos, ui, uiSounds } from "./global.js"
+import { ctx } from "./context.js"
 import TechPanel from "./game/ui/TechPanel.js"
 import TextButton from "./game/ui/buttons/TextButton.js"
-import World from "./game/World.js"
 import Game from "./game/Game.js"
 
 /** The max delta time for updates (for stability). */
@@ -82,6 +82,9 @@ function tick(dt: number) {
 
 	ui.update(dt)
 	ui.render()
+	if (captureInput) {
+		images.getAnim("cursor", "default").frames[0]!.render(...mousePos!)
+	}
 
 	clock.update(dt)
 }

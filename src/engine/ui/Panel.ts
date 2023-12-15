@@ -1,4 +1,5 @@
-import { canvas, ctx } from "../../global.js";
+import { ctx } from "../../context.js";
+import { canvas } from "../../context.js";
 import { createProviderKey, provide } from "../Provider.js";
 import { v2 } from "../vector.js";
 import { ScreenCoord } from "./ScreenCoord.js";

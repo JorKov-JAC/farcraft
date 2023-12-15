@@ -15,7 +15,7 @@ export default class Camera extends Panel {
     renderImpl() {
         this.game.world.render(...ScreenCoord.rect(0, 0).canvasPos, ...ScreenCoord.rect(1, 1).canvasSize, ...this.worldPos, this.minLen);
     }
-    updateImpl(dt) {
+    updateImpl(_dt) {
         const actualSize = this.getActualSize();
         const vMin = Math.min(actualSize[0], actualSize[1]);
         const scale = this.minLen / vMin;

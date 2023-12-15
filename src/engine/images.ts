@@ -1,4 +1,5 @@
 import { ImageAsset, ImageAssets } from "../assets.js"
+import { ctx } from "../context.js"
 import { raise } from "./util.js"
 import { v2 } from "./vector.js"
 
@@ -15,10 +16,22 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
 	return promise
 }
 
-interface Sprite {
+export class Sprite {
 	bitmap: ImageBitmap
 	offset: V2
 	size: V2
+
+	constructor(bitmap: ImageBitmap, offset: V2, size: V2) {
+		this.bitmap = bitmap
+		this.offset = offset.slice()
+		this.size = size.slice()
+	}
+
+	render(x: number, y: number, w: number = this.size[0], h: number = this.size[1]) {
+		w = this.bitmap.width * w / this.size[0]
+		h = this.bitmap.height * h / this.size[1]
+		ctx.drawImage(this.bitmap, x + this.offset[0], y + this.offset[1], w, h)
+	}
 }
 
 type SpriteInfos<T extends ImageAssets> = { [K in keyof T]: SpriteInfo<T[K]> }
@@ -65,7 +78,7 @@ async function createSpriteInfo<T extends ImageAsset>(image: HTMLImageElement, i
 					const offset = spritesDef.baseOffset.slice().neg().lock()
 					const size = spritesDef.baseSize.slice().lock()
 
-					sprites.push({ bitmap, offset, size })
+					sprites.push(new Sprite(bitmap, offset, size))
 				}
 			}
 		}

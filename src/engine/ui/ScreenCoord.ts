@@ -1,4 +1,4 @@
-import { canvas } from "../../global.js";
+import { canvas } from "../../context.js";
 import { current } from "../Provider.js";
 import { v2 } from "../vector.js";
 import { containerSizeKey } from "./Panel.js";

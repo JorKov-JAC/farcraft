@@ -1,6 +1,6 @@
 import { ScreenCoord } from "../../engine/ui/ScreenCoord.js";
 import { Panel } from "../../engine/ui/Panel.js";
-import { ctx } from "../../global.js";
+import { ctx } from "../../context.js";
 export default class TechPanel extends Panel {
     renderImpl() {
         const pos = ScreenCoord.rect(0, 0).canvasPos;
