@@ -8,13 +8,13 @@ export default class UiTree {
     update(dt) {
         this.clock.update(dt);
         this.panels.forEach(e => {
-            e.update(dt);
+            e.baseUpdate(dt);
         });
         for (const child of this.descendantsBackward()) {
             if (this.mouseEventsToHandle.length <= 0)
                 break;
-            const actualPos = child.actualPos;
-            const actualSize = child.actualSize;
+            const actualPos = child.getActualPos();
+            const actualSize = child.getActualSize();
             const childBounds = rectFromV2s(actualPos, actualSize);
             for (const handlableMouseEvent of this.mouseEventsToHandle) {
                 const event = handlableMouseEvent.event;
@@ -46,7 +46,7 @@ export default class UiTree {
     }
     render() {
         this.panels.forEach(e => {
-            e.render();
+            e.baseRender();
         });
     }
     emptyOngoingMouseHolds(mouseUpEvent) {

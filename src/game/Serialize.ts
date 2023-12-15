@@ -148,6 +148,11 @@ export async function deserialize(json: string): Promise<object | unknown[]> {
 		}
 	}
 
+	for (const instance of instances) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+		(instance as Serializable<any>).postDeserialize?.()
+	}
+
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 	return instances[0]
 }

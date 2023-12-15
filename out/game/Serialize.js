@@ -95,6 +95,9 @@ export async function deserialize(json) {
             }
         }
     }
+    for (const instance of instances) {
+        instance.postDeserialize?.();
+    }
     return instances[0];
 }
 //# sourceMappingURL=Serialize.js.map

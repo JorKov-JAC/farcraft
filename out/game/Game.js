@@ -1,44 +1,27 @@
-import { canvas } from "../context.js";
 import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
 import { v2 } from "../engine/vector.js";
-import { captureInput, keys, mousePos } from "../global.js";
 import Camera from "./Camera.js";
 import World from "./World.js";
 import Hud from "./ui/Hud.js";
 export default class Game {
-    panel;
+    hud;
     world;
     camera;
     constructor(world) {
-        this.camera = new Camera(ScreenCoord.rect(0, 0), ScreenCoord.rect(0, 0), this, v2(0, 0), 10);
-        this.panel = new Hud(ScreenCoord.rect(0, 0), ScreenCoord.rect(1, 1), this.camera);
+        this.camera = new Camera(this, v2(0, 0), 10);
         this.world = world;
+        this.hud = null;
+        this.postDeserialize();
     }
     static async create(mapName) {
         const world = await World.create(mapName);
         return new Game(world);
     }
     update(dt) {
-        const moveVec = v2(0, 0).mut();
-        if (keys["ArrowRight"])
-            moveVec[0] += 1;
-        if (keys["ArrowLeft"])
-            moveVec[0] -= 1;
-        if (keys["ArrowUp"])
-            moveVec[1] -= 1;
-        if (keys["ArrowDown"])
-            moveVec[1] += 1;
-        if (captureInput) {
-            if (mousePos[0] <= 3)
-                moveVec[0] -= 1;
-            if (mousePos[0] >= canvas.width - 3)
-                moveVec[0] += 1;
-            if (mousePos[1] <= 3)
-                moveVec[1] -= 1;
-            if (mousePos[1] >= canvas.height - 3)
-                moveVec[1] += 1;
-        }
-        this.camera.moveBy(moveVec, dt);
+        this.camera.update(dt);
+    }
+    render(x, y, w, h) {
+        this.world.render(x, y, w, h, ...this.camera.worldPos, this.camera.minLen);
     }
     startDrag(pos) {
     }
@@ -46,6 +29,9 @@ export default class Game {
     }
     classId() {
         return 0;
+    }
+    postDeserialize() {
+        this.hud = new Hud(ScreenCoord.rect(0, 0), ScreenCoord.rect(1, 1), this);
     }
 }
 //# sourceMappingURL=Game.js.map

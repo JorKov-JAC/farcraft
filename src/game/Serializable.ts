@@ -2,7 +2,7 @@ import SerializableId from "./SerializableId.js";
 import { SerializationSafe } from "./Serialize.js";
 
 
-type SerializationForm<T> = RemoveNever<{
+export type SerializationForm<T> = RemoveNever<{
 	[K in keyof T]: T[K] extends (Record<any, unknown> | Array<unknown>)
 			? {_: number}
 		: T[K] extends undefined ? never
@@ -10,8 +10,16 @@ type SerializationForm<T> = RemoveNever<{
 		: never
 }>
 
-export default interface Serializable<T extends Serializable<T, unknown>, U = never> {
+export type DeserializationForm<T> = RemoveNever<{
+	[K in keyof T]: T[K] extends (Record<any, unknown> | Array<unknown>)
+			? ({_: number} | T[K])
+		: T[K] extends (...a:any[]) => any ? never
+		: T[K]
+}>
+
+export default interface Serializable<T extends Serializable<T, unknown> = never, U = never> {
 	classId(): SerializableId
-	deserialize?(serializationForm: SerializationForm<U>): Promise<T>
+	deserialize?(serializationForm: SerializationForm<U>): Promise<DeserializationForm<T>>
 	prepareForSerialization?(): U
+	postDeserialize?(): void
 }

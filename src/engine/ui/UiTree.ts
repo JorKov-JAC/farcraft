@@ -15,17 +15,14 @@ export default class UiTree {
 		this.clock.update(dt)
 
 		this.panels.forEach(e => {
-			// @ts-expect-error update is a private method
-			e.update(dt)
+			e.baseUpdate(dt)
 		})
 
 		for (const child of this.descendantsBackward()) {
 			if (this.mouseEventsToHandle.length <= 0) break
 
-			// @ts-expect-error actualPos is private
-			const actualPos = child.actualPos
-			// @ts-expect-error actualSize is private
-			const actualSize = child.actualSize
+			const actualPos = child.getActualPos()
+			const actualSize = child.getActualSize()
 
 			const childBounds = rectFromV2s(actualPos, actualSize)
 
@@ -65,8 +62,7 @@ export default class UiTree {
 
 	render() {
 		this.panels.forEach(e => {
-			// @ts-expect-error render is private
-			e.render()
+			e.baseRender()
 		})
 	}
 

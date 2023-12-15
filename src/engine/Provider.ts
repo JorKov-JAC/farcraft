@@ -12,18 +12,20 @@ export function createProviderKey<T>(defaultValue?: T) {
 	return symbol
 }
 
-type Providable = Newable | ProviderKey<unknown>
-type ProvidedTypeOf<T extends Providable>
+type Providable = object | ProviderKey<unknown>
+type ProvidedTypeOf<T extends Providable & {prototype?: any}>
 	= T extends ProviderKey<unknown>
 			? T[typeof providerSymbolTag]
 		: T extends Newable
 			? InstanceType<T>
-			: never
+		: T["prototype"] extends any
+			? T["prototype"]
+		: never
 
 /**
  * Maps classes and symbols to their currently provided instances.
  */
-const currentProvidedObjects: Map<Newable | ProviderKey<any>, any> = new Map()
+const currentProvidedObjects: Map<object | ProviderKey<any>, any> = new Map()
 
 /**
  * Gets the currently provided instance of {@link type}.

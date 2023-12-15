@@ -14,7 +14,7 @@ export class Panel {
         this.pos = pos;
         this.size = size;
     }
-    render() {
+    baseRender() {
         ctx.save();
         ctx.beginPath();
         ctx.rect(...this.actualPos, ...this.actualSize);
@@ -24,10 +24,10 @@ export class Panel {
                 this.renderImpl();
             });
         });
-        this.children.forEach(e => { e.render(); });
+        this.children.forEach(e => { e.baseRender(); });
         ctx.restore();
     }
-    update(dt) {
+    baseUpdate(dt) {
         this.actualPos = this.pos.canvasPos;
         this.actualSize = this.size.canvasSize;
         this.updateImpl(dt);
@@ -35,7 +35,7 @@ export class Panel {
         this.actualSize = this.size.canvasSize;
         provide(containerPosKey, this.actualPos, () => {
             provide(containerSizeKey, this.actualSize, () => {
-                this.children.forEach(e => { e.update(dt); });
+                this.children.forEach(e => { e.baseUpdate(dt); });
             });
         });
     }

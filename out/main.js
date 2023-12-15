@@ -52,8 +52,9 @@ const serialized = serialize(game);
 console.log(serialized);
 console.dir(await deserialize(serialized));
 console.dir(game.world.pathfind(v2(6, 9), v2(6, 5)));
-ui.panels.push(game.panel);
+ui.panels.push(game.hud);
 function tick(dt) {
+    ui.update(dt);
     ctx.clearRect(0, 0, ...ScreenCoord.rect(1, 1).canvasSize);
     game.update(dt);
     ctx.fillStyle = "#f00";
@@ -63,7 +64,6 @@ function tick(dt) {
     ctx.fillStyle = "#F00";
     ctx.fillRect(a.x, a.y, a.sub.w, a.sub.h);
     ctx.drawImage(mapTiles[currentTile].bitmap, 20, 200);
-    ui.update(dt);
     ui.render();
     if (captureInput) {
         images.getAnim("cursor", "default").frames[0].render(...mousePos);

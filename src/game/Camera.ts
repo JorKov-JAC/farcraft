@@ -3,8 +3,11 @@ import { Panel } from "../engine/ui/Panel.js"
 import type Game from "./Game.js"
 import Serializable from "./Serializable.js"
 import SerializableId from "./SerializableId.js"
+import { captureInput, keys, mousePos } from "../global.js"
+import { canvas } from "../context.js"
+import { v2 } from "../engine/vector.js"
 
-export default class Camera extends Panel implements Serializable {
+export default class Camera implements Serializable {
 	game: Game
 	worldPos: V2
 	minLen: number
@@ -18,25 +21,38 @@ export default class Camera extends Panel implements Serializable {
 	 * @param pos Position in tiles
 	 * @param minLen Minimum range of tiles the camera can see on either axis
 	 */
-	constructor(uiPos: ScreenCoord, uiSize: ScreenCoord, game: Game, pos: V2, minLen: number) {
-		super(uiPos, uiSize)
+	constructor(game: Game, pos: V2, minLen: number) {
 		this.game = game
 		this.worldPos = pos.slice()
 		this.minLen = minLen
 	}
 
-	override renderImpl(): void {
-		this.game.world.render(
-			...ScreenCoord.rect(0, 0).canvasPos, 
-			...ScreenCoord.rect(1, 1).canvasSize,
-			...this.worldPos,
-			this.minLen
-		)
-	}
+	// override renderImpl(): void {
+	// 	this.game.render(
+	// 		...ScreenCoord.rect(0, 0).canvasPos, 
+	// 		...ScreenCoord.rect(1, 1).canvasSize,
+	// 	)
+	// }
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	override updateImpl(_dt: number): void {
-		const actualSize = this.getActualSize()
+	update(dt: number): void {
+		const moveVec = v2(0, 0).mut()
+		if (keys["ArrowRight"]) moveVec[0] += 1
+		if (keys["ArrowLeft"]) moveVec[0] -= 1
+		if (keys["ArrowUp"]) moveVec[1] -= 1
+		if (keys["ArrowDown"]) moveVec[1] += 1
+
+		if (captureInput) {
+			if (mousePos[0] <= 3) moveVec[0] -= 1
+			if (mousePos[0] >= canvas.width - 3) moveVec[0] += 1
+			if (mousePos[1] <= 3) moveVec[1] -= 1
+			if (mousePos[1] >= canvas.height - 3) moveVec[1] += 1
+		}
+
+		this.moveToward(moveVec, dt)
+
+		// Clamp position
+		const actualSize = this.game.hud.worldPanel.getActualSize()
 		const vMin = Math.min(actualSize[0], actualSize[1])
 		const scale = this.minLen / vMin
 
@@ -46,15 +62,7 @@ export default class Camera extends Panel implements Serializable {
 		this.worldPos[1] = Math.min(Math.max(0, this.worldPos[1]), tilemap.height - actualSize[1] * scale * (1 - this.extraYMult))
 	}
 
-	override onPress(pos: V2): void {
-		this.game.startDrag(pos)
-	}
-
-	override onUnpress(pos: V2): void {
-		this.game.stopDrag(pos)
-	}
-
-	moveBy(v: V2, dt: number) {
+	moveToward(v: V2, dt: number) {
 		this.worldPos.mut().add(v.slice().mul(Camera.speed * this.minLen * dt))
 	}
 
