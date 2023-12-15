@@ -1,4 +1,5 @@
-import { Panel, ScreenCoord } from "../engine/ui.js";
+import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
+import { Panel } from "../engine/ui/Panel.js";
 import { ctx } from "../global.js";
 
 export default class TechPanel extends Panel {

@@ -1,9 +1,9 @@
 import Clock from "./engine/clock.js"
-import { ScreenCoord } from "./engine/ui.js"
+import { ScreenCoord } from "./engine/ui/ScreenCoord.js"
 import "./engine/vector.js"
-import { ctx, images, keys, ui, uiSounds } from "./global.js"
-import TechPanel from "./ui/TechPanel.js"
-import TextButton from "./ui/buttons/TextButton.js"
+import { canvas, ctx, images, keys, ui, uiSounds } from "./global.js"
+import TechPanel from "./game/TechPanel.js"
+import TextButton from "./game/ui/buttons/TextButton.js"
 
 /** The max delta time for updates (for stability). */
 const MAX_UPDATE_DT = 1/15
@@ -42,13 +42,34 @@ const techPanel = new TechPanel(ScreenCoord.rect(0.5, 0.5).setSq(-.25, -.25), Sc
 techPanel.children.push(new TextButton("Hello", () => { console.log("clicked!") }, ScreenCoord.rect(.25, .5).setSq(0, -.125), ScreenCoord.rect(.5, 0).setSq(0, .25)))
 ui.panels.push(techPanel)
 
+const mapTiles = images.getAllSprites("techTiles")
+let currentTile = 0
+
+function nextSprite(offset = 0) {
+	++currentTile
+	currentTile %= mapTiles.length
+
+	void clock.wait(.2, offset).then(nextSprite)
+}
+
+nextSprite()
+
+
+
+
 /** Performs a single tick (update, render) */
 function tick(dt: number) {
+	ctx.clearRect(0, 0, ...ScreenCoord.rect(1, 1).canvasSize)
 	const anim = images.getAnim("marine", "die")
 	ctx.drawImage(anim.frames[3]!.bitmap, 0, 0)
 
 	ctx.fillStyle = "#F00"
 	ctx.fillRect(a.x, a.y, a.sub.w, a.sub.h)
+
+	ctx.drawImage(mapTiles[currentTile]!.bitmap, 20, 200)
+
+
+
 
 	ui.update(dt)
 	ui.render()

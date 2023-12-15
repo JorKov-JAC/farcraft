@@ -53,11 +53,13 @@ export default class Clock {
 	update(dt: number) {
 		this.time += dt
 
+		// Update tweens
 		this.tweens.forEach(tween => {
 			tween.update(this.time)
 		})
 		this.tweens = this.tweens.filter(e => !e.shouldCleanUp(this.time))
 
+		// Update waits
 		this.waits = this.waits.filter(wait => {
 			if (this.time < wait.finishTime) return true
 
@@ -71,12 +73,13 @@ export default class Clock {
 	 * {@link duration} seconds.
 	 * 
 	 * @param duration The seconds to wait for.
+	 * @param timeOffset The initial amount to fast forward the wait by.
 	 * @return A promise that resolves after the wait with the excess time over
 	 * the duration that has been waited for.
 	 */
-	wait(duration: number): Promise<number> {
+	wait(duration: number, timeOffset = 0): Promise<number> {
 		return new Promise(resolve => {
-			this.waits.push({ finishTime: this.time + duration, resolve })
+			this.waits.push({ finishTime: this.time + duration - timeOffset, resolve })
 		})
 	}
 

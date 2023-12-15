@@ -1,5 +1,6 @@
-import { Panel, MouseEventType, GameMouseEvent } from "./ui";
-import { rectFromV2s } from "./vector.js";
+import { MouseEventType, GameMouseEvent } from "./GameMouseEvent";
+import { Panel } from "./Panel";
+import { rectFromV2s } from "../vector.js";
 
 
 export default class UiTree {
@@ -14,7 +15,7 @@ export default class UiTree {
 			e.update(dt)
 		})
 
-		for (const child of this.childrenBackward()) {
+		for (const child of this.descendantsBackward()) {
 			if (this.mouseEventsToHandle.length <= 0) break
 
 			// @ts-expect-error actualPos is private
@@ -72,11 +73,10 @@ export default class UiTree {
 		this.ongoingMouseHolds.length = 0
 	}
 
-	private *childrenBackward() {
+	private *descendantsBackward() {
 		for (let i = this.panels.length; i-- > 0;) {
 			const child = this.panels[i]!
-			// @ts-expect-error childrenBackward is private
-			const childBackward = child.childrenBackward()
+			const childBackward = child.descendantsBackward()
 			yield* childBackward
 		}
 	}

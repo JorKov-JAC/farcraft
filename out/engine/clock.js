@@ -39,9 +39,9 @@ export default class Clock {
             return false;
         });
     }
-    wait(duration) {
+    wait(duration, timeOffset = 0) {
         return new Promise(resolve => {
-            this.waits.push({ finishTime: this.time + duration, resolve });
+            this.waits.push({ finishTime: this.time + duration - timeOffset, resolve });
         });
     }
     tween(obj, target, duration, timeOffset = 0) {

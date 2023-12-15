@@ -1,1 +1,1 @@
-{"version":3,"file":"Hud.js","sourceRoot":"","sources":["../../src/ui/Hud.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,EAAE,MAAM,iBAAiB,CAAC;AAExC,MAAM,CAAC,OAAO,OAAO,GAAI,SAAQ,KAAK;CAIrC"}
+{"version":3,"file":"Hud.js","sourceRoot":"","sources":["../../src/ui/Hud.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,EAAE,MAAM,YAAY,CAAC;AAEnC,MAAM,CAAC,OAAO,OAAO,GAAI,SAAQ,KAAK;CAIrC"}

@@ -77,5 +77,8 @@ export class ImageManager {
     getAnim(spriteName, animName) {
         return this.namesToSpriteInfos[spriteName].animFrames[animName];
     }
+    getAllSprites(spriteName) {
+        return this.namesToSpriteInfos[spriteName].sprites;
+    }
 }
 //# sourceMappingURL=images.js.map

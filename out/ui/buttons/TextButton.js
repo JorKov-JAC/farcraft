@@ -1,6 +1,6 @@
-import { ScreenCoord } from "../../engine/ui.js";
+import { ScreenCoord } from "../ScreenCoord.js";
 import { ctx } from "../../global.js";
-import { Button } from "./Button.js";
+import { Button } from "../Button.js";
 export default class TextButton extends Button {
     text;
     constructor(text, clickCallback, pos, size) {

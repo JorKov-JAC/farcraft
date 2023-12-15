@@ -1,4 +1,5 @@
-import { Panel, ScreenCoord } from "../../engine/ui.js";
+import { ScreenCoord } from "./ScreenCoord.js";
+import { Panel } from "./Panel.js";
 
 export abstract class Button extends Panel {
 	beingHeld = false

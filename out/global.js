@@ -1,14 +1,14 @@
 import assets from "./assets.js";
 import { SoundManager } from "./engine/audio.js";
 import { ImageManager } from "./engine/images.js";
-import { GameMouseEvent } from "./engine/ui.js";
+import { GameMouseEvent } from "./engine/ui/GameMouseEvent.js";
 import { v2 } from "./engine/vector.js";
 export const images = await ImageManager.create(assets.images);
 export const uiSounds = await SoundManager.create(assets.sounds);
 await uiSounds.audioContext.suspend();
 export const gameSounds = await SoundManager.create(assets.sounds);
 await gameSounds.audioContext.suspend();
-const UiTree = (await import("./engine/UiTree.js")).default;
+const UiTree = (await import("./engine/ui/UiTree.js")).default;
 export const ui = new UiTree();
 const ASPECT_RATIO = 4 / 3;
 export const canvas = document.getElementById("game");

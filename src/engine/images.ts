@@ -135,4 +135,8 @@ export class ImageManager<T extends ImageAssets> {
 	(spriteName: SpriteK, animName: AnimK): AnimFrames<T[SpriteK]>[AnimK] {
 		return this.namesToSpriteInfos[spriteName].animFrames[animName]
 	}
+
+	getAllSprites(spriteName: keyof T): Sprite[] {
+		return this.namesToSpriteInfos[spriteName].sprites
+	}
 }

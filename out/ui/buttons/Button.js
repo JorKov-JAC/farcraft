@@ -1,4 +1,4 @@
-import { Panel } from "../../engine/ui.js";
+import { Panel } from "../Panel.js";
 export class Button extends Panel {
     beingHeld = false;
     clickCallback;
