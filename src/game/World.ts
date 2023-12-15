@@ -124,7 +124,8 @@ export default class World implements Serializable<World, { mapName: string }> {
 	}
 
 	isSolid(x: number, y: number): boolean {
-		return this.collisionGrid[Math.floor(y) * this.tilemap.width + Math.floor(x)] ?? true
+		return !rect(0, 0, this.tilemap.width-1, this.tilemap.height-1).iAabbV2([x, y])
+			|| this.collisionGrid[Math.floor(y) * this.tilemap.width + Math.floor(x)]!
 	}
 
 	pathfind(a: V2, b: V2): V2[] | null {

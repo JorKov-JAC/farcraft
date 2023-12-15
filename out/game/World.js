@@ -71,7 +71,8 @@ export default class World {
         ctx.restore();
     }
     isSolid(x, y) {
-        return this.collisionGrid[Math.floor(y) * this.tilemap.width + Math.floor(x)] ?? true;
+        return !rect(0, 0, this.tilemap.width - 1, this.tilemap.height - 1).iAabbV2([x, y])
+            || this.collisionGrid[Math.floor(y) * this.tilemap.width + Math.floor(x)];
     }
     pathfind(a, b) {
         try {
