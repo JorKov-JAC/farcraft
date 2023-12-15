@@ -5,7 +5,7 @@ export default class Camera extends Panel {
     worldPos;
     minLen;
     extraYMult = 0;
-    speed = 1.5;
+    static speed = 1.5;
     constructor(uiPos, uiSize, game, pos, minLen) {
         super(uiPos, uiSize);
         this.game = game;
@@ -30,7 +30,10 @@ export default class Camera extends Panel {
         this.game.stopDrag(pos);
     }
     moveBy(v, dt) {
-        this.worldPos.mut().add(v.slice().mul(this.speed * this.minLen * dt));
+        this.worldPos.mut().add(v.slice().mul(Camera.speed * this.minLen * dt));
+    }
+    classId() {
+        return 2;
     }
 }
 //# sourceMappingURL=Camera.js.map

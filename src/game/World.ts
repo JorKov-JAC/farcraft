@@ -3,6 +3,8 @@ import { images } from "../global.js"
 import { ctx } from "../context.js"
 import assets from "../assets.js"
 import Direction from "../engine/Direction.js"
+import Serializable from "./Serializable.js"
+import SerializableId from "./SerializableId.js"
 
 interface TilemapData {
 	width: number
@@ -32,12 +34,15 @@ class Tilemap {
 	}
 }
 
-export default class World {
-	tilemap: Tilemap
+export default class World implements Serializable<{ mapName: string }> {
+	// Needed for serialization:
+	mapDefName: string
 
+	tilemap: Tilemap
 	collisionGrid: boolean[]
 
-	private constructor(tilemap: Tilemap, collisionGrid: boolean[]) {
+	private constructor(mapDefName: string, tilemap: Tilemap, collisionGrid: boolean[]) {
+		this.mapDefName = mapDefName
 		this.tilemap = tilemap
 		this.collisionGrid = collisionGrid
 	}
@@ -60,7 +65,7 @@ export default class World {
 			collisionGrid.push(solidLayers.some(layer => layer.data[i]! !== 0))
 		}
 
-		return new World(tilemap, collisionGrid)
+		return new World(mapDefName, tilemap, collisionGrid)
 	}
 
 	/**
@@ -219,4 +224,15 @@ export default class World {
 			return null
 		}
 	} 
+
+	classId(): SerializableId {
+		return SerializableId.WORLD
+	}
+	deserialize?(serializable: { mapName: string }) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		return World.create(serializable.mapName as any)
+	}
+	prepareForSerialization?() {
+		return { mapName: this.mapDefName }
+	}
 }

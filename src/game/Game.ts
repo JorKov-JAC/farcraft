@@ -5,10 +5,12 @@ import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
 import { v2 } from "../engine/vector.js";
 import { captureInput, keys, mousePos } from "../global.js";
 import Camera from "./Camera.js";
+import Serializable from "./Serializable.js";
+import SerializableId from "./SerializableId.js";
 import World from "./World.js";
 import Hud from "./ui/Hud.js";
 
-export default class Game {
+export default class Game implements Serializable {
 	readonly panel: Panel
 	world: World
 	camera: Camera
@@ -47,5 +49,9 @@ export default class Game {
 
 	stopDrag(pos: V2) {
 
+	}
+
+	classId(): SerializableId {
+		return SerializableId.GAME
 	}
 }

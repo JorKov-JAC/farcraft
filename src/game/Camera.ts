@@ -1,15 +1,17 @@
 import { ScreenCoord } from "../engine/ui/ScreenCoord.js"
 import { Panel } from "../engine/ui/Panel.js"
 import type Game from "./Game.js"
+import Serializable from "./Serializable.js"
+import SerializableId from "./SerializableId.js"
 
-export default class Camera extends Panel {
+export default class Camera extends Panel implements Serializable {
 	game: Game
 	worldPos: V2
 	minLen: number
 	extraYMult: number = 0
 
 	/** Scroll speed in minLens per second */
-	speed = 1.5
+	static speed = 1.5
 
 	/**
 	 * @param game The game this camera is attached to
@@ -53,6 +55,10 @@ export default class Camera extends Panel {
 	}
 
 	moveBy(v: V2, dt: number) {
-		this.worldPos.mut().add(v.slice().mul(this.speed * this.minLen * dt))
+		this.worldPos.mut().add(v.slice().mul(Camera.speed * this.minLen * dt))
+	}
+
+	classId(): SerializableId {
+		return SerializableId.CAMERA
 	}
 }

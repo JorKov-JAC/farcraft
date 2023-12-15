@@ -1,9 +1,12 @@
 import { rectFromV2s } from "../vector.js";
+import Clock from "../clock.js";
 export default class UiTree {
     panels = [];
+    clock = new Clock();
     mouseEventsToHandle = [];
     ongoingMouseHolds = [];
     update(dt) {
+        this.clock.update(dt);
         this.panels.forEach(e => {
             e.update(dt);
         });

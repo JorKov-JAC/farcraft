@@ -19,9 +19,11 @@ class Tilemap {
     }
 }
 export default class World {
+    mapDefName;
     tilemap;
     collisionGrid;
-    constructor(tilemap, collisionGrid) {
+    constructor(mapDefName, tilemap, collisionGrid) {
+        this.mapDefName = mapDefName;
         this.tilemap = tilemap;
         this.collisionGrid = collisionGrid;
     }
@@ -35,7 +37,7 @@ export default class World {
         for (let i = 0; i < tilemap.width * tilemap.height; ++i) {
             collisionGrid.push(solidLayers.some(layer => layer.data[i] !== 0));
         }
-        return new World(tilemap, collisionGrid);
+        return new World(mapDefName, tilemap, collisionGrid);
     }
     render(startX, startY, w, h, startTileX, startTileY, tiles) {
         ctx.save();
@@ -156,6 +158,15 @@ export default class World {
             console.groupEnd();
             return null;
         }
+    }
+    classId() {
+        return 1;
+    }
+    deserialize(serializable) {
+        return World.create(serializable.mapName);
+    }
+    prepareForSerialization() {
+        return { mapName: this.mapDefName };
     }
 }
 //# sourceMappingURL=World.js.map

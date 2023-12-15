@@ -44,5 +44,8 @@ export default class Game {
     }
     stopDrag(pos) {
     }
+    classId() {
+        return 0;
+    }
 }
 //# sourceMappingURL=Game.js.map
