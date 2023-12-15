@@ -45,8 +45,12 @@ export function serialize(root) {
             instances[ref._] = newVal;
             return ref;
         }
-        if (!classToId.has(proto))
+        if (proto !== Object && !classToId.has(proto)) {
+            console.group("Not serializing an object with invalid prototype");
+            console.dir(oldVal);
+            console.groupEnd();
             return undefined;
+        }
         const newVal = Object.create(null);
         const ref = addInstance(oldVal, newVal);
         if (oldVal.prepareForSerialization) {
@@ -58,8 +62,8 @@ export function serialize(root) {
         return ref;
     }
     recurse(root);
-    const instanceClassIds = Array
-        .from(instanceToIdx.keys())
+    const oldInstances = Array.from(instanceToIdx.keys());
+    const instanceClassIds = oldInstances
         .map(e => e.classId?.() ?? -1);
     return JSON.stringify([instanceClassIds, instances]);
 }

@@ -34,7 +34,7 @@ class Tilemap {
 	}
 }
 
-export default class World implements Serializable<{ mapName: string }> {
+export default class World implements Serializable<World, { mapName: string }> {
 	// Needed for serialization:
 	mapDefName: string
 
@@ -228,11 +228,11 @@ export default class World implements Serializable<{ mapName: string }> {
 	classId(): SerializableId {
 		return SerializableId.WORLD
 	}
-	deserialize?(serializable: { mapName: string }) {
+	deserialize(serializable: { mapName: string }) {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		return World.create(serializable.mapName as any)
 	}
-	prepareForSerialization?() {
+	prepareForSerialization() {
 		return { mapName: this.mapDefName }
 	}
 }

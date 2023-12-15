@@ -25,12 +25,12 @@ export function serializableIdToClass(id: SerializableId): unknown {
 	throw Error("Invalid serializable ID")
 }
 
-type SerializationSafe = number|string|boolean|{_:number}|undefined
+export type SerializationSafe = number|string|boolean|{_:number}|undefined
 
-export function serialize(root: Serializable | Array<any>): string {
+export function serialize(root: Serializable<any> | Array<any>): string {
 	const classToId = new Map();
 	for (let i = 0 as SerializableId; i < SerializableId._SIZE; ++i) {
-		classToId.set(serializableIdToClass(i).prototype, i);
+		classToId.set((serializableIdToClass(i) as Newable).prototype, i);
 	}
 
 	const instanceToIdx = new Map();
@@ -63,14 +63,19 @@ export function serialize(root: Serializable | Array<any>): string {
 			return ref
 		}
 
-		if (!classToId.has(proto)) return undefined
+		if (proto !== Object && !classToId.has(proto)) {
+			console.group("Not serializing an object with invalid prototype")
+			console.dir(oldVal)
+			console.groupEnd()
+			return undefined
+		}
 
 		// Add to the instances before we're done actually recursing it
 		const newVal: Record<keyof any, SerializationSafe> = Object.create(null)
 		const ref = addInstance(oldVal, newVal)
 
-		if ((oldVal as Serializable).prepareForSerialization) {
-			oldVal = (oldVal as Serializable<object>).prepareForSerialization()
+		if ((oldVal as Serializable<any>).prepareForSerialization) {
+			oldVal = (oldVal as Serializable<any, any>).prepareForSerialization!()
 		}
 
 		for (const name of Object.getOwnPropertyNames(oldVal)) {
@@ -82,10 +87,25 @@ export function serialize(root: Serializable | Array<any>): string {
 	}
 
 	recurse(root)
-	const instanceClassIds: number[] = Array
-		.from(instanceToIdx.keys())
+	const oldInstances = Array.from(instanceToIdx.keys())
+	const instanceClassIds: number[] = oldInstances
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 		.map(e => (e.classId?.() as number | undefined) ?? -1)
+	// const instanceClassIds: number[] = oldInstances
+	// 	.map(e => {
+	// 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+	// 		const classId = (e.classId?.() as number | undefined)
+	// 		if (classId === undefined) {
+	// 			const proto = Object.getPrototypeOf(e)
+	// 			if (proto !== Array && proto !== Object) {
+	// 				console.group("Serialized object with invalid prototype")
+	// 				console.dir(e)
+	// 				console.groupEnd()
+	// 			}
+	// 			return -1
+	// 		}
+	// 		return classId
+	// 	})
 	return JSON.stringify([instanceClassIds, instances])
 }
 
