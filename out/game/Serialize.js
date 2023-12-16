@@ -44,13 +44,13 @@ export function serialize(root) {
         const existingIdx = instanceToIdx.get(oldVal);
         if (existingIdx !== undefined)
             return { _: existingIdx };
-        if (proto === Array) {
+        if (proto === Array.prototype) {
             const ref = addInstance(oldVal, null);
             const newVal = oldVal.map(e => recurse(e));
             instances[ref._] = newVal;
             return ref;
         }
-        if (proto !== Object && !classToId.has(proto)) {
+        if (proto !== Object.prototype && !classToId.has(proto)) {
             console.group("Not serializing an object with invalid prototype");
             console.dir(oldVal);
             console.groupEnd();

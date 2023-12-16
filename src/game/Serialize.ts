@@ -60,7 +60,7 @@ export function serialize(root: Serializable<any> | Array<any>): string {
 		const existingIdx = instanceToIdx.get(oldVal)
 		if (existingIdx !== undefined) return {_: existingIdx}
 
-		if (proto === Array) {
+		if (proto === Array.prototype) {
 			// Add to the instances before we're done actually recursing it
 			const ref = addInstance(oldVal, null)
 			const newVal = (oldVal as Array<unknown>).map(e => recurse(e))
@@ -68,7 +68,7 @@ export function serialize(root: Serializable<any> | Array<any>): string {
 			return ref
 		}
 
-		if (proto !== Object && !classToId.has(proto)) {
+		if (proto !== Object.prototype && !classToId.has(proto)) {
 			console.group("Not serializing an object with invalid prototype")
 			console.dir(oldVal)
 			console.groupEnd()
