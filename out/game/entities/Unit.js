@@ -1,6 +1,6 @@
 import { ctx } from "../../context.js";
 import { current } from "../../engine/Provider.js";
-import { v2 } from "../../engine/vector.js";
+import { rect, v2 } from "../../engine/vector.js";
 import { images } from "../../global.js";
 import Game from "../Game.js";
 import ArmyEntity from "./ArmyEntity.js";
@@ -14,6 +14,28 @@ export default class Unit extends ArmyEntity {
         const speed = this.getSpeed();
         const radius = this.getRadius();
         const path = this.pathBackward;
+        const aabb = rect(this.pos[0] - radius, this.pos[1] - radius, this.pos[0] + radius, this.pos[1] + radius);
+        for (let y = Math.floor(this.pos[1] - radius); y < Math.ceil(this.pos[1] + radius); ++y) {
+            for (let x = Math.floor(this.pos[0] - radius); x < Math.ceil(this.pos[0] + radius); ++x) {
+                if (!world.isSolid(x, y))
+                    continue;
+                if (aabb.iAabb4(x, y, 1, 1)) {
+                    const inLeft = x + 1 - this.pos[0] + radius;
+                    const inRight = this.pos[0] + radius - x;
+                    const inUp = y + 1 - this.pos[1] + radius;
+                    const inDown = this.pos[1] + radius - y;
+                    const smallest = Math.min(inLeft, inRight, inUp, inDown);
+                    if (inLeft === smallest)
+                        this.pos[0] += inLeft;
+                    else if (inRight === smallest)
+                        this.pos[0] -= inRight;
+                    else if (inUp === smallest)
+                        this.pos[1] += inUp;
+                    else
+                        this.pos[1] -= inDown;
+                }
+            }
+        }
         if (this.pathBackward.length > 0
             && this.pos.slice().add2(-.5, -.5).sub(path[path.length - 1]).mag() <= radius)
             path.pop();
@@ -24,7 +46,7 @@ export default class Unit extends ArmyEntity {
             this.angle = this.vel.radians();
         }
         const pushVel = v2(0, 0).mut();
-        for (const e of world.unitsWithinBoundsInclusive(this.pos[0] - radius, this.pos[1] - radius, this.pos[0] + radius, this.pos[1] + radius)) {
+        for (const e of world.unitsWithinBoundsInclusive(...aabb)) {
             if (e === this)
                 continue;
             const dist = this.pos.dist(e.pos);
