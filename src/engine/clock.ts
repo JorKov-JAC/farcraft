@@ -1,10 +1,14 @@
+import Serializable from "../game/Serializable.js"
+import SerializableCallback from "../game/SerializableCallback.js"
+import SerializableId from "../game/SerializableId.js"
+
 type CanBeTweenTarget<T> = T extends number ? true : T extends object ? (true extends CanBeTweenTarget<T[keyof T]> ? true : never) : never
 
 export type TweenTarget<T> = RemoveNever<{
 	[K in keyof T]?: true extends CanBeTweenTarget<T[K]> ? (T[K] extends number ? number : TweenTarget<T[K]>) : never
 }>
 
-class Tween {
+export class Tween implements Serializable {
 	startTime: number
 	endTime: number
 	obj: any
@@ -42,9 +46,41 @@ class Tween {
 	shouldCleanUp(time: number) {
 		return time >= this.endTime
 	}
+
+	classId() {
+		return SerializableId.TWEEN
+	}
 }
 
-export default class Clock {
+function tweenRecursive<T>(tweens: Tween[], time: number, obj: T, target: TweenTarget<T>, duration: number, timeOffset: number): Tween[] {
+	for (const key in target) {
+		const targetVal = target[key]!
+
+		if (typeof targetVal === "number") {
+			// Remove any existing tweens on this value
+			const existingTweenIdx = tweens.findIndex(existing => {
+				return existing.obj === obj && existing.key === key
+			})
+			if (existingTweenIdx >= 0) tweens.splice(existingTweenIdx, 1)
+
+			// Add new tween
+			const offsetTime = time - timeOffset
+			tweens.push(
+				new Tween(
+					offsetTime,
+					offsetTime + duration,
+					obj,
+					key,
+					targetVal
+				)
+			)
+		} else {
+			tweenRecursive(tweens, time, obj[key]!, targetVal, duration, timeOffset)
+		}
+	}
+}
+
+export class UiClock {
 	private time = 0
 
 	private tweens: Tween[] = []
@@ -96,36 +132,52 @@ export default class Clock {
 	 * tween's excess seconds.
 	 */
 	tween<T>(obj: T, target: TweenTarget<T>, duration: number, timeOffset = 0): Promise<number> {
-		this.tweenRecursive(obj, target, duration, timeOffset)
+		tweenRecursive(this.tweens, this.time, obj, target, duration, timeOffset)
 
-		return this.wait(duration)
+		return this.wait(duration, timeOffset)
+	}
+}
+
+export class SerializableClock implements Serializable {
+	private time = 0
+
+	private tweens: Tween[] = []
+	private waits: { finishTime: number, serializableCallback: SerializableCallback<any, [number]> }[] = []
+
+	update(dt: number) {
+		this.time += dt
+
+		// Update tweens
+		this.tweens.forEach(tween => {
+			tween.update(this.time)
+		})
+		this.tweens = this.tweens.filter(e => !e.shouldCleanUp(this.time))
+
+		// Update waits
+		this.waits = this.waits.filter(wait => {
+			if (this.time < wait.finishTime) return true
+
+			const callback = wait.serializableCallback
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			callback[0][callback[1]](this.time - wait.finishTime)
+			return false
+		})
 	}
 
-	private tweenRecursive<T>(obj: T, target: TweenTarget<T>, duration: number, timeOffset: number) {
-		for (const key in target) {
-			const targetVal = target[key]!
+	wait<C extends Serializable<any, any>>(duration: number, timeOffset = 0, serializableCallback: SerializableCallback<C, [number]>): void {
+		this.waits.push({
+			finishTime: this.time + duration - timeOffset,
+			serializableCallback: serializableCallback as any
+		})
+	}
 
-			if (typeof targetVal === "number") {
-				// Remove any existing tweens on this value
-				const existingTweenIdx = this.tweens.findIndex(existing => {
-					return existing.obj === obj && existing.key === key
-				})
-				if (existingTweenIdx >= 0) this.tweens.splice(existingTweenIdx, 1)
+	tween<T, C extends Serializable<any, any>>(obj: T, target: TweenTarget<T>, duration: number, timeOffset = 0, serializableCallback: SerializableCallback<C, [number]>): void {
+		tweenRecursive(this.tweens, this.time, obj, target, duration, timeOffset)
 
-				// Add new tween
-				const offsetTime = this.time - timeOffset
-				this.tweens.push(
-					new Tween(
-						offsetTime,
-						offsetTime + duration,
-						obj,
-						key,
-						targetVal
-					)
-				)
-			} else {
-				this.tweenRecursive(obj[key], targetVal, duration, timeOffset)
-			}
-		}
+		this.wait(duration, timeOffset, serializableCallback)
+	}
+
+	classId(): SerializableId {
+		return SerializableId.CLOCK
 	}
 }

@@ -1,7 +1,5 @@
 import assets from "../assets.js";
 import { ctx } from "../context.js";
-import { provide } from "../engine/Provider.js";
-import { containerPosKey } from "../engine/ui/Panel.js";
 import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
 import { v2 } from "../engine/vector.js";
 import { mousePos } from "../global.js";

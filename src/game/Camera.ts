@@ -1,5 +1,3 @@
-import { ScreenCoord } from "../engine/ui/ScreenCoord.js"
-import { Panel } from "../engine/ui/Panel.js"
 import type Game from "./Game.js"
 import Serializable from "./Serializable.js"
 import SerializableId from "./SerializableId.js"

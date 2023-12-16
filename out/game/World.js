@@ -22,10 +22,12 @@ export default class World {
     mapDefName;
     tilemap;
     collisionGrid;
-    constructor(mapDefName, tilemap, collisionGrid) {
+    ents;
+    constructor(mapDefName, tilemap, collisionGrid, ents) {
         this.mapDefName = mapDefName;
         this.tilemap = tilemap;
         this.collisionGrid = collisionGrid;
+        this.ents = ents;
     }
     static async create(mapDefName) {
         const mapDef = assets.maps[mapDefName];
@@ -37,7 +39,7 @@ export default class World {
         for (let i = 0; i < tilemap.width * tilemap.height; ++i) {
             collisionGrid.push(solidLayers.some(layer => layer.data[i] !== 0));
         }
-        return new World(mapDefName, tilemap, collisionGrid);
+        return new World(mapDefName, tilemap, collisionGrid, []);
     }
     render(startX, startY, w, h, startTileX, startTileY, tiles) {
         ctx.save();
@@ -163,11 +165,16 @@ export default class World {
     classId() {
         return 1;
     }
-    deserializationForm(serializable) {
-        return World.create(serializable.mapName);
-    }
     serializationForm() {
-        return { mapName: this.mapDefName };
+        return {
+            mapName: this.mapDefName,
+            ents: this.ents
+        };
+    }
+    async deserializationForm(serializable) {
+        const world = await World.create(serializable.mapName);
+        world.ents = serializable.ents;
+        return world;
     }
 }
 //# sourceMappingURL=World.js.map

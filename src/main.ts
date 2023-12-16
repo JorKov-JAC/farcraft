@@ -1,4 +1,4 @@
-import Clock from "./engine/clock.js"
+import { UiClock } from "./engine/clock.js"
 import { ScreenCoord } from "./engine/ui/ScreenCoord.js"
 import "./engine/vector.js"
 import { captureInput, images, keys, mousePos, ui, uiSounds } from "./global.js"
@@ -14,7 +14,7 @@ const MAX_UPDATE_DT = 1/15
 
 // TODO Testing code
 uiSounds.playSoundtrackUntilStopped(["music_aStepCloser", "music_darkfluxxTheme"])
-const clock = new Clock()
+const clock = new UiClock()
 const a = {
 	x: 5,
 	y: 3,
@@ -77,8 +77,6 @@ function tick(dt: number) {
 
 	ctx.clearRect(0, 0, ...ScreenCoord.rect(1, 1).canvasSize)
 	game.update(dt)
-	ctx.fillStyle = "#f00"
-	ctx.fillRect(0, 0, 640, 480)
 	// .render(10, 10, 620, 460, -1.5, -1.5, 10)
 	const anim = images.getAnim("marine", "die")
 	ctx.drawImage(anim.frames[3]!.bitmap, 0, 0)

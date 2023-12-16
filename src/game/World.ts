@@ -5,6 +5,7 @@ import assets from "../assets.js"
 import Direction from "../engine/Direction.js"
 import Serializable from "./Serializable.js"
 import SerializableId from "./SerializableId.js"
+import Entity from "./Entity.js"
 
 interface TilemapData {
 	width: number
@@ -40,11 +41,13 @@ export default class World implements Serializable<World, { mapName: string }> {
 
 	tilemap: Tilemap
 	collisionGrid: boolean[]
+	ents: Entity[]
 
-	private constructor(mapDefName: string, tilemap: Tilemap, collisionGrid: boolean[]) {
+	private constructor(mapDefName: string, tilemap: Tilemap, collisionGrid: boolean[], ents: Entity[]) {
 		this.mapDefName = mapDefName
 		this.tilemap = tilemap
 		this.collisionGrid = collisionGrid
+		this.ents = ents
 	}
 
 	static async create(mapDefName: keyof (typeof assets)["maps"]): Promise<World> {
@@ -65,7 +68,7 @@ export default class World implements Serializable<World, { mapName: string }> {
 			collisionGrid.push(solidLayers.some(layer => layer.data[i]! !== 0))
 		}
 
-		return new World(mapDefName, tilemap, collisionGrid)
+		return new World(mapDefName, tilemap, collisionGrid, [])
 	}
 
 	/**
@@ -229,11 +232,16 @@ export default class World implements Serializable<World, { mapName: string }> {
 	classId(): SerializableId {
 		return SerializableId.WORLD
 	}
-	deserializationForm(serializable: { mapName: string }) {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-		return World.create(serializable.mapName as any)
-	}
 	serializationForm() {
-		return { mapName: this.mapDefName }
+		return {
+			mapName: this.mapDefName,
+			ents: this.ents
+		}
+	}
+	async deserializationForm(serializable: { mapName: string, ents: Entity[] }) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const world = await World.create(serializable.mapName as any)
+		world.ents = serializable.ents
+		return world
 	}
 }

@@ -1,12 +1,12 @@
 import { MouseEventType, GameMouseEvent, MouseButton } from "./GameMouseEvent";
 import { Panel } from "./Panel";
 import { rectFromV2s } from "../vector.js";
-import Clock from "../clock.js";
+import { UiClock } from "../clock.js";
 
 
 export default class UiTree {
 	panels: Panel[] = [];
-	clock: Clock = new Clock()
+	clock = new UiClock()
 
 	mouseEventsToHandle: { event: GameMouseEvent; handled: boolean } [] = [];
 	ongoingMouseHolds: { button: MouseButton, panel: Panel }[] = [];

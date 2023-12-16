@@ -12,7 +12,7 @@ export default class Marine extends Unit {
         throw new Error("Method not implemented.");
     }
     classId() {
-        return 3;
+        return 5;
     }
 }
 //# sourceMappingURL=Marine.js.map
