@@ -4,6 +4,7 @@ import { ScreenCoord } from "../../engine/ui/ScreenCoord.js";
 import Game from "../Game.js";
 import CommandMap from "./hud/CommandMap.js";
 import Minimap from "./hud/Minimap.js";
+import UnitList from "./hud/UnitList.js";
 import WorldPanel from "./hud/WorldPanel.js";
 
 export default class Hud extends Panel {
@@ -20,7 +21,8 @@ export default class Hud extends Panel {
 		const children = [
 			this.worldPanel,
 			new Minimap(ScreenCoord.rect(0, 1).setSq(0, -.25), ScreenCoord.sq(.25, .25)),
-			new CommandMap(ScreenCoord.rect(1, 1).setSq(-.25, -.25), ScreenCoord.sq(.25, .25))
+			new CommandMap(ScreenCoord.rect(1, 1).setSq(-.25, -.25), ScreenCoord.sq(.25, .25)),
+			new UnitList(ScreenCoord.rect(0, .8).setSq(.25, 0), ScreenCoord.rect(1, .2).setSq(-.5, 0))
 		]
 		this.children.push(...children)
 	}
