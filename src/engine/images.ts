@@ -28,26 +28,36 @@ export class Sprite {
 	}
 
 	render(x: number, y: number, maxBaseLen = this.size.max()) {
-		ctx.drawImage(this.bitmap, x + this.offset[0], y + this.offset[1], ...this.sizeWithin(maxBaseLen).lock())
+		const scale = this.scaleWithin(maxBaseLen)
+		const sizeWithin = this.sizeWithin(maxBaseLen)
+		const w = this.bitmap.width * sizeWithin[0] / this.size[0]
+		const h = this.bitmap.height * sizeWithin[1] / this.size[1]
+
+		ctx.drawImage(this.bitmap, x + this.offset[0] * scale, y + this.offset[1] * scale, w, h)
+	}
+
+	scaleWithin(maxBaseLen: number): number {
+		if (this.size[0] > this.size[1]) {
+			return maxBaseLen / this.size[0]
+		}
+		return maxBaseLen / this.size[1]
 	}
 
 	sizeWithin(maxBaseLen: number): MutV2 {
-		const ratio = this.size[0] / this.size[1]
+		return this.size.slice().mul(this.scaleWithin(maxBaseLen))
+		// const ratio = this.size[0] / this.size[1]
 
-		let w, h
+		// let w, h
 
-		if (ratio > 1) {
-			w = maxBaseLen
-			h = w * ratio
-		} else {
-			h = maxBaseLen
-			w = h * ratio
-		}
+		// if (ratio > 1) {
+		// 	w = maxBaseLen
+		// 	h = w / ratio
+		// } else {
+		// 	h = maxBaseLen
+		// 	w = h * ratio
+		// }
 
-		w = this.bitmap.width * w / this.size[0]
-		h = this.bitmap.height * h / this.size[1]
-
-		return v2(w, h).mut()
+		// return v2(w, h).mut()
 	}
 }
 
@@ -92,7 +102,7 @@ async function createSpriteInfo<T extends ImageAsset>(image: HTMLImageElement, i
 						...spritesDef.actualSize,
 						{ resizeQuality: "pixelated" }
 					)
-					const offset = spritesDef.baseOffset.slice().neg().lock()
+					const offset = spritesDef.baseOffset.slice().sub(spritesDef.actualOffset).neg().lock()
 					const size = spritesDef.baseSize.slice().lock()
 
 					sprites.push(new Sprite(bitmap, offset, size))

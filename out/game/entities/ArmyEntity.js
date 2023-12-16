@@ -20,29 +20,35 @@ export default class ArmyEntity extends Entity {
         if (selected) {
             ctx.save();
             ctx.strokeStyle = "#0F0";
-            ctx.translate(...camera.worldPosToCanvas(this.pos).lock());
-            ctx.scale(1, .5);
+            ctx.lineWidth = 2;
+            ctx.translate(...camera.worldPosToCanvas(this.pos.slice().add2(0, radius * .5)).lock());
+            ctx.scale(1, 3 / 8);
+            ctx.beginPath();
             ctx.arc(0, 0, radius * worldSizeToCanvasFactor, 0, Math.PI, true);
+            ctx.stroke();
             ctx.restore();
         }
         this.renderImpl();
         if (selected) {
             ctx.save();
             ctx.strokeStyle = "#0F0";
-            ctx.translate(...camera.worldPosToCanvas(this.pos).lock());
-            ctx.scale(1, .5);
+            ctx.lineWidth = 2;
+            ctx.translate(...camera.worldPosToCanvas(this.pos.slice().add2(0, radius * .5)).lock());
+            ctx.scale(1, 3 / 8);
+            ctx.beginPath();
             ctx.arc(0, 0, radius * worldSizeToCanvasFactor, 0, Math.PI, false);
+            ctx.stroke();
             ctx.restore();
         }
     }
     renderImpl() {
         const camera = current(Game).camera;
         const sprite = this.getCurrentSprite();
-        const radius = this.getRadius();
-        const spriteSize = sprite.sizeWithin(radius);
-        const worldPos = this.pos.slice().add2(-spriteSize[0] / 2, -spriteSize[1]);
+        const len = this.getRadius() * 2;
+        const spriteSize = sprite.sizeWithin(len);
+        const worldPos = this.pos.slice().add(spriteSize.slice().neg().mul(.5));
         const canvasPos = camera.worldPosToCanvas(worldPos).lock();
-        sprite.render(...canvasPos, radius * camera.worldSizeToCanvasFactor());
+        sprite.render(...canvasPos, len * camera.worldSizeToCanvasFactor());
     }
 }
 //# sourceMappingURL=ArmyEntity.js.map
