@@ -93,8 +93,6 @@ function tick(dt: number) {
 
 	ctx.drawImage(mapTiles[currentTile]!.bitmap, 20, 200)
 
-	console.log(game.selectedEnts)
-
 
 	ui.render()
 	if (captureInput) {

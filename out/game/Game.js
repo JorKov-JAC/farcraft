@@ -5,6 +5,7 @@ import { v2 } from "../engine/vector.js";
 import { mousePos } from "../global.js";
 import Camera from "./Camera.js";
 import World from "./World.js";
+import Unit from "./entities/Unit.js";
 import Hud from "./ui/Hud.js";
 export default class Game {
     hud;
@@ -49,12 +50,11 @@ export default class Game {
         });
     }
     startDrag(pos) {
-        this.ongoingDrag = this.camera.canvasPosToWorld(pos);
+        this.ongoingDrag = pos;
     }
-    stopDrag(pos) {
+    stopDrag(endPos) {
         if (!this.ongoingDrag)
             return;
-        const endPos = this.camera.canvasPosToWorld(pos).lock();
         const selected = this.world
             .unitsWithinBoundsInclusive(...this.ongoingDrag, ...endPos)
             .filter(e => e.owner === 0);
@@ -65,6 +65,13 @@ export default class Game {
             }
         }
         this.ongoingDrag = null;
+    }
+    orderMove(pos) {
+        for (const e of this.selectedEnts.values()) {
+            if (!(e instanceof Unit))
+                continue;
+            e.startMovingTo(pos, this.world);
+        }
     }
     classId() {
         return 0;

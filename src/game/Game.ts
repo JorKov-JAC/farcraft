@@ -9,6 +9,7 @@ import Serializable from "./Serializable.js";
 import SerializableId from "./SerializableId.js";
 import World from "./World.js";
 import ArmyEntity, { Owner } from "./entities/ArmyEntity.js";
+import Unit from "./entities/Unit.js";
 import Hud from "./ui/Hud.js";
 
 export default class Game implements Serializable<Game, {world: World, camera: Camera}> {
@@ -70,13 +71,11 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 	}
 
 	startDrag(pos: V2) {
-		this.ongoingDrag = this.camera.canvasPosToWorld(pos)
+		this.ongoingDrag = pos
 	}
 
-	stopDrag(pos: V2) {
+	stopDrag(endPos: V2) {
 		if (!this.ongoingDrag) return
-
-		const endPos = this.camera.canvasPosToWorld(pos).lock()
 
 		const selected = this.world
 			.unitsWithinBoundsInclusive(...this.ongoingDrag, ...endPos)
@@ -90,6 +89,14 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 		}
 
 		this.ongoingDrag = null
+	}
+
+	orderMove(pos: V2) {
+		for (const e of this.selectedEnts.values()) {
+			if (!(e instanceof Unit)) continue
+
+			e.startMovingTo(pos, this.world)
+		}
 	}
 
 	classId(): SerializableId {

@@ -41,14 +41,5 @@ export default class ArmyEntity extends Entity {
             ctx.restore();
         }
     }
-    renderImpl() {
-        const camera = current(Game).camera;
-        const sprite = this.getCurrentSprite();
-        const len = this.getRadius() * 2;
-        const spriteSize = sprite.sizeWithin(len);
-        const worldPos = this.pos.slice().add(spriteSize.slice().neg().mul(.5));
-        const canvasPos = camera.worldPosToCanvas(worldPos).lock();
-        sprite.render(...canvasPos, len * camera.worldSizeToCanvasFactor());
-    }
 }
 //# sourceMappingURL=ArmyEntity.js.map

@@ -169,7 +169,9 @@ Array.prototype.rot90 = function() {
 }
 
 Array.prototype.radians = function() {
-	return Math.atan2(this[1], this[0])
+	let ang = Math.atan2(this[1], this[0])
+	if (ang < 0) ang += Math.PI * 2
+	return ang
 }
 
 Array.prototype.rectArea = function() {

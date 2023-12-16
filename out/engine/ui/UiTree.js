@@ -26,7 +26,7 @@ export default class UiTree {
                         if (event.button === 0) {
                             child.onPress(event.pos);
                         }
-                        else if (event.button === 1) {
+                        else if (event.button === 2) {
                             child.onRightPress(event.pos);
                         }
                         this.ongoingMouseHolds.push({ button: event.button, panel: child });

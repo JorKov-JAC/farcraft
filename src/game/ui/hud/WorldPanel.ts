@@ -18,10 +18,14 @@ export default class WorldPanel extends Panel {
 	}
 
 	override onPress(pos: V2): void {
-		this.game.startDrag(pos)
+		this.game.startDrag(this.game.camera.canvasPosToWorld(pos))
 	}
 
 	override onUnpress(pos: V2): void {
-		this.game.stopDrag(pos)
+		this.game.stopDrag(this.game.camera.canvasPosToWorld(pos))
+	}
+
+	override onRightPress(pos: V2): void {
+		this.game.orderMove(this.game.camera.canvasPosToWorld(pos))
 	}
 }

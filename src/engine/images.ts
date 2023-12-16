@@ -33,7 +33,10 @@ export class Sprite {
 		const w = this.bitmap.width * sizeWithin[0] / this.size[0]
 		const h = this.bitmap.height * sizeWithin[1] / this.size[1]
 
-		ctx.drawImage(this.bitmap, x + this.offset[0] * scale, y + this.offset[1] * scale, w, h)
+		ctx.drawImage(
+			this.bitmap,
+			x + this.offset[0] * scale, y + this.offset[1] * scale, w, h
+		)
 	}
 
 	scaleWithin(maxBaseLen: number): number {

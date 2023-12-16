@@ -67,7 +67,6 @@ function tick(dt) {
     ctx.fillStyle = "#F00";
     ctx.fillRect(a.x, a.y, a.sub.w, a.sub.h);
     ctx.drawImage(mapTiles[currentTile].bitmap, 20, 200);
-    console.log(game.selectedEnts);
     ui.render();
     if (captureInput) {
         images.getAnim("cursor", "default").frames[0].render(...mousePos, ScreenCoord.sq(.1, 0).canvasSize[0]);
