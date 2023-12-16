@@ -5,6 +5,7 @@ export const enum SerializableId {
 	CAMERA,
 	CLOCK,
 	TWEEN,
+	ANIMATION,
 	MARINE,
 	_SIZE
 }

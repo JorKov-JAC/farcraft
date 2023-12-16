@@ -166,4 +166,7 @@ const assets = {
 	} satisfies Record<string, MapDef>
 }
 
+export type ImageGroupName = Exclude<keyof (typeof assets)["images"], symbol>
+export type AnimName<T extends ImageGroupName> = Exclude<keyof (typeof assets)["images"][T]["anims"], symbol>
+
 export default assets

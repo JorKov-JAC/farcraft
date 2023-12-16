@@ -1,13 +1,14 @@
+import { ImageGroupName } from "../../assets.js";
 import { ctx } from "../../context.js";
 import { current } from "../../engine/Provider.js";
-import { Sprite } from "../../engine/images.js";
 import { rect, v2 } from "../../engine/vector.js";
-import { images } from "../../global.js";
 import Game from "../Game.js";
 import World from "../World.js";
-import ArmyEntity from "./ArmyEntity.js";
+import ArmyEntity, { ArmyEntityArgs } from "./ArmyEntity.js";
 
-export default abstract class Unit extends ArmyEntity {
+export type UnitArgs<AnimGroupName extends ImageGroupName> = ArmyEntityArgs<AnimGroupName>
+
+export default abstract class Unit<AnimGroupName extends ImageGroupName> extends ArmyEntity<AnimGroupName> {
 	readonly vel: V2 = v2(0, 0)
 
 	angle: number = 0
@@ -61,6 +62,7 @@ export default abstract class Unit extends ArmyEntity {
 		const pushVel = v2(0, 0).mut()
 		for (const e of world.unitsWithinBoundsInclusive(...aabb)) {
 			if (e === this) continue
+
 			const dist = this.pos.dist(e.pos)
 			const otherRadius = e.getRadius()
 			const pushFactor = Math.max(0, 1 - (dist - otherRadius) / radius)
@@ -126,10 +128,5 @@ export default abstract class Unit extends ArmyEntity {
 		sprite.render(0, 0, len * camera.worldSizeToCanvasFactor())
 
 		ctx.restore()
-	}
-
-
-	override getCurrentSprite(): Sprite {
-		return images.getAnim("marine", "idle").frames[0]!
 	}
 }

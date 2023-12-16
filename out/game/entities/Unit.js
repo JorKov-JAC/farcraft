@@ -1,7 +1,6 @@
 import { ctx } from "../../context.js";
 import { current } from "../../engine/Provider.js";
 import { rect, v2 } from "../../engine/vector.js";
-import { images } from "../../global.js";
 import Game from "../Game.js";
 import ArmyEntity from "./ArmyEntity.js";
 export default class Unit extends ArmyEntity {
@@ -97,9 +96,6 @@ export default class Unit extends ArmyEntity {
         ctx.translate(...spriteSize.slice().neg().mul(.5 * camera.worldSizeToCanvasFactor()).lock());
         sprite.render(0, 0, len * camera.worldSizeToCanvasFactor());
         ctx.restore();
-    }
-    getCurrentSprite() {
-        return images.getAnim("marine", "idle").frames[0];
     }
 }
 //# sourceMappingURL=Unit.js.map

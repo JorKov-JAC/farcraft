@@ -6,6 +6,7 @@ import World from "./World.js";
 import Camera from "./Camera.js";
 import Serializable from "./Serializable.js";
 import { SerializableClock, Tween } from "../engine/clock.js";
+import Anim from "./Anim.js";
 
 
 export function serializableIdToClass(id: SerializableId): unknown {
@@ -23,6 +24,8 @@ export function serializableIdToClass(id: SerializableId): unknown {
 			return SerializableClock
 		case SerializableId.TWEEN:
 			return Tween
+		case SerializableId.ANIMATION:
+			return Anim
 		case SerializableId._SIZE:
 			throw Error("Tried to serialize 1 past the number of IDs")
 	}

@@ -6,10 +6,12 @@ export default class ArmyEntity extends Entity {
     health = this.getMaxHealth();
     owner;
     pos;
-    constructor(owner, pos) {
+    anim;
+    constructor(args) {
         super();
-        this.owner = owner;
-        this.pos = pos;
+        this.owner = args.owner;
+        this.pos = args.pos;
+        this.anim = args.initialAnimation;
     }
     baseRender() {
         const game = current(Game);
@@ -40,6 +42,9 @@ export default class ArmyEntity extends Entity {
             ctx.stroke();
             ctx.restore();
         }
+    }
+    getCurrentSprite() {
+        return this.anim.getSprite();
     }
 }
 //# sourceMappingURL=ArmyEntity.js.map

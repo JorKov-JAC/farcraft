@@ -3,11 +3,12 @@ import Marine from "./entities/Marine.js";
 import World from "./World.js";
 import Camera from "./Camera.js";
 import { SerializableClock, Tween } from "../engine/clock.js";
+import Anim from "./Anim.js";
 export function serializableIdToClass(id) {
     switch (id) {
         case 0:
             return Game;
-        case 5:
+        case 6:
             return Marine;
         case 1:
             return World;
@@ -17,14 +18,16 @@ export function serializableIdToClass(id) {
             return SerializableClock;
         case 4:
             return Tween;
-        case 6:
+        case 5:
+            return Anim;
+        case 7:
             throw Error("Tried to serialize 1 past the number of IDs");
     }
     throw Error("Invalid serializable ID");
 }
 export function serialize(root) {
     const classToId = new Map();
-    for (let i = 0; i < 6; ++i) {
+    for (let i = 0; i < 7; ++i) {
         classToId.set(serializableIdToClass(i).prototype, i);
     }
     const instanceToIdx = new Map();

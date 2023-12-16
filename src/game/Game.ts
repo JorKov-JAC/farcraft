@@ -19,7 +19,7 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 
 	ongoingDrag: V2 | null = null
 
-	private selectedEnts: Set<ArmyEntity> = new Set()
+	private selectedEnts: Set<ArmyEntity<any>> = new Set()
 
 	private constructor(world: World) {
 		this.camera = new Camera(this, v2(0, 0), 10)
@@ -99,7 +99,7 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 		}
 	}
 
-	isSelected(e: ArmyEntity) {
+	isSelected(e: ArmyEntity<any>) {
 		return this.selectedEnts.has(e)
 	}
 

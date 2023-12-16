@@ -8,7 +8,6 @@ import TextButton from "./game/ui/buttons/TextButton.js"
 import Game from "./game/Game.js"
 import { v2 } from "./engine/vector.js"
 import { deserialize, serialize } from "./game/Serialize.js"
-import { rangeArray } from "./engine/util.js"
 import Marine from "./game/entities/Marine.js"
 import { Owner } from "./game/entities/ArmyEntity.js"
 
@@ -62,10 +61,10 @@ function nextSprite(offset = 0) {
 nextSprite()
 
 const game = await Game.create("m1")
-const m = new Marine(Owner.PLAYER, v2(.5, 2.5))
+const m = new Marine({ owner: Owner.PLAYER, pos: v2(.5, 2.5) })
 game.world.ents.push(m)
 m.startMovingTo(v2(5.5, 3.5), game.world)
-game.world.ents.push(new Marine(Owner.PLAYER, v2(4.5, 2.5)))
+game.world.ents.push(new Marine({ owner: Owner.PLAYER, pos: v2(4.5, 2.5) }))
 const serialized = serialize(game)
 console.log(serialized)
 console.dir(await deserialize(serialized))

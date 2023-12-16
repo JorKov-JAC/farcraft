@@ -34,4 +34,7 @@ export function spanArray(start, length) {
 export function raise(error) {
     throw error;
 }
+export function mod(a, b) {
+    return (a % b + b) % b;
+}
 //# sourceMappingURL=util.js.map

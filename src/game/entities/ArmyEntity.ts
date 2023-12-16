@@ -1,6 +1,7 @@
-import { canvas, ctx } from "../../context.js";
+import { ImageGroupName } from "../../assets.js";
+import { ctx } from "../../context.js";
 import { current } from "../../engine/Provider.js";
-import { Sprite } from "../../engine/images.js";
+import Anim from "../Anim.js";
 import Entity from "../Entity.js";
 import Game from "../Game.js";
 
@@ -10,15 +11,23 @@ export const enum Owner {
 	RESCUABLE
 }
 
-export default abstract class ArmyEntity extends Entity {
+export type ArmyEntityArgs<AnimGroupName extends ImageGroupName> = {
+	owner: Owner,
+	pos: V2,
+	initialAnimation: Anim<AnimGroupName>
+}
+
+export default abstract class ArmyEntity<AnimGroupName extends ImageGroupName> extends Entity {
 	health: number = this.getMaxHealth()
 	owner: Owner
 	pos: V2
+	anim: Anim<AnimGroupName>
 
-	constructor(owner: Owner, pos: V2) {
+	constructor(args: ArmyEntityArgs<AnimGroupName>) {
 		super()
-		this.owner = owner
-		this.pos = pos
+		this.owner = args.owner
+		this.pos = args.pos
+		this.anim = args.initialAnimation
 	}
 
 	override baseRender(): void {
@@ -59,7 +68,9 @@ export default abstract class ArmyEntity extends Entity {
 		}
 	}
 
-	abstract getCurrentSprite(): Sprite
+	getCurrentSprite() {
+		return this.anim.getSprite()
+	}
 	abstract getRadius(): number
 	abstract getMaxHealth(): number
 }

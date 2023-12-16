@@ -39,3 +39,7 @@ export function spanArray(start: number, length: number): number[] {
 export function raise(error: Error): never {
 	throw error
 }
+
+export function mod(a: number, b: number) {
+	return (a % b + b) % b
+}

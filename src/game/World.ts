@@ -131,7 +131,7 @@ export default class World implements Serializable<World, { mapName: string }> {
 			}
 		}
 
-		const armyEnts = this.ents.filter(e => e instanceof ArmyEntity) as ArmyEntity[]
+		const armyEnts = this.ents.filter(e => e instanceof ArmyEntity) as ArmyEntity<any>[]
 		armyEnts.sort((a, b) => a.pos[1] - b.pos[1])
 		for (const armyEnt of armyEnts) {
 			armyEnt.baseRender()
@@ -268,7 +268,7 @@ export default class World implements Serializable<World, { mapName: string }> {
 		return false
 	}
 
-	unitsWithinBoundsInclusive(x0: number, y0: number, x1: number, y1: number): Unit[] {
+	unitsWithinBoundsInclusive(x0: number, y0: number, x1: number, y1: number): Unit<any>[] {
 		if (x0 > x1) [x0, x1] = [x1, x0]
 		if (y0 > y1) [y0, y1] = [y1, y0]
 		const bounds = rect(x0, y0, x1 - x0, y1 - y0)
@@ -277,7 +277,7 @@ export default class World implements Serializable<World, { mapName: string }> {
 			if (!(e instanceof Unit)) return false
 			const r = e.getRadius()
 			return bounds.iAabb4(e.pos[0] - r, e.pos[1] - r, r * 2, r * 2)
-		}) as Unit[]
+		}) as Unit<any>[]
 	}
 
 	classId(): SerializableId {
