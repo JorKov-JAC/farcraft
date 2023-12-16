@@ -40,7 +40,7 @@ export default class Marine extends Unit<"marine"> {
 	}
 
 	override getSpeed(): number {
-		return 2
+		return 3
 	}
 	override getAttackRange(): number {
 		return 5

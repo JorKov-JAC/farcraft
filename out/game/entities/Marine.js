@@ -36,7 +36,7 @@ export default class Marine extends Unit {
         }
     }
     getSpeed() {
-        return 2;
+        return 3;
     }
     getAttackRange() {
         return 5;
