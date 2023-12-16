@@ -115,6 +115,7 @@ export default class Unit extends ArmyEntity {
     startMovingTo(dest, world) {
         this.pathBackward = world.pathfindBackward(this.pos, dest) ?? [];
         if (this.pathBackward) {
+            this.pathBackward.pop();
             this.lastDestination = dest.slice();
         }
         else {

@@ -158,6 +158,8 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 		this.pathBackward = world.pathfindBackward(this.pos, dest) ?? []
 
 		if (this.pathBackward) {
+			// First tile is current tile, get rid of it:
+			this.pathBackward.pop()
 			this.lastDestination = dest.slice()
 		} else {
 			this.lastDestination = this.pos.slice()
