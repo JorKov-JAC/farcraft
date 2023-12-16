@@ -34,7 +34,7 @@ export default class Anim<T extends ImageGroupName> implements Serializable {
 
 	getSprite() {
 		const anim = this.getAnim()
-		const idx = this.frameTime / this.getDuration() * anim.frames.length
+		const idx = Math.floor(this.frameTime / this.getDuration() * anim.frames.length)
 
 		return anim.frames[idx]!
 	}

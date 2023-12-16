@@ -38,7 +38,7 @@ const images = {
                 frames: [4]
             },
             "move": {
-                duration: 1,
+                duration: 2,
                 frames: spanArray(5, 4)
             },
             "shoot": {
