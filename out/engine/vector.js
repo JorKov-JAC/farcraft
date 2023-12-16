@@ -50,6 +50,11 @@ Array.prototype.mul2 = function (x, y) {
 Array.prototype.mulV2 = function (o) {
     return this.mul2(o[0], o[1]);
 };
+Array.prototype.inv = function () {
+    this[0] = 1 / this[0];
+    this[1] = 1 / this[1];
+    return this;
+};
 Array.prototype.dot = function (o) {
     return this[0] * o[0] + this[1] * o[1];
 };

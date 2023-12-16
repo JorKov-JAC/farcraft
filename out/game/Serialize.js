@@ -32,7 +32,7 @@ export function serialize(root) {
     }
     function recurse(oldVal) {
         const type = typeof oldVal;
-        if (type === "boolean" || type === "number" || type === "string" || type === "undefined") {
+        if (oldVal === null || type === "boolean" || type === "number" || type === "string" || type === "undefined") {
             return oldVal;
         }
         const proto = Object.getPrototypeOf(oldVal);
@@ -53,8 +53,9 @@ export function serialize(root) {
         }
         const newVal = Object.create(null);
         const ref = addInstance(oldVal, newVal);
-        if (oldVal.prepareForSerialization) {
-            oldVal = oldVal.prepareForSerialization();
+        oldVal.preSerialization?.();
+        if (oldVal.serializationForm) {
+            oldVal = oldVal.serializationForm();
         }
         for (const name of Object.getOwnPropertyNames(oldVal)) {
             newVal[name] = recurse(oldVal[name]);
@@ -80,8 +81,8 @@ export async function deserialize(json) {
             continue;
         }
         const proto = serializableIdToClass(id).prototype;
-        if (proto.deserialize) {
-            instances[i] = await proto.deserialize(serializationInstance);
+        if (proto.deserializationForm) {
+            instances[i] = await proto.deserializationForm(serializationInstance);
             continue;
         }
         Object.setPrototypeOf(serializationInstance, proto);
@@ -89,7 +90,7 @@ export async function deserialize(json) {
     }
     for (const instance of instances) {
         for (const key in instance) {
-            const ref = instance[key]._;
+            const ref = instance[key]?._;
             if (ref !== undefined) {
                 instance[key] = instances[ref];
             }

@@ -19,7 +19,8 @@ export type DeserializationForm<T> = RemoveNever<{
 
 export default interface Serializable<T extends Serializable<T, unknown> = never, U = never> {
 	classId(): SerializableId
-	deserialize?(serializationForm: SerializationForm<U>): Promise<DeserializationForm<T>>
-	prepareForSerialization?(): U
+	preSerialization?(): void
+	serializationForm?(): U
+	deserializationForm?(serializationForm: SerializationForm<U>): Promise<DeserializationForm<T>>
 	postDeserialize?(): void
 }

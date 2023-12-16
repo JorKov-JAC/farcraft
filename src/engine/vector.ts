@@ -43,6 +43,7 @@ declare global {
 		mul(this: MutV2, s: number): MutV2
 		mul2(this: MutV2, x: number, y: number): MutV2
 		mulV2(this: MutV2, o: V2): MutV2
+		inv(this: MutV2): MutV2
 		dot(this: V2, o: V2): number
 		mag(this: V2): number
 		dist(this: V2, o: V2): number
@@ -117,6 +118,13 @@ Array.prototype.mul2 = function(x, y) {
 
 Array.prototype.mulV2 = function(o) {
 	return this.mul2(o[0], o[1])
+}
+
+Array.prototype.inv = function() {
+	this[0] = 1/this[0]
+	this[1] = 1/this[1]
+
+	return this
 }
 
 Array.prototype.dot = function(o: V2) {

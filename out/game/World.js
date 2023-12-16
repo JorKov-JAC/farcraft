@@ -163,10 +163,10 @@ export default class World {
     classId() {
         return 1;
     }
-    deserialize(serializable) {
+    deserializationForm(serializable) {
         return World.create(serializable.mapName);
     }
-    prepareForSerialization() {
+    serializationForm() {
         return { mapName: this.mapDefName };
     }
 }

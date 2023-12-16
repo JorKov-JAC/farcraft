@@ -1,11 +1,12 @@
 import assets from "../assets.js";
-import { canvas } from "../context.js";
-import { Panel } from "../engine/ui/Panel.js";
+import { ctx } from "../context.js";
+import { provide } from "../engine/Provider.js";
+import { containerPosKey } from "../engine/ui/Panel.js";
 import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
 import { v2 } from "../engine/vector.js";
-import { captureInput, keys, mousePos } from "../global.js";
+import { mousePos } from "../global.js";
 import Camera from "./Camera.js";
-import Serializable, { DeserializationForm, SerializationForm } from "./Serializable.js";
+import Serializable from "./Serializable.js";
 import SerializableId from "./SerializableId.js";
 import World from "./World.js";
 import Hud from "./ui/Hud.js";
@@ -14,6 +15,8 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 	hud: Hud
 	world: World
 	camera: Camera
+
+	ongoingDrag: V2 | null = null
 
 	private constructor(world: World) {
 		this.camera = new Camera(this, v2(0, 0), 10)
@@ -39,18 +42,42 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 			...this.camera.worldPos,
 			this.camera.minLen
 		)
+
+		// provide(containerPosKey
+		ctx.save()
+		// ctx.translate(...this.camera.worldPosToCanvas([0, 0]).neg().lock())
+		// console.log(this.camera.hudPosToWorldPos([0, 0]))
+		// ctx.scale(...this.camera.hudPosToWorldPos([1, 1]).lock())
+		if (this.ongoingDrag) {
+			const canvasDragStart = this.camera.worldPosToCanvas(this.ongoingDrag).lock()
+			ctx.fillStyle = "#0F02"
+			ctx.strokeStyle = "#0F0B"
+			ctx.beginPath()
+			ctx.rect(...canvasDragStart, ...mousePos.slice().sub(canvasDragStart).lock())
+			console.log(this.ongoingDrag, mousePos)
+			ctx.fill()
+			ctx.stroke()
+		}
+		ctx.restore()
+	}
+
+	hudCoordsToGameCoords(hudCoord: V2) {
+		this.hud.worldPanel
 	}
 
 	startDrag(pos: V2) {
-
+		this.ongoingDrag = this.camera.canvasPosToWorld(pos)
 	}
 
 	stopDrag(pos: V2) {
-
+		this.ongoingDrag = null
 	}
 
 	classId(): SerializableId {
 		return SerializableId.GAME
+	}
+	preSerialization() {
+		this.ongoingDrag = null
 	}
 	postDeserialize() {
 		this.hud = new Hud(ScreenCoord.rect(0, 0), ScreenCoord.rect(1, 1), this)

@@ -25,7 +25,7 @@ export function serializableIdToClass(id: SerializableId): unknown {
 	throw Error("Invalid serializable ID")
 }
 
-export type SerializationSafe = number|string|boolean|{_:number}|undefined
+export type SerializationSafe = number|string|boolean|{_:number}|undefined|null
 
 export function serialize(root: Serializable<any> | Array<any>): string {
 	const classToId = new Map();
@@ -46,7 +46,7 @@ export function serialize(root: Serializable<any> | Array<any>): string {
 
 	function recurse(oldVal: unknown): SerializationSafe {
 		const type = typeof oldVal
-		if (type === "boolean" || type === "number" || type === "string" || type === "undefined") {
+		if (oldVal === null || type === "boolean" || type === "number" || type === "string" || type === "undefined") {
 			return oldVal as SerializationSafe
 		}
 
@@ -74,8 +74,9 @@ export function serialize(root: Serializable<any> | Array<any>): string {
 		const newVal: Record<keyof any, SerializationSafe> = Object.create(null)
 		const ref = addInstance(oldVal, newVal)
 
-		if ((oldVal as Serializable<any>).prepareForSerialization) {
-			oldVal = (oldVal as Serializable<any, any>).prepareForSerialization!()
+		;(oldVal as Serializable<any, any>).preSerialization?.()
+		if ((oldVal as Serializable<any>).serializationForm) {
+			oldVal = (oldVal as Serializable<any, any>).serializationForm!()
 		}
 
 		for (const name of Object.getOwnPropertyNames(oldVal)) {
@@ -128,8 +129,8 @@ export async function deserialize(json: string): Promise<object | unknown[]> {
 		}
 
 		const proto = (serializableIdToClass(id) as Newable).prototype as Serializable<any>
-		if (proto.deserialize) {
-			instances[i] = await proto.deserialize(serializationInstance)
+		if (proto.deserializationForm) {
+			instances[i] = await proto.deserializationForm(serializationInstance)
 			continue
 		}
 
@@ -140,7 +141,7 @@ export async function deserialize(json: string): Promise<object | unknown[]> {
 	for (const instance of instances) {
 		for (const key in instance) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			const ref = instance[key]._
+			const ref = instance[key]?._
 			if (ref !== undefined) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				instance[key] = instances[ref]

@@ -62,6 +62,28 @@ export default class Camera implements Serializable {
 		this.worldPos[1] = Math.min(Math.max(0, this.worldPos[1]), tilemap.height - actualSize[1] * scale * (1 - this.extraYMult))
 	}
 
+	canvasPosToWorld(pos: V2) {
+		const panel = this.game.hud.worldPanel
+		const panelPos = panel.getActualPos()
+		const panelSize = panel.getActualSize()
+
+		const vMin = panelSize.min()
+		const tileLen = vMin / this.minLen
+
+		return pos.slice().sub(panelPos).mul(1/tileLen).add(this.worldPos)
+	}
+
+	worldPosToCanvas(pos: V2) {
+		const panel = this.game.hud.worldPanel
+		const panelPos = panel.getActualPos()
+		const panelSize = panel.getActualSize()
+
+		const vMin = panelSize.min()
+		const tileLen = vMin / this.minLen
+
+		return pos.slice().sub(this.worldPos).mul(tileLen).add(panelPos)
+	}
+
 	moveToward(v: V2, dt: number) {
 		this.worldPos.mut().add(v.slice().mul(Camera.speed * this.minLen * dt))
 	}

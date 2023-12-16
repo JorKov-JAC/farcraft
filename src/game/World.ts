@@ -229,11 +229,11 @@ export default class World implements Serializable<World, { mapName: string }> {
 	classId(): SerializableId {
 		return SerializableId.WORLD
 	}
-	deserialize(serializable: { mapName: string }) {
+	deserializationForm(serializable: { mapName: string }) {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		return World.create(serializable.mapName as any)
 	}
-	prepareForSerialization() {
+	serializationForm() {
 		return { mapName: this.mapDefName }
 	}
 }
