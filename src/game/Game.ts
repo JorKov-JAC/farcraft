@@ -39,6 +39,10 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 			this.camera.update(dt)
 
 		})
+
+		for (const e of this.selectedEnts.values()) {
+			if (e.health <= 0) this.selectedEnts.delete(e)
+		}
 	}
 
 	render(x: number, y: number, w: number, h: number) {
@@ -73,12 +77,15 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 
 		const endPos = this.camera.canvasPosToWorld(pos).lock()
 
-		this.selectedEnts.clear()
 		const selected = this.world
-			.unitsWithinInclusive(...this.ongoingDrag, ...endPos)
+			.unitsWithinBoundsInclusive(...this.ongoingDrag, ...endPos)
 			.filter(e => e.owner === Owner.PLAYER)
-		for (const ent of selected) {
-			this.selectedEnts.add(ent)
+
+		if (selected.length > 0) {
+			this.selectedEnts.clear()
+			for (const ent of selected) {
+				this.selectedEnts.add(ent)
+			}
 		}
 
 		this.ongoingDrag = null

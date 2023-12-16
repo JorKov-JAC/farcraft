@@ -125,6 +125,10 @@ export default class World implements Serializable<World, { mapName: string }> {
 			}
 		}
 
+		for (const armyEnt of this.ents.filter(e => e instanceof ArmyEntity)) {
+			armyEnt.baseRender()
+		}
+
 		ctx.restore()
 	}
 
@@ -133,7 +137,7 @@ export default class World implements Serializable<World, { mapName: string }> {
 			|| this.collisionGrid[Math.floor(y) * this.tilemap.width + Math.floor(x)]!
 	}
 
-	pathfind(a: V2, b: V2): V2[] | null {
+	pathfindBackward(a: V2, b: V2): V2[] | null {
 		try {
 			a = a.slice().floor()
 			b = b.slice().floor()
@@ -217,7 +221,6 @@ export default class World implements Serializable<World, { mapName: string }> {
 				path.push(currentNode.pos)
 				currentNode = currentNode.from!
 			}
-			path.reverse()
 
 			return path
 		} catch (e) {
@@ -257,13 +260,15 @@ export default class World implements Serializable<World, { mapName: string }> {
 		return false
 	}
 
-	unitsWithinInclusive(x: number, y: number, w: number, h: number): Unit[] {
-		const bounds = rect(x, y, w, h)
+	unitsWithinBoundsInclusive(x0: number, y0: number, x1: number, y1: number): Unit[] {
+		if (x0 > x1) [x0, x1] = [x1, x0]
+		if (y0 > y1) [y0, y1] = [y1, y0]
+		const bounds = rect(x0, y0, x1 - x0, y1 - y0)
 
 		return this.ents.filter(e => {
 			if (!(e instanceof Unit)) return false
-			const r = e.radius
-			return bounds.iAabb4(e.pos[0] - r, e.pos[1] - r, e.pos[0] + r, e.pos[1] + r)
+			const r = e.getRadius()
+			return bounds.iAabb4(e.pos[0] - r, e.pos[1] - r, r * 2, r * 2)
 		}) as Unit[]
 	}
 

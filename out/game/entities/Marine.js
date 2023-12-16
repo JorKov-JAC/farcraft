@@ -1,15 +1,13 @@
 import Unit from "./Unit.js";
 export default class Marine extends Unit {
+    getSpeed() {
+        return 1;
+    }
+    getRadius() {
+        return .5;
+    }
     getMaxHealth() {
-        throw new Error("Method not implemented.");
-    }
-    updateImpl(dt) {
-        super.updateImpl(dt);
-        throw new Error("Method not implemented.");
-    }
-    render() {
-        super.render();
-        throw new Error("Method not implemented.");
+        return 40;
     }
     classId() {
         return 5;

@@ -50,6 +50,7 @@ declare global {
 		taxiDist(this: V2, o:V2): number
 		normOr(this: MutV2, fallbackX: number, fallbackY: number): MutV2
 		rot90(this: MutV2): MutV2
+		radians(this: V2): number
 		rectArea(this: V2): number
 		min(this: V2): number
 		max(this: V2): number
@@ -165,6 +166,10 @@ Array.prototype.rot90 = function() {
 	[this[0], this[1]] = [-this[1], this[0]]
 
 	return this
+}
+
+Array.prototype.radians = function() {
+	return Math.atan2(this[1], this[0])
 }
 
 Array.prototype.rectArea = function() {

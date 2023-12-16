@@ -70,7 +70,14 @@ canvas.addEventListener("mouseup", e => {
 	if (e.button as MouseButton >= MouseButton._SIZE) return
 
 	e.preventDefault()
-	ui.addMouseEvent(new GameMouseEvent(MouseEventType.UP, e.button as MouseButton, v2(e.offsetX, e.offsetY)))
+	let pos: V2
+	if (!captureInput) {
+		canvas.requestPointerLock()
+		pos = v2(e.offsetX, e.offsetY)
+	} else {
+		pos = mousePos.slice()
+	}
+	ui.addMouseEvent(new GameMouseEvent(MouseEventType.UP, e.button as MouseButton, pos))
 })
 canvas.addEventListener("pointermove", e => {
 	if (captureInput) {

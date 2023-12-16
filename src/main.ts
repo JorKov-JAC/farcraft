@@ -9,6 +9,8 @@ import Game from "./game/Game.js"
 import { v2 } from "./engine/vector.js"
 import { deserialize, serialize } from "./game/Serialize.js"
 import { rangeArray } from "./engine/util.js"
+import Marine from "./game/entities/Marine.js"
+import { Owner } from "./game/entities/ArmyEntity.js"
 
 /** The max delta time for updates (for stability). */
 const MAX_UPDATE_DT = 1/15
@@ -60,10 +62,11 @@ function nextSprite(offset = 0) {
 nextSprite()
 
 const game = await Game.create("m1")
+game.world.ents.push(new Marine(Owner.PLAYER, v2(.5, 2.5)))
 const serialized = serialize(game)
 console.log(serialized)
 console.dir(await deserialize(serialized))
-console.dir(game.world.pathfind(v2(6, 9), v2(6, 5)))
+console.dir(game.world.pathfindBackward(v2(6, 9), v2(6, 5)))
 ui.panels.push(game.hud)
 
 
@@ -86,6 +89,8 @@ function tick(dt: number) {
 	ctx.fillRect(a.x, a.y, a.sub.w, a.sub.h)
 
 	ctx.drawImage(mapTiles[currentTile]!.bitmap, 20, 200)
+
+	console.log(game.selectedEnts)
 
 
 	ui.render()

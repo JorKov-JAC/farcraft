@@ -60,11 +60,12 @@ export default class UiTree {
     }
     emptyOngoingMouseHolds(mouseUpEvent) {
         this.ongoingMouseHolds = this.ongoingMouseHolds.filter(e => {
-            if (e.button === mouseUpEvent.button) {
+            if (e.button !== mouseUpEvent.button)
+                return true;
+            if (mouseUpEvent.button === 0) {
                 e.panel.onUnpress(mouseUpEvent.pos);
-                return false;
             }
-            return true;
+            return false;
         });
     }
     *descendantsBackward() {

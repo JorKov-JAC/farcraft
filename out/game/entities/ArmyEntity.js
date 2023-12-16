@@ -36,8 +36,13 @@ export default class ArmyEntity extends Entity {
         }
     }
     renderImpl() {
+        const camera = current(Game).camera;
         const sprite = this.getCurrentSprite();
-        sprite.render(-sprite.size[0] / 2, -sprite.size[1]);
+        const radius = this.getRadius();
+        const spriteSize = sprite.sizeWithin(radius);
+        const worldPos = this.pos.slice().add2(-spriteSize[0] / 2, -spriteSize[1]);
+        const canvasPos = camera.worldPosToCanvas(worldPos).lock();
+        sprite.render(...canvasPos, radius * camera.worldSizeToCanvasFactor());
     }
 }
 //# sourceMappingURL=ArmyEntity.js.map

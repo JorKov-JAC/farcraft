@@ -2,6 +2,7 @@ import { rect } from "../engine/vector.js";
 import { images } from "../global.js";
 import { ctx } from "../context.js";
 import assets from "../assets.js";
+import ArmyEntity from "./entities/ArmyEntity.js";
 import Unit from "./entities/Unit.js";
 async function loadTilemapData(path) {
     const response = await fetch(path);
@@ -71,13 +72,16 @@ export default class World {
                 }
             }
         }
+        for (const armyEnt of this.ents.filter(e => e instanceof ArmyEntity)) {
+            armyEnt.baseRender();
+        }
         ctx.restore();
     }
     isSolid(x, y) {
         return !rect(0, 0, this.tilemap.width - 1, this.tilemap.height - 1).iAabbV2([x, y])
             || this.collisionGrid[Math.floor(y) * this.tilemap.width + Math.floor(x)];
     }
-    pathfind(a, b) {
+    pathfindBackward(a, b) {
         try {
             a = a.slice().floor();
             b = b.slice().floor();
@@ -151,7 +155,6 @@ export default class World {
                 path.push(currentNode.pos);
                 currentNode = currentNode.from;
             }
-            path.reverse();
             return path;
         }
         catch (e) {
@@ -184,13 +187,17 @@ export default class World {
         }
         return false;
     }
-    unitsWithinInclusive(x, y, w, h) {
-        const bounds = rect(x, y, w, h);
+    unitsWithinBoundsInclusive(x0, y0, x1, y1) {
+        if (x0 > x1)
+            [x0, x1] = [x1, x0];
+        if (y0 > y1)
+            [y0, y1] = [y1, y0];
+        const bounds = rect(x0, y0, x1 - x0, y1 - y0);
         return this.ents.filter(e => {
             if (!(e instanceof Unit))
                 return false;
-            const r = e.radius;
-            return bounds.iAabb4(e.pos[0] - r, e.pos[1] - r, e.pos[0] + r, e.pos[1] + r);
+            const r = e.getRadius();
+            return bounds.iAabb4(e.pos[0] - r, e.pos[1] - r, r * 2, r * 2);
         });
     }
     classId() {

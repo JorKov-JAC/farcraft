@@ -84,6 +84,9 @@ Array.prototype.rot90 = function () {
     [this[0], this[1]] = [-this[1], this[0]];
     return this;
 };
+Array.prototype.radians = function () {
+    return Math.atan2(this[1], this[0]);
+};
 Array.prototype.rectArea = function () {
     return this[0] * this[1];
 };

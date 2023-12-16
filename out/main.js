@@ -8,6 +8,7 @@ import TextButton from "./game/ui/buttons/TextButton.js";
 import Game from "./game/Game.js";
 import { v2 } from "./engine/vector.js";
 import { deserialize, serialize } from "./game/Serialize.js";
+import Marine from "./game/entities/Marine.js";
 const MAX_UPDATE_DT = 1 / 15;
 uiSounds.playSoundtrackUntilStopped(["music_aStepCloser", "music_darkfluxxTheme"]);
 const clock = new UiClock();
@@ -48,10 +49,11 @@ function nextSprite(offset = 0) {
 }
 nextSprite();
 const game = await Game.create("m1");
+game.world.ents.push(new Marine(0, v2(.5, 2.5)));
 const serialized = serialize(game);
 console.log(serialized);
 console.dir(await deserialize(serialized));
-console.dir(game.world.pathfind(v2(6, 9), v2(6, 5)));
+console.dir(game.world.pathfindBackward(v2(6, 9), v2(6, 5)));
 ui.panels.push(game.hud);
 function tick(dt) {
     ui.update(dt);
@@ -62,6 +64,7 @@ function tick(dt) {
     ctx.fillStyle = "#F00";
     ctx.fillRect(a.x, a.y, a.sub.w, a.sub.h);
     ctx.drawImage(mapTiles[currentTile].bitmap, 20, 200);
+    console.log(game.selectedEnts);
     ui.render();
     if (captureInput) {
         images.getAnim("cursor", "default").frames[0].render(...mousePos, ScreenCoord.sq(.1, 0).canvasSize[0]);

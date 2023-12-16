@@ -77,12 +77,13 @@ export default class UiTree {
 
 	private emptyOngoingMouseHolds(mouseUpEvent: GameMouseEvent) {
 		this.ongoingMouseHolds = this.ongoingMouseHolds.filter(e => {
-			if (e.button === mouseUpEvent.button) {
+			if (e.button !== mouseUpEvent.button) return true
+			
+			if (mouseUpEvent.button === MouseButton.LEFT) {
 				e.panel.onUnpress(mouseUpEvent.pos)
-				return false
 			}
 
-			return true
+			return false
 		})
 	}
 

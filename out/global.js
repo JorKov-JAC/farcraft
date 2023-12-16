@@ -67,7 +67,15 @@ canvas.addEventListener("mouseup", e => {
     if (e.button >= 3)
         return;
     e.preventDefault();
-    ui.addMouseEvent(new GameMouseEvent(1, e.button, v2(e.offsetX, e.offsetY)));
+    let pos;
+    if (!captureInput) {
+        canvas.requestPointerLock();
+        pos = v2(e.offsetX, e.offsetY);
+    }
+    else {
+        pos = mousePos.slice();
+    }
+    ui.addMouseEvent(new GameMouseEvent(1, e.button, pos));
 });
 canvas.addEventListener("pointermove", e => {
     if (captureInput) {
