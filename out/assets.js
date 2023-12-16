@@ -1,4 +1,5 @@
 import { spanArray } from "./engine/util.js";
+import Marine from "./game/entities/Marine.js";
 const images = {
     marine: {
         path: "sprites/infantry.png",
@@ -92,6 +93,12 @@ const images = {
         }
     }
 };
+const maps = {
+    m1: {
+        tilemapJsonPath: "maps/m1.tmj",
+        tileset: "techTiles"
+    }
+};
 const assets = {
     images,
     sounds: {
@@ -99,10 +106,38 @@ const assets = {
         music_aStepCloser: "music/aStepCloser.mp3",
         music_darkfluxxTheme: "music/darkfluxxTheme.mp3",
     },
-    maps: {
-        m1: {
-            tilemapJsonPath: "maps/m1.tmj",
-            tileset: "techTiles"
+    maps,
+    levels: {
+        level1: {
+            mapName: "m1",
+            cameraUpperLeft: [0, 0],
+            units: [
+                {
+                    owner: 0,
+                    units: [
+                        {
+                            constructor: Marine,
+                            instanceArgs: [
+                                {
+                                    pos: [2.5, 3.5]
+                                },
+                                {
+                                    pos: [2.5, 4.5]
+                                },
+                                {
+                                    pos: [2.5, 5.5]
+                                },
+                                {
+                                    pos: [3.5, 4]
+                                },
+                                {
+                                    pos: [3.5, 5]
+                                },
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     }
 };

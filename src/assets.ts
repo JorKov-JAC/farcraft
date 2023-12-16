@@ -1,4 +1,7 @@
 import { spanArray } from "./engine/util.js"
+import { ArmyEntityArgs, Owner } from "./game/entities/ArmyEntity.js"
+import Marine from "./game/entities/Marine.js"
+import Unit from "./game/entities/Unit.js"
 
 export interface ImageAssets {
 	[Name: string]: ImageAsset
@@ -46,6 +49,23 @@ export interface SpritesDef {
 export interface MapDef {
 	tilemapJsonPath: string
 	tileset: keyof typeof images
+}
+
+export interface UnitInfo<T extends abstract new (a: any) => Unit<any>> {
+	constructor: T
+	instanceArgs: Omit<ConstructorParameters<T>[0], "owner">[]
+	// args: {
+	// 	[K in keyof ConstructorParameters<T>]: ConstructorParameters<T>[K]
+	// }
+}
+
+export interface LevelDef {
+	mapName: keyof typeof maps
+	cameraUpperLeft: V2
+	units: {
+		owner: Owner
+		units: UnitInfo<any>[]
+	}[]
 }
 
 const images = {
@@ -151,6 +171,13 @@ const images = {
 	// },
 } satisfies ImageAssets
 
+const maps = {
+	m1: {
+		tilemapJsonPath: "maps/m1.tmj",
+		tileset: "techTiles"
+	}
+} satisfies Record<string, MapDef>
+
 const assets = {
 	images,
 	sounds: {
@@ -158,12 +185,40 @@ const assets = {
 		music_aStepCloser: "music/aStepCloser.mp3",
 		music_darkfluxxTheme: "music/darkfluxxTheme.mp3",
 	},
-	maps: {
-		m1: {
-			tilemapJsonPath: "maps/m1.tmj",
-			tileset: "techTiles"
+	maps,
+	levels: {
+		level1: {
+			mapName: "m1",
+			cameraUpperLeft: [0, 0],
+			units: [
+				{
+					owner: Owner.PLAYER,
+					units: [
+						{
+							constructor: Marine,
+							instanceArgs: [
+								{
+									pos: [2.5, 3.5]
+								},
+								{
+									pos: [2.5, 4.5]
+								},
+								{
+									pos: [2.5, 5.5]
+								},
+								{
+									pos: [3.5, 4]
+								},
+								{
+									pos: [3.5, 5]
+								},
+							]
+						} 
+					] satisfies UnitInfo<typeof Marine>[]
+				}
+			]
 		}
-	} satisfies Record<string, MapDef>
+	} satisfies Record<string, LevelDef>
 }
 
 export type ImageGroupName = Exclude<keyof (typeof assets)["images"], symbol>

@@ -1,10 +1,12 @@
 import assets from "./assets.js";
 import { canvas } from "./context.js";
+import GameStateManager from "./engine/GameState.js";
 import { SoundManager } from "./engine/audio.js";
 import { ImageManager } from "./engine/images.js";
 import { GameMouseEvent, MouseButton, MouseEventType } from "./engine/ui/GameMouseEvent.js";
 import UiTree from "./engine/ui/UiTree.js";
 import { v2 } from "./engine/vector.js";
+import GameplayState from "./game/gameStates/GameplayState.js";
 
 // Setup event listeners
 export let mousePos: V2 = v2(canvas.width / 2, canvas.height / 2)
@@ -22,7 +24,17 @@ await gameSounds.audioContext.suspend()
 
 // Use dynamic import to avoid looping dependencies
 // const UiTree = (await import("./engine/ui/UiTree.js")).default
-export const ui = new UiTree()
+export let ui = new UiTree()
+
+export function replaceUi(newUi: UiTree) {
+	gameSounds.stopSounds()
+	gameSounds.stopMusic()
+	uiSounds.stopMusic()
+
+	ui = newUi
+}
+
+export const gameStateManager = new GameStateManager(await GameplayState.newGame())
 
 export const keys: Record<string, { justPressed: boolean }> = Object.create(null)
 canvas.addEventListener("keydown", e => {
