@@ -36,6 +36,7 @@ canvas.addEventListener("keyup", e => {
 addEventListener("pointerlockchange", () => {
     if (document.pointerLockElement === canvas) {
         captureInput = true;
+        canvas.focus();
     }
     else {
         captureInput = false;

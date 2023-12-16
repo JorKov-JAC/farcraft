@@ -66,12 +66,6 @@ console.dir(await deserialize(serialized))
 console.dir(game.world.pathfind(v2(6, 9), v2(6, 5)))
 ui.panels.push(game.hud)
 
-for (let y = -1; y < 18; ++ y) {
-	console.log(
-		rangeArray(-1, 18).map(x => game.world.isRayObstructed(v2(0, 2), v2(x + .5, y + .5)))
-	)
-}
-
 
 
 
@@ -92,8 +86,6 @@ function tick(dt: number) {
 	ctx.fillRect(a.x, a.y, a.sub.w, a.sub.h)
 
 	ctx.drawImage(mapTiles[currentTile]!.bitmap, 20, 200)
-
-	console.log(game.world.isRayObstructed(game.camera.worldPos, game.camera.canvasPosToWorld(mousePos)))
 
 
 	ui.render()
