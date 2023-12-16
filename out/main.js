@@ -1,11 +1,13 @@
+import { canvas, ctx } from "./context.js";
 import { ScreenCoord } from "./engine/ui/ScreenCoord.js";
 import "./engine/vector.js";
-import GameplayState from "./game/gameStates/GameplayState.js";
+import MainMenuState from "./game/gameStates/MainMenuState.js";
 import { captureInput, images, keys, mousePos, ui, uiClock } from "./global.js";
 const MAX_UPDATE_DT = 1 / 15;
 const gameStateManager = (await import("./global.js")).gameStateManager;
-void gameStateManager.switch(GameplayState.newGame());
+void gameStateManager.switch(MainMenuState.create());
 function tick(dt) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     uiClock.update(dt);
     ui.update(dt);
     gameStateManager.update(dt);

@@ -51,9 +51,9 @@ export default class GameplayState extends GameState {
 		return localStorage.getItem(GameplayState.SAVE_LOCAL_STORAGE_KEY) !== null
 	}
 
-	static tryLoadGame(): GameplayState | null {
+	static async tryLoadGame(): Promise<GameplayState | null> {
 		try {
-			const game = deserialize(localStorage.getItem("save") as string) as unknown as Game
+			const game = await deserialize(localStorage.getItem("save") as string) as unknown as Game
 			if (!(game instanceof Game)) {
 				console.groupCollapsed("Deserialized successfully, but wasn't a game")
 				console.dir(game)

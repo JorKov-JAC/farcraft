@@ -37,9 +37,9 @@ export default class GameplayState extends GameState {
     static saveExists() {
         return localStorage.getItem(GameplayState.SAVE_LOCAL_STORAGE_KEY) !== null;
     }
-    static tryLoadGame() {
+    static async tryLoadGame() {
         try {
-            const game = deserialize(localStorage.getItem("save"));
+            const game = await deserialize(localStorage.getItem("save"));
             if (!(game instanceof Game)) {
                 console.groupCollapsed("Deserialized successfully, but wasn't a game");
                 console.dir(game);

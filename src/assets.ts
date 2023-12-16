@@ -185,7 +185,7 @@ const assets = {
 		death: "sounds/death.mp3",
 		pulseRifle1: "sounds/pulseRifle1.mp3",
 		pulseRifle2: "sounds/pulseRifle2.mp3",
-		// music_
+		music_spritzTherapy: "music/spritzTherapy.mp3",
 		music_aStepCloser: "music/aStepCloser.mp3",
 		music_darkfluxxTheme: "music/darkfluxxTheme.mp3",
 	},

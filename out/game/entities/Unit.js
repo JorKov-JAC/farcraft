@@ -71,7 +71,7 @@ export default class Unit extends ArmyEntity {
                 }
             }
         }
-        if (this.pathBackward.length > 0
+        if (path.length > 0
             && this.pos.slice().add2(-.5, -.5).sub(path[path.length - 1]).mag() <= radius)
             path.pop();
         const velTowardNode = v2(0, 0).mut();
