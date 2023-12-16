@@ -4,10 +4,10 @@ import SerializableId from "../SerializableId.js";
 import { ArmyEntityArgs } from "./ArmyEntity.js";
 import Unit from "./Unit.js";
 
-export default class Marine extends Unit<"marine"> {
+export default class Marine extends Unit<"sarge"> {
 	// eslint-disable-next-line @typescript-eslint/no-useless-constructor
-	constructor(args: Omit<ArmyEntityArgs<"marine">, "initialAnimation">) {
-		super({...args, initialAnimation: new Anim("marine", "idle")})
+	constructor(args: Omit<ArmyEntityArgs<"sarge">, "initialAnimation">) {
+		super({...args, initialAnimation: new Anim("sarge", "idle")})
 	}
 	
 	override updateImpl(dt: number): void {
@@ -18,19 +18,19 @@ export default class Marine extends Unit<"marine"> {
 		const speed = this.vel.mag()
 		if (this.attackCooldown > 0) {
 			if (this.anim.animationName !== "shoot") {
-				this.anim = new Anim("marine", "shoot")
+				this.anim = new Anim("sarge", "shoot")
 			} else {
 				this.anim.advance(dt / this.getAttackTime())
 			}
 		} else if (this.vel.mag() > maxSpeed * .1) {
 			if (this.anim.animationName !== "move") {
-				this.anim = new Anim("marine", "move")
+				this.anim = new Anim("sarge", "move")
 			} else {
 				this.anim.advance(speed / (radius * 2) * dt)
 			}
 		} else {
 			if (this.anim.animationName !== "idle") {
-				this.anim = new Anim("marine", "idle")
+				this.anim = new Anim("sarge", "idle")
 			} else {
 				this.anim.advance(dt)
 			}
@@ -38,13 +38,13 @@ export default class Marine extends Unit<"marine"> {
 	}
 
 	override getSpeed(): number {
-		return 3
+		return 2.5
 	}
 	override getAttackRange(): number {
-		return 5
+		return 4
 	}
 	override getAttackDamage(): number {
-		return 8
+		return 12
 	}
 	override getAttackTime(): number {
 		return 1
@@ -53,12 +53,12 @@ export default class Marine extends Unit<"marine"> {
 		return ["pulseRifle1", "pulseRifle2"]
 	}
 	override getRadius(): number {
-		return .4
+		return .5
 	}
 	override getMaxHealth(): number {
-		return 40
+		return 60
 	}
 	override classId(): SerializableId {
-		return SerializableId.MARINE
+		return SerializableId.SARGE
 	}
 }

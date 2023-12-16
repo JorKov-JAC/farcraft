@@ -7,6 +7,7 @@ import Camera from "./Camera.js";
 import Serializable from "./Serializable.js";
 import { SerializableClock, Tween } from "../engine/clock.js";
 import Anim from "./Anim.js";
+import Sarge from "./entities/Sarge.js";
 
 
 export function serializableIdToClass(id: SerializableId): unknown {
@@ -16,6 +17,8 @@ export function serializableIdToClass(id: SerializableId): unknown {
 			return Game;
 		case SerializableId.MARINE:
 			return Marine;
+		case SerializableId.SARGE:
+			return Sarge;
 		case SerializableId.WORLD:
 			return World
 		case SerializableId.CAMERA:

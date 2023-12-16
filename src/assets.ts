@@ -2,6 +2,7 @@ import { spanArray } from "./engine/util.js"
 import SerializableId from "./game/SerializableId.js"
 import { Owner } from "./game/entities/ArmyEntity.js"
 import Marine from "./game/entities/Marine.js"
+import Sarge from "./game/entities/Sarge.js"
 import Unit from "./game/entities/Unit.js"
 
 export interface ImageAssets {
@@ -124,6 +125,57 @@ const images = {
 			},
 		}
 	},
+	sarge: {
+		path: "sprites/bigInfantry.png",
+		spritesDefs: [
+			{
+				gridSize: [32, 32],
+				actualOffset: [0, 0],
+				actualSize: [32, 32],
+				baseOffset: [9, 15],
+				baseSize: [18, 15],
+				spans: [
+					{
+						start: [0, 224],
+						gridRect: [1, 1]
+					},
+					{
+						start: [0, 320],
+						gridRect: [4, 1]
+					},
+					{
+						start: [0, 352],
+						gridRect: [4, 1]
+					},
+					{
+						start: [0, 384],
+						gridRect: [7, 1]
+					}
+				]
+			}
+		],
+		anims: {
+			"spawn": {
+				frames: spanArray(11, -3)
+			},
+			"idle": {
+				duration: 1,
+				frames: [0]
+			},
+			"move": {
+				duration: 2,
+				frames: spanArray(1, 4)
+			},
+			"shoot": {
+				duration: 1,
+				frames: spanArray(5, 4)
+			},
+			"die": {
+				duration: 1,
+				frames: spanArray(9, 7)
+			},
+		}
+	},
 	techTiles: {
 		path: "sprites/techTiles.png",
 		spritesDefs: [
@@ -217,8 +269,16 @@ const assets = {
 									pos: [3.5, 5]
 								},
 							]
-						} 
-					] satisfies UnitInfo<typeof Marine>[]
+						} satisfies UnitInfo<typeof Marine>,
+						{
+							typeId: SerializableId.SARGE,
+							instanceArgs: [
+								{
+									pos: [5, 4.5]
+								}
+							]
+						} satisfies UnitInfo<typeof Sarge>
+					]
 				},
 				{
 					owner: Owner.ENEMY,

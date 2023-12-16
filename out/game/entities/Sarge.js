@@ -2,7 +2,7 @@ import Anim from "../Anim.js";
 import Unit from "./Unit.js";
 export default class Marine extends Unit {
     constructor(args) {
-        super({ ...args, initialAnimation: new Anim("marine", "idle") });
+        super({ ...args, initialAnimation: new Anim("sarge", "idle") });
     }
     updateImpl(dt) {
         super.updateImpl(dt);
@@ -11,7 +11,7 @@ export default class Marine extends Unit {
         const speed = this.vel.mag();
         if (this.attackCooldown > 0) {
             if (this.anim.animationName !== "shoot") {
-                this.anim = new Anim("marine", "shoot");
+                this.anim = new Anim("sarge", "shoot");
             }
             else {
                 this.anim.advance(dt / this.getAttackTime());
@@ -19,7 +19,7 @@ export default class Marine extends Unit {
         }
         else if (this.vel.mag() > maxSpeed * .1) {
             if (this.anim.animationName !== "move") {
-                this.anim = new Anim("marine", "move");
+                this.anim = new Anim("sarge", "move");
             }
             else {
                 this.anim.advance(speed / (radius * 2) * dt);
@@ -27,7 +27,7 @@ export default class Marine extends Unit {
         }
         else {
             if (this.anim.animationName !== "idle") {
-                this.anim = new Anim("marine", "idle");
+                this.anim = new Anim("sarge", "idle");
             }
             else {
                 this.anim.advance(dt);
@@ -35,13 +35,13 @@ export default class Marine extends Unit {
         }
     }
     getSpeed() {
-        return 3;
+        return 2.5;
     }
     getAttackRange() {
-        return 5;
+        return 4;
     }
     getAttackDamage() {
-        return 8;
+        return 12;
     }
     getAttackTime() {
         return 1;
@@ -50,13 +50,13 @@ export default class Marine extends Unit {
         return ["pulseRifle1", "pulseRifle2"];
     }
     getRadius() {
-        return .4;
+        return .5;
     }
     getMaxHealth() {
-        return 40;
+        return 60;
     }
     classId() {
-        return 6;
+        return 7;
     }
 }
-//# sourceMappingURL=Marine.js.map
+//# sourceMappingURL=Sarge.js.map
