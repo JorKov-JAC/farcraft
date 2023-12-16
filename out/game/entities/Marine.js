@@ -3,8 +3,8 @@ export default class Marine extends Unit {
     getMaxHealth() {
         throw new Error("Method not implemented.");
     }
-    update(dt) {
-        super.update(dt);
+    updateImpl(dt) {
+        super.updateImpl(dt);
         throw new Error("Method not implemented.");
     }
     render() {

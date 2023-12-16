@@ -19,7 +19,17 @@ export class Sprite {
         this.offset = offset.slice();
         this.size = size.slice();
     }
-    render(x, y, w = this.size[0], h = this.size[1]) {
+    render(x, y, maxBaseLen = this.size.max()) {
+        const ratio = this.size[0] / this.size[1];
+        let w, h;
+        if (ratio > 1) {
+            w = maxBaseLen;
+            h = w * ratio;
+        }
+        else {
+            h = maxBaseLen;
+            w = h * ratio;
+        }
         w = this.bitmap.width * w / this.size[0];
         h = this.bitmap.height * h / this.size[1];
         ctx.drawImage(this.bitmap, x + this.offset[0], y + this.offset[1], w, h);

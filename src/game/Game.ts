@@ -1,5 +1,6 @@
 import assets from "../assets.js";
 import { ctx } from "../context.js";
+import { provide } from "../engine/Provider.js";
 import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
 import { v2 } from "../engine/vector.js";
 import { mousePos } from "../global.js";
@@ -17,7 +18,7 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 
 	ongoingDrag: V2 | null = null
 
-	selectedEnts: ArmyEntity[] = []
+	readonly selectedEnts: Set<ArmyEntity> = new Set()
 
 	private constructor(world: World) {
 		this.camera = new Camera(this, v2(0, 0), 10)
@@ -33,28 +34,34 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 	}
 
 	update(dt: number) {
-		this.camera.update(dt)
+		provide(Game, this, () => {
+
+			this.camera.update(dt)
+
+		})
 	}
 
 	render(x: number, y: number, w: number, h: number) {
-		this.world.render(
-			x, y,
-			w, h,
-			...this.camera.worldPos,
-			this.camera.minLen
-		)
+		provide(Game, this, () => {
+			this.world.render(
+				x, y,
+				w, h,
+				...this.camera.worldPos,
+				this.camera.minLen
+			)
 
-		ctx.save()
-		if (this.ongoingDrag) {
-			const canvasDragStart = this.camera.worldPosToCanvas(this.ongoingDrag).lock()
-			ctx.fillStyle = "#0F02"
-			ctx.strokeStyle = "#0F0B"
-			ctx.beginPath()
-			ctx.rect(...canvasDragStart, ...mousePos.slice().sub(canvasDragStart).lock())
-			ctx.fill()
-			ctx.stroke()
-		}
-		ctx.restore()
+			ctx.save()
+			if (this.ongoingDrag) {
+				const canvasDragStart = this.camera.worldPosToCanvas(this.ongoingDrag).lock()
+				ctx.fillStyle = "#0F02"
+				ctx.strokeStyle = "#0F0B"
+				ctx.beginPath()
+				ctx.rect(...canvasDragStart, ...mousePos.slice().sub(canvasDragStart).lock())
+				ctx.fill()
+				ctx.stroke()
+			}
+			ctx.restore()
+		})
 	}
 
 	startDrag(pos: V2) {
@@ -66,9 +73,14 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 
 		const endPos = this.camera.canvasPosToWorld(pos).lock()
 
-		this.selectedEnts = this.world
+		this.selectedEnts.clear()
+		const selected = this.world
 			.unitsWithinInclusive(...this.ongoingDrag, ...endPos)
 			.filter(e => e.owner === Owner.PLAYER)
+		for (const ent of selected) {
+			this.selectedEnts.add(ent)
+		}
+
 		this.ongoingDrag = null
 	}
 

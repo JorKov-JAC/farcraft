@@ -2,7 +2,6 @@ import ArmyEntity from "./ArmyEntity.js";
 
 export default abstract class Unit extends ArmyEntity {
 	vel: V2
-	radius: number
 
 	angle: number = 0
 

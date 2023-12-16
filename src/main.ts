@@ -90,7 +90,7 @@ function tick(dt: number) {
 
 	ui.render()
 	if (captureInput) {
-		images.getAnim("cursor", "default").frames[0]!.render(...mousePos)
+		images.getAnim("cursor", "default").frames[0]!.render(...mousePos, ScreenCoord.sq(.1, 0).canvasSize[0])
 	}
 
 	clock.update(dt)

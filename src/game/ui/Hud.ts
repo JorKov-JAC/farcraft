@@ -25,6 +25,12 @@ export default class Hud extends Panel {
 		this.children.push(...children)
 	}
 	
+	override baseUpdate(dt: number) {
+		provide(Game, this.game, () => {
+			super.baseUpdate(dt)
+		})
+	}
+
 	override baseRender() {
 		provide(Game, this.game, () => {
 			super.baseRender()

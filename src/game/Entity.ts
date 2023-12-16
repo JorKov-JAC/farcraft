@@ -3,6 +3,14 @@ import SerializableId from "./SerializableId.js";
 
 export default abstract class Entity implements Serializable {
 	abstract classId(): SerializableId
-	abstract update(dt: number): void
-	abstract render(): void
+
+	baseUpdate(dt: number) {
+		this.updateImpl(dt)
+	}
+	abstract updateImpl(dt: number): void
+
+	baseRender() {
+		this.renderImpl()
+	}
+	abstract renderImpl(): void
 }

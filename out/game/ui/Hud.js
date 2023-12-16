@@ -20,6 +20,11 @@ export default class Hud extends Panel {
         ];
         this.children.push(...children);
     }
+    baseUpdate(dt) {
+        provide(Game, this.game, () => {
+            super.baseUpdate(dt);
+        });
+    }
     baseRender() {
         provide(Game, this.game, () => {
             super.baseRender();
