@@ -1,7 +1,16 @@
 import { ScreenCoord } from "../../../engine/ui/ScreenCoord.js";
 import { ctx } from "../../../context.js";
 import TechPanel from "../TechPanel.js";
+import TextButton from "../buttons/TextButton.js";
+import { gameStateManager } from "../../../global.js";
 export default class Minimap extends TechPanel {
+    constructor(pos, size) {
+        super(pos, size);
+        this.children.push(new TextButton("Save", () => {
+            const gameplayState = gameStateManager.state;
+            gameplayState.saveGame();
+        }, ScreenCoord.rect(.2, .7), ScreenCoord.rect(.6, .2)));
+    }
     renderImpl() {
         super.renderImpl();
         ctx.save();

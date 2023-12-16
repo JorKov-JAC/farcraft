@@ -2,6 +2,7 @@ import assets from "./assets.js";
 import { canvas } from "./context.js";
 import GameStateManager from "./engine/GameState.js";
 import { SoundManager } from "./engine/audio.js";
+import { UiClock } from "./engine/clock.js";
 import { ImageManager } from "./engine/images.js";
 import { GameMouseEvent, MouseButton, MouseEventType } from "./engine/ui/GameMouseEvent.js";
 import UiTree from "./engine/ui/UiTree.js";
@@ -23,6 +24,8 @@ export const uiSounds = await SoundManager.create(assets.sounds)
 await uiSounds.audioContext.suspend()
 export const gameSounds = await SoundManager.create(assets.sounds)
 await gameSounds.audioContext.suspend()
+
+export const uiClock = new UiClock()
 
 // Use dynamic import to avoid looping dependencies
 // const UiTree = (await import("./engine/ui/UiTree.js")).default

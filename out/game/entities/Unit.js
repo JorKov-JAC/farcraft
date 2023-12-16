@@ -1,6 +1,7 @@
 import { ctx } from "../../context.js";
 import { current } from "../../engine/Provider.js";
 import { rect, v2 } from "../../engine/vector.js";
+import { gameSounds } from "../../global.js";
 import Game from "../Game.js";
 import ArmyEntity from "./ArmyEntity.js";
 export default class Unit extends ArmyEntity {
@@ -8,7 +9,11 @@ export default class Unit extends ArmyEntity {
     angle = 0;
     pathBackward = [];
     lastDestination = this.pos.slice();
+    target = null;
+    attackCooldown = 0;
+    command = 0;
     updateImpl(dt) {
+        this.attackCooldown -= dt;
         const world = current(Game).world;
         const speed = this.getSpeed();
         const radius = this.getRadius();
@@ -35,14 +40,50 @@ export default class Unit extends ArmyEntity {
                 }
             }
         }
+        if (this.target && this.target.health <= 0)
+            this.target = null;
+        const attackRange = this.getAttackRange();
+        if (!this.target && this.command !== 1) {
+            for (const e of world.unitsWithinBoundsInclusive(this.pos[0] - attackRange, this.pos[1] - attackRange, this.pos[0] + attackRange, this.pos[1] + attackRange)) {
+                if (this.owner === e.owner || e.owner === 3)
+                    continue;
+                if (this.pos.dist(e.pos) <= attackRange && !world.isRayObstructed(this.pos, e.pos)) {
+                    this.target = e;
+                }
+            }
+        }
+        if (this.command === 1)
+            this.target = null;
+        const target = this.target;
+        if (target) {
+            const dist = this.pos.dist(target.pos);
+            if (dist > attackRange || world.isRayObstructed(this.pos, target.pos)) {
+                this.commandAttackMoveTo(target.pos, world);
+            }
+            else {
+                if (this.attackCooldown <= 0) {
+                    target.health -= this.getAttackDamage();
+                    this.angle = target.pos.slice().sub(this.pos).radians();
+                    this.attackCooldown = this.getAttackTime();
+                    const attackSounds = this.getAttackSounds();
+                    const sound = attackSounds[Math.floor(Math.random() * attackSounds.length)];
+                    void gameSounds.playSound(sound);
+                }
+            }
+        }
         if (this.pathBackward.length > 0
             && this.pos.slice().add2(-.5, -.5).sub(path[path.length - 1]).mag() <= radius)
             path.pop();
         const velTowardNode = v2(0, 0).mut();
-        if (this.pathBackward.length > 0) {
-            const targetNode = path[path.length - 1];
-            velTowardNode.set(...targetNode.slice().add2(.5, .5).sub(this.pos).normOr(0, 0).mul(speed).lock());
-            this.angle = this.vel.radians();
+        if (this.attackCooldown <= 0) {
+            if (this.pathBackward.length > 0) {
+                const targetNode = path[path.length - 1];
+                velTowardNode.set(...targetNode.slice().add2(.5, .5).sub(this.pos).normOr(0, 0).mul(speed).lock());
+                this.angle = this.vel.radians();
+            }
+            else {
+                this.command = 0;
+            }
         }
         const pushVel = v2(0, 0).mut();
         for (const e of world.unitsWithinBoundsInclusive(...aabb)) {
@@ -63,6 +104,7 @@ export default class Unit extends ArmyEntity {
             if (pushFactor > .25 && dest && e.pathBackward.length === 0 && dest.dist(e.lastDestination) < .1) {
                 this.pathBackward.length = 0;
                 velTowardNode.set(0, 0);
+                this.command = 0;
             }
         }
         this.vel.mut().set(...velTowardNode.lock()).add(pushVel);
@@ -78,6 +120,14 @@ export default class Unit extends ArmyEntity {
         else {
             this.lastDestination = this.pos.slice();
         }
+    }
+    commandMoveTo(dest, world) {
+        this.startMovingTo(dest, world);
+        this.command = 1;
+    }
+    commandAttackMoveTo(dest, world) {
+        this.startMovingTo(dest, world);
+        this.command = 2;
     }
     renderImpl() {
         ctx.save();

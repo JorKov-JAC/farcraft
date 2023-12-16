@@ -1,11 +1,12 @@
 import { ScreenCoord } from "./engine/ui/ScreenCoord.js";
 import "./engine/vector.js";
 import GameplayState from "./game/gameStates/GameplayState.js";
-import { captureInput, images, keys, mousePos, ui } from "./global.js";
+import { captureInput, images, keys, mousePos, ui, uiClock } from "./global.js";
 const MAX_UPDATE_DT = 1 / 15;
 const gameStateManager = (await import("./global.js")).gameStateManager;
 void gameStateManager.switch(GameplayState.newGame());
 function tick(dt) {
+    uiClock.update(dt);
     ui.update(dt);
     gameStateManager.update(dt);
     ui.render();

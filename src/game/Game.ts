@@ -36,10 +36,8 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 
 	update(dt: number) {
 		provide(Game, this, () => {
-
 			this.camera.update(dt)
 			this.world.update(dt)
-
 		})
 
 		for (const e of this.selectedEnts.values()) {
@@ -95,7 +93,15 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 		for (const e of this.selectedEnts.values()) {
 			if (!(e instanceof Unit)) continue
 
-			e.startMovingTo(pos, this.world)
+			e.commandMoveTo(pos, this.world)
+		}
+	}
+
+	orderAttackMove(pos: V2) {
+		for (const e of this.selectedEnts.values()) {
+			if (!(e instanceof Unit)) continue
+
+			e.commandAttackMoveTo(pos, this.world)
 		}
 	}
 

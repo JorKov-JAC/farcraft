@@ -8,7 +8,8 @@ import Game from "../Game.js";
 export const enum Owner {
 	PLAYER,
 	ENEMY,
-	RESCUABLE
+	RESCUABLE,
+	NEUTRAL
 }
 
 export type ArmyEntityArgs<AnimGroupName extends ImageGroupName> = {

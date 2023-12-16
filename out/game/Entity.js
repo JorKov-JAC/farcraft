@@ -5,5 +5,6 @@ export default class Entity {
     baseRender() {
         this.renderImpl();
     }
+    shouldCleanUp() { return false; }
 }
 //# sourceMappingURL=Entity.js.map

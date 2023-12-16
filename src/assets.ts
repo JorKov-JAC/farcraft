@@ -183,6 +183,8 @@ const assets = {
 	images,
 	sounds: {
 		death: "sounds/death.mp3",
+		pulseRifle1: "sounds/pulseRifle1.mp3",
+		pulseRifle2: "sounds/pulseRifle2.mp3",
 		// music_
 		music_aStepCloser: "music/aStepCloser.mp3",
 		music_darkfluxxTheme: "music/darkfluxxTheme.mp3",
@@ -213,6 +215,34 @@ const assets = {
 								},
 								{
 									pos: [3.5, 5]
+								},
+							]
+						} 
+					] satisfies UnitInfo<typeof Marine>[]
+				},
+				{
+					owner: Owner.ENEMY,
+					units: [
+						{
+							typeId: SerializableId.MARINE,
+							instanceArgs: [
+								{
+									pos: [10.5, 16.5]
+								},
+								{
+									pos: [2.5, 16.25]
+								},
+								{
+									pos: [29.5, 4.5]
+								},
+								{
+									pos: [25, 5.5]
+								},
+								{
+									pos: [29, 12.5]
+								},
+								{
+									pos: [30, 6.5]
 								},
 							]
 						} 

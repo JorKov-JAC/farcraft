@@ -13,4 +13,6 @@ export default abstract class Entity implements Serializable {
 		this.renderImpl()
 	}
 	abstract renderImpl(): void
+
+	shouldCleanUp() { return false }
 }

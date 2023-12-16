@@ -1,13 +1,15 @@
 import { rect } from "../engine/vector.js"
-import { images } from "../global.js"
+import { gameSounds, images } from "../global.js"
 import { ctx } from "../context.js"
-import assets from "../assets.js"
+import assets, { ImageGroupName } from "../assets.js"
 import Direction from "../engine/Direction.js"
 import Serializable from "./Serializable.js"
 import SerializableId from "./SerializableId.js"
 import Entity from "./Entity.js"
 import ArmyEntity from "./entities/ArmyEntity.js"
 import Unit from "./entities/Unit.js"
+import Corpse from "./entities/Corpse.js"
+import Anim from "./Anim.js"
 
 interface TilemapData {
 	width: number
@@ -77,6 +79,31 @@ export default class World implements Serializable<World, { mapName: string }> {
 		for (const ent of this.ents) {
 			ent.baseUpdate(dt)
 		}
+
+		let entDied = false
+		const newCorpses: Corpse<any>[] = []
+		this.ents = this.ents.filter(e => {
+			if (e instanceof Unit) {
+				if (e.health > 0) return true
+				entDied = true
+				const animGroupName = e.anim.groupName as ImageGroupName
+				const anims = assets.images[animGroupName].anims
+				if ("death" in anims) {
+					// newCorpses.push(new Corpse(e.pos, e.getRadius(), new Anim(animGroupName, "death")))
+				}
+				return false
+			}
+
+			return true
+		})
+
+		this.ents.push(...newCorpses)
+
+		if (entDied) {
+			void gameSounds.playSound("death")
+		}
+
+		this.ents = this.ents.filter(e => !e.shouldCleanUp())
 	}
 
 	/**

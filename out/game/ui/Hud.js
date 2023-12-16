@@ -14,11 +14,14 @@ export default class Hud extends Panel {
         this.game = game;
         game.camera.extraYMult = .05 / .8;
         this.worldPanel = new WorldPanel(ScreenCoord.rect(0, 0), ScreenCoord.rect(1, .8), game);
+        const minimap = new Minimap(ScreenCoord.rect(0, 1).setSq(0, -.25), ScreenCoord.sq(.25, .25));
+        const commandMap = new CommandMap(ScreenCoord.rect(1, 1).setSq(-.25, -.25), ScreenCoord.sq(.25, .25));
+        const unitList = new UnitList(ScreenCoord.rect(0, .8).setSq(.25, 0), ScreenCoord.rect(1, .2).setSq(-.5, 0));
         const children = [
             this.worldPanel,
-            new Minimap(ScreenCoord.rect(0, 1).setSq(0, -.25), ScreenCoord.sq(.25, .25)),
-            new CommandMap(ScreenCoord.rect(1, 1).setSq(-.25, -.25), ScreenCoord.sq(.25, .25)),
-            new UnitList(ScreenCoord.rect(0, .8).setSq(.25, 0), ScreenCoord.rect(1, .2).setSq(-.5, 0))
+            minimap,
+            commandMap,
+            unitList
         ];
         this.children.push(...children);
     }

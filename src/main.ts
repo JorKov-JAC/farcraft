@@ -1,7 +1,7 @@
 import { ScreenCoord } from "./engine/ui/ScreenCoord.js"
 import "./engine/vector.js"
 import GameplayState from "./game/gameStates/GameplayState.js"
-import { captureInput, images, keys, mousePos, ui } from "./global.js"
+import { captureInput, images, keys, mousePos, ui, uiClock } from "./global.js"
 
 /** The max delta time for updates (for stability). */
 const MAX_UPDATE_DT = 1/15
@@ -11,6 +11,7 @@ void gameStateManager.switch(GameplayState.newGame())
 
 /** Performs a single tick (update, render) */
 function tick(dt: number) {
+	uiClock.update(dt)
 	ui.update(dt)
 	gameStateManager.update(dt)
 

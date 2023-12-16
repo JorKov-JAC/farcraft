@@ -29,7 +29,7 @@ export default class Anim<T extends ImageGroupName> implements Serializable {
 		if ("duration" in anim) {
 			return anim.duration
 		}
-		return anim.frames.length
+		return 1
 	}
 
 	getSprite() {

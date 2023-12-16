@@ -21,7 +21,7 @@ export default class Anim {
         if ("duration" in anim) {
             return anim.duration;
         }
-        return anim.frames.length;
+        return 1;
     }
     getSprite() {
         const anim = this.getAnim();

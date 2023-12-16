@@ -70,7 +70,14 @@ export default class Game {
         for (const e of this.selectedEnts.values()) {
             if (!(e instanceof Unit))
                 continue;
-            e.startMovingTo(pos, this.world);
+            e.commandMoveTo(pos, this.world);
+        }
+    }
+    orderAttackMove(pos) {
+        for (const e of this.selectedEnts.values()) {
+            if (!(e instanceof Unit))
+                continue;
+            e.commandAttackMoveTo(pos, this.world);
         }
     }
     isSelected(e) {

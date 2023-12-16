@@ -1,5 +1,6 @@
 import { Panel } from "../../../engine/ui/Panel.js";
 import { ScreenCoord } from "../../../engine/ui/ScreenCoord.js";
+import { keys, mousePos } from "../../../global.js";
 import Game from "../../Game.js";
 
 export default class WorldPanel extends Panel {
@@ -15,6 +16,13 @@ export default class WorldPanel extends Panel {
 			...ScreenCoord.rect(0, 0).canvasPos,
 			...ScreenCoord.rect(1, 1).canvasSize,
 		)
+	}
+
+	override updateImpl(dt: number): void {
+		super.updateImpl(dt)
+		if (keys["a"]) {
+			this.game.orderAttackMove(this.game.camera.canvasPosToWorld(mousePos))
+		}
 	}
 
 	override onPress(pos: V2): void {

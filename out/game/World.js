@@ -1,5 +1,5 @@
 import { rect } from "../engine/vector.js";
-import { images } from "../global.js";
+import { gameSounds, images } from "../global.js";
 import { ctx } from "../context.js";
 import assets from "../assets.js";
 import ArmyEntity from "./entities/ArmyEntity.js";
@@ -47,6 +47,26 @@ export default class World {
         for (const ent of this.ents) {
             ent.baseUpdate(dt);
         }
+        let entDied = false;
+        const newCorpses = [];
+        this.ents = this.ents.filter(e => {
+            if (e instanceof Unit) {
+                if (e.health > 0)
+                    return true;
+                entDied = true;
+                const animGroupName = e.anim.groupName;
+                const anims = assets.images[animGroupName].anims;
+                if ("death" in anims) {
+                }
+                return false;
+            }
+            return true;
+        });
+        this.ents.push(...newCorpses);
+        if (entDied) {
+            void gameSounds.playSound("death");
+        }
+        this.ents = this.ents.filter(e => !e.shouldCleanUp());
     }
     render(startX, startY, w, h, startTileX, startTileY, tiles) {
         ctx.save();
