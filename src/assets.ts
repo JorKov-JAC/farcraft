@@ -67,7 +67,7 @@ const images = {
 						gridRect: [4, 1]
 					},
 					{
-						start: [0, 4 * 32],
+						start: [32, 7 * 32],
 						gridRect: [1, 1]
 					},
 					{
