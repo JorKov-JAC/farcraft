@@ -65,12 +65,16 @@ export default abstract class Unit extends ArmyEntity {
 			const otherRadius = e.getRadius()
 			const pushFactor = Math.max(0, 1 - (dist - otherRadius) / radius)
 
-			pushVel.add(
-				this.pos
-					.slice()
-					.sub(e.pos)
-					.normOr(Math.random(), Math.random())
-					.mul(speed * pushFactor)
+			const jiggle = Math.random() * .0001
+
+			const away = this.pos
+				.slice()
+				.sub(e.pos)
+				.normOr(Math.random(), Math.random())
+
+			pushVel.add(away
+				.mul(speed * pushFactor)
+				.add(away.slice().rot90().mul(jiggle))
 			)
 
 			const dest = this.pathBackward[0]
