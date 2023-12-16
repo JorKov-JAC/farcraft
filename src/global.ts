@@ -6,7 +6,9 @@ import { ImageManager } from "./engine/images.js";
 import { GameMouseEvent, MouseButton, MouseEventType } from "./engine/ui/GameMouseEvent.js";
 import UiTree from "./engine/ui/UiTree.js";
 import { v2 } from "./engine/vector.js";
-import GameplayState from "./game/gameStates/GameplayState.js";
+import LoadingState from "./game/gameStates/LoadingState.js";
+
+export const gameStateManager = new GameStateManager(() => new LoadingState())
 
 // Setup event listeners
 export let mousePos: V2 = v2(canvas.width / 2, canvas.height / 2)
@@ -33,8 +35,6 @@ export function replaceUi(newUi: UiTree) {
 
 	ui = newUi
 }
-
-export const gameStateManager = new GameStateManager(await GameplayState.newGame())
 
 export const keys: Record<string, { justPressed: boolean }> = Object.create(null)
 canvas.addEventListener("keydown", e => {

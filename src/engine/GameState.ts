@@ -1,15 +1,31 @@
 export default class GameStateManager {
 	state: GameState
 
-	constructor(state: GameState) {
-		this.state = state
-		state.enter()
+	loadingScreenCreator: () => GameState
+	loadingState: Promise<GameState> | null
+
+	constructor(loadingScreenCreator: () => GameState) {
+		this.loadingScreenCreator = loadingScreenCreator
+		this.state = loadingScreenCreator()
+		this.state.enter()
+
+		this.loadingState = null
 	}
 
-	switch(newState: GameState) {
+	async switch(newState: Promise<GameState>): Promise<boolean> {
 		this.state.exit()
-		this.state = newState
-		newState.enter()
+		this.state = this.loadingScreenCreator()
+		this.state.enter()
+
+		this.loadingState = newState
+		return await newState.then(e => {
+			if (newState !== this.loadingState) return false
+
+			this.state = e
+			e.enter()
+
+			return true
+		})
 	}
 
 	update(dt: number) {

@@ -4,7 +4,7 @@ import { GameState } from "../../engine/GameState.js";
 import UiTree from "../../engine/ui/UiTree.js";
 import { replaceUi, uiSounds } from "../../global.js";
 import Game from "../Game.js";
-import { deserialize, serialize } from "../Serialize.js";
+import { deserialize, serializableIdToClass, serialize } from "../Serialize.js";
 
 export default class GameplayState extends GameState {
 	static SAVE_LOCAL_STORAGE_KEY = "save"
@@ -33,10 +33,12 @@ export default class GameplayState extends GameState {
 			const ownerFb = new FactoryBuilder({owner: ownersUnits.owner})
 
 			for (const unitTypeGroup of ownersUnits.units) {
-				const constructor = unitTypeGroup.constructor
+				const constructor = serializableIdToClass(unitTypeGroup.typeId)
 
 				for (const args of unitTypeGroup.instanceArgs) {
-					const factory = ownerFb.with(args).forClass<typeof constructor>(constructor)
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+					const factory = ownerFb.with(args).forClass<any>(constructor as any)
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 					game.world.ents.push(factory.spawn())
 				}
 			}

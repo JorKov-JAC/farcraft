@@ -1,1 +1,1 @@
-{"version":3,"file":"MainMenuState.js","sourceRoot":"","sources":["../../../src/game/gameStates/MainMenuState.tsx"],"names":[],"mappings":""}
+{"version":3,"file":"MainMenuState.js","sourceRoot":"","sources":["../../../src/game/gameStates/MainMenuState.ts"],"names":[],"mappings":"AAAA,OAAO,SAAS,MAAM,2BAA2B,CAAC;AAElD,MAAM,CAAC,OAAO,OAAO,aAAc,SAAQ,SAAS;CAEnD"}

@@ -1,5 +1,4 @@
 import { spanArray } from "./engine/util.js";
-import Marine from "./game/entities/Marine.js";
 const images = {
     marine: {
         path: "sprites/infantry.png",
@@ -116,7 +115,7 @@ const assets = {
                     owner: 0,
                     units: [
                         {
-                            constructor: Marine,
+                            typeId: 6,
                             instanceArgs: [
                                 {
                                     pos: [2.5, 3.5]

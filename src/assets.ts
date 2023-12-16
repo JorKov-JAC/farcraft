@@ -1,5 +1,6 @@
 import { spanArray } from "./engine/util.js"
-import { ArmyEntityArgs, Owner } from "./game/entities/ArmyEntity.js"
+import SerializableId from "./game/SerializableId.js"
+import { Owner } from "./game/entities/ArmyEntity.js"
 import Marine from "./game/entities/Marine.js"
 import Unit from "./game/entities/Unit.js"
 
@@ -52,7 +53,7 @@ export interface MapDef {
 }
 
 export interface UnitInfo<T extends abstract new (a: any) => Unit<any>> {
-	constructor: T
+	typeId: SerializableId
 	instanceArgs: Omit<ConstructorParameters<T>[0], "owner">[]
 	// args: {
 	// 	[K in keyof ConstructorParameters<T>]: ConstructorParameters<T>[K]
@@ -182,6 +183,7 @@ const assets = {
 	images,
 	sounds: {
 		death: "sounds/death.mp3",
+		// music_
 		music_aStepCloser: "music/aStepCloser.mp3",
 		music_darkfluxxTheme: "music/darkfluxxTheme.mp3",
 	},
@@ -195,7 +197,7 @@ const assets = {
 					owner: Owner.PLAYER,
 					units: [
 						{
-							constructor: Marine,
+							typeId: SerializableId.MARINE,
 							instanceArgs: [
 								{
 									pos: [2.5, 3.5]
