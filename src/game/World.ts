@@ -73,6 +73,12 @@ export default class World implements Serializable<World, { mapName: string }> {
 		return new World(mapDefName, tilemap, collisionGrid, [])
 	}
 
+	update(dt: number) {
+		for (const ent of this.ents) {
+			ent.baseUpdate(dt)
+		}
+	}
+
 	/**
 	 * @param tiles Scale of 1 would be 1 tile for every min(w, h), 2 would be
 	 * 2 tiles and so on.
@@ -125,7 +131,9 @@ export default class World implements Serializable<World, { mapName: string }> {
 			}
 		}
 
-		for (const armyEnt of this.ents.filter(e => e instanceof ArmyEntity)) {
+		const armyEnts = this.ents.filter(e => e instanceof ArmyEntity) as ArmyEntity[]
+		armyEnts.sort((a, b) => a.pos[1] - b.pos[1])
+		for (const armyEnt of armyEnts) {
 			armyEnt.baseRender()
 		}
 

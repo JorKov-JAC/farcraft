@@ -10,12 +10,17 @@ export default class Unit extends ArmyEntity {
         const speed = this.getSpeed();
         const path = this.pathBackward;
         if (this.pathBackward.length > 0
-            && this.pos.slice().floor().equals(path[path.length - 1]))
+            && this.pos.slice().add2(-.5, -.5).sub(path[path.length - 1]).mag() <= .1)
             path.pop();
         if (this.pathBackward.length > 0) {
-            const nextPath = path[path.length - 1];
-            this.vel.mut().set(...nextPath.slice().sub(this.pos).normOr(0, 0).mul(speed).lock());
+            const targetNode = path[path.length - 1];
+            this.vel.mut().set(...targetNode.slice().add2(.5, .5).sub(this.pos).normOr(0, 0).mul(speed).lock());
         }
+        else {
+            this.vel.mut().set(0, 0);
+        }
+        if (this.vel.mag() > speed)
+            this.vel.mut().normOr(0, 0).mul(speed);
         this.pos.mut().add(this.vel.slice().mul(dt));
         this.angle = this.vel.radians();
     }

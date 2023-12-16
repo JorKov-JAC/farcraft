@@ -1,10 +1,10 @@
 import Unit from "./Unit.js";
 export default class Marine extends Unit {
     getSpeed() {
-        return 1;
+        return 2;
     }
     getRadius() {
-        return .5;
+        return .4;
     }
     getMaxHealth() {
         return 40;

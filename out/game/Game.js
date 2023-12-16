@@ -25,6 +25,7 @@ export default class Game {
     update(dt) {
         provide(Game, this, () => {
             this.camera.update(dt);
+            this.world.update(dt);
         });
         for (const e of this.selectedEnts.values()) {
             if (e.health <= 0)

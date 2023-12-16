@@ -37,6 +37,7 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 		provide(Game, this, () => {
 
 			this.camera.update(dt)
+			this.world.update(dt)
 
 		})
 

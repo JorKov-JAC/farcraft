@@ -62,7 +62,10 @@ function nextSprite(offset = 0) {
 nextSprite()
 
 const game = await Game.create("m1")
-game.world.ents.push(new Marine(Owner.PLAYER, v2(.5, 2.5)))
+const m = new Marine(Owner.PLAYER, v2(.5, 2.5))
+game.world.ents.push(m)
+m.startMovingTo(v2(5.5, 3.5), game.world)
+game.world.ents.push(new Marine(Owner.PLAYER, v2(4.5, 2.5)))
 const serialized = serialize(game)
 console.log(serialized)
 console.dir(await deserialize(serialized))

@@ -43,6 +43,11 @@ export default class World {
         }
         return new World(mapDefName, tilemap, collisionGrid, []);
     }
+    update(dt) {
+        for (const ent of this.ents) {
+            ent.baseUpdate(dt);
+        }
+    }
     render(startX, startY, w, h, startTileX, startTileY, tiles) {
         ctx.save();
         ctx.beginPath();
@@ -72,7 +77,9 @@ export default class World {
                 }
             }
         }
-        for (const armyEnt of this.ents.filter(e => e instanceof ArmyEntity)) {
+        const armyEnts = this.ents.filter(e => e instanceof ArmyEntity);
+        armyEnts.sort((a, b) => a.pos[1] - b.pos[1]);
+        for (const armyEnt of armyEnts) {
             armyEnt.baseRender();
         }
         ctx.restore();
