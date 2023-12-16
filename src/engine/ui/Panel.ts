@@ -89,4 +89,7 @@ export abstract class Panel {
 	/** Called when the mouse is pressed and released on this panel. */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onClick(_pos: V2) { }
+
+	/** Like {@link onPress}, but for the right mouse button. */
+	onRightPress(_pos: V2) { }
 }

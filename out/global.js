@@ -45,6 +45,11 @@ addEventListener("pointerlockchange", () => {
     }
 });
 canvas.addEventListener("mousedown", e => {
+    if (captureInput)
+        e.preventDefault();
+    if (e.button >= 3)
+        return;
+    e.preventDefault();
     let pos;
     if (!captureInput) {
         canvas.requestPointerLock();
@@ -53,10 +58,15 @@ canvas.addEventListener("mousedown", e => {
     else {
         pos = mousePos.slice();
     }
-    ui.addMouseEvent(new GameMouseEvent(0, pos));
+    ui.addMouseEvent(new GameMouseEvent(0, e.button, pos));
 });
 canvas.addEventListener("mouseup", e => {
-    ui.addMouseEvent(new GameMouseEvent(1, v2(e.offsetX, e.offsetY)));
+    if (captureInput)
+        e.preventDefault();
+    if (e.button >= 3)
+        return;
+    e.preventDefault();
+    ui.addMouseEvent(new GameMouseEvent(1, e.button, v2(e.offsetX, e.offsetY)));
 });
 canvas.addEventListener("pointermove", e => {
     if (captureInput) {

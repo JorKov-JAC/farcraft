@@ -1,4 +1,4 @@
-import { MouseEventType, GameMouseEvent } from "./GameMouseEvent";
+import { MouseEventType, GameMouseEvent, MouseButton } from "./GameMouseEvent";
 import { Panel } from "./Panel";
 import { rectFromV2s } from "../vector.js";
 import Clock from "../clock.js";
@@ -9,7 +9,7 @@ export default class UiTree {
 	clock: Clock = new Clock()
 
 	mouseEventsToHandle: { event: GameMouseEvent; handled: boolean } [] = [];
-	ongoingMouseHolds: Panel[] = [];
+	ongoingMouseHolds: { button: MouseButton, panel: Panel }[] = [];
 
 	update(dt: number) {
 		this.clock.update(dt)
@@ -35,15 +35,25 @@ export default class UiTree {
 				handlableMouseEvent.handled = true
 				switch (event.type) {
 					case MouseEventType.DOWN: {
-						child.onPress(event.pos)
-						this.ongoingMouseHolds.push(child)
+						if (event.button === MouseButton.LEFT) {
+							child.onPress(event.pos)
+						} else if (event.button === MouseButton.RIGHT) {
+							child.onRightPress(event.pos)
+						}
+						this.ongoingMouseHolds.push({ button: event.button, panel: child })
 						break
 					}
 					case MouseEventType.UP: {
-						const clickedChild = this.ongoingMouseHolds.find(e => e === child)
+						const childOngoingHolds = this.ongoingMouseHolds.filter(e => e.panel === child)
 						this.emptyOngoingMouseHolds(event)
-						child.onDrop(event.pos)
-						clickedChild?.onClick(event.pos)
+
+						if (event.button === MouseButton.LEFT) {
+							child.onDrop(event.pos)
+							childOngoingHolds
+								.find(e => e.button === MouseButton.LEFT)
+								?.panel
+								.onClick(event.pos)
+						}
 						break
 					}
 				}
@@ -52,10 +62,9 @@ export default class UiTree {
 		}
 
 		// If a mouse up wasn't handled, tell everyone to go home:
-		const unhandledUpEvent = this.mouseEventsToHandle.find(e => e.event.type === MouseEventType.UP)
-		if (unhandledUpEvent) {
-			this.emptyOngoingMouseHolds(unhandledUpEvent.event)
-		}
+		this.mouseEventsToHandle
+			.filter(e => e.event.type === MouseEventType.UP)
+			.forEach(e => { this.emptyOngoingMouseHolds(e.event) })
 		// Drop the rest of the events
 		this.mouseEventsToHandle.length = 0
 	}
@@ -67,14 +76,18 @@ export default class UiTree {
 	}
 
 	private emptyOngoingMouseHolds(mouseUpEvent: GameMouseEvent) {
-		this.ongoingMouseHolds.forEach(e => {
-			e.onUnpress(mouseUpEvent.pos)
+		this.ongoingMouseHolds = this.ongoingMouseHolds.filter(e => {
+			if (e.button === mouseUpEvent.button) {
+				e.panel.onUnpress(mouseUpEvent.pos)
+				return false
+			}
+
+			return true
 		})
-		this.ongoingMouseHolds.length = 0
 	}
 
 	private *descendantsBackward() {
-		for (let i = this.panels.length; i-- > 0;) {
+		for (let i = this.panels.length; i --> 0;) {
 			const child = this.panels[i]!
 			const childBackward = child.descendantsBackward()
 			yield* childBackward

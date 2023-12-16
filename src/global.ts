@@ -2,7 +2,7 @@ import assets from "./assets.js";
 import { canvas } from "./context.js";
 import { SoundManager } from "./engine/audio.js";
 import { ImageManager } from "./engine/images.js";
-import { GameMouseEvent, MouseEventType } from "./engine/ui/GameMouseEvent.js";
+import { GameMouseEvent, MouseButton, MouseEventType } from "./engine/ui/GameMouseEvent.js";
 import UiTree from "./engine/ui/UiTree.js";
 import { v2 } from "./engine/vector.js";
 
@@ -51,6 +51,10 @@ addEventListener("pointerlockchange", () => {
 })
 
 canvas.addEventListener("mousedown", e => {
+	if (captureInput) e.preventDefault()
+	if (e.button as MouseButton >= MouseButton._SIZE) return
+
+	e.preventDefault()
 	let pos: V2
 	if (!captureInput) {
 		canvas.requestPointerLock()
@@ -58,10 +62,14 @@ canvas.addEventListener("mousedown", e => {
 	} else {
 		pos = mousePos.slice()
 	}
-	ui.addMouseEvent(new GameMouseEvent(MouseEventType.DOWN, pos))
+	ui.addMouseEvent(new GameMouseEvent(MouseEventType.DOWN, e.button as MouseButton, pos))
 })
 canvas.addEventListener("mouseup", e => {
-	ui.addMouseEvent(new GameMouseEvent(MouseEventType.UP, v2(e.offsetX, e.offsetY)))
+	if (captureInput) e.preventDefault()
+	if (e.button as MouseButton >= MouseButton._SIZE) return
+
+	e.preventDefault()
+	ui.addMouseEvent(new GameMouseEvent(MouseEventType.UP, e.button as MouseButton, v2(e.offsetX, e.offsetY)))
 })
 canvas.addEventListener("pointermove", e => {
 	if (captureInput) {

@@ -57,5 +57,6 @@ export class Panel {
     onUnpress(_pos) { }
     onDrop(_pos) { }
     onClick(_pos) { }
+    onRightPress(_pos) { }
 }
 //# sourceMappingURL=Panel.js.map

@@ -43,11 +43,7 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 			this.camera.minLen
 		)
 
-		// provide(containerPosKey
 		ctx.save()
-		// ctx.translate(...this.camera.worldPosToCanvas([0, 0]).neg().lock())
-		// console.log(this.camera.hudPosToWorldPos([0, 0]))
-		// ctx.scale(...this.camera.hudPosToWorldPos([1, 1]).lock())
 		if (this.ongoingDrag) {
 			const canvasDragStart = this.camera.worldPosToCanvas(this.ongoingDrag).lock()
 			ctx.fillStyle = "#0F02"
