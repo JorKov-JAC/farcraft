@@ -73,13 +73,21 @@ export default class Game {
             e.startMovingTo(pos, this.world);
         }
     }
+    isSelected(e) {
+        return this.selectedEnts.has(e);
+    }
     classId() {
         return 0;
     }
     preSerialization() {
         this.ongoingDrag = null;
+        this.selectedEnts = Array.from(this.selectedEnts.values());
+    }
+    postSerialization() {
+        this.selectedEnts = new Set(this.selectedEnts);
     }
     postDeserialize() {
+        this.postSerialization();
         this.hud = new Hud(ScreenCoord.rect(0, 0), ScreenCoord.rect(1, 1), this);
     }
 }

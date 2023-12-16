@@ -19,7 +19,7 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 
 	ongoingDrag: V2 | null = null
 
-	readonly selectedEnts: Set<ArmyEntity> = new Set()
+	private selectedEnts: Set<ArmyEntity> = new Set()
 
 	private constructor(world: World) {
 		this.camera = new Camera(this, v2(0, 0), 10)
@@ -99,13 +99,24 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 		}
 	}
 
+	isSelected(e: ArmyEntity) {
+		return this.selectedEnts.has(e)
+	}
+
 	classId(): SerializableId {
 		return SerializableId.GAME
 	}
 	preSerialization() {
 		this.ongoingDrag = null
+		
+		this.selectedEnts = Array.from(this.selectedEnts.values()) as any
+	}
+	postSerialization(): void {
+		this.selectedEnts = new Set(this.selectedEnts)
 	}
 	postDeserialize() {
+		this.postSerialization()
+
 		this.hud = new Hud(ScreenCoord.rect(0, 0), ScreenCoord.rect(1, 1), this)
 	}
 }

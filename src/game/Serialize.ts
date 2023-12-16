@@ -112,6 +112,10 @@ export function serialize(root: Serializable<any> | Array<any>): string {
 	// 		}
 	// 		return classId
 	// 	})
+
+	for (const e of oldInstances) {
+		(e as Serializable<any>).postSerialization?.()
+	}
 	return JSON.stringify([instanceClassIds, instances])
 }
 

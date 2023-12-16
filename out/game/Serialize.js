@@ -71,6 +71,9 @@ export function serialize(root) {
     const oldInstances = Array.from(instanceToIdx.keys());
     const instanceClassIds = oldInstances
         .map(e => e.classId?.() ?? -1);
+    for (const e of oldInstances) {
+        e.postSerialization?.();
+    }
     return JSON.stringify([instanceClassIds, instances]);
 }
 export async function deserialize(json) {

@@ -21,6 +21,7 @@ export default interface Serializable<T extends Serializable<T, unknown> = never
 	classId(): SerializableId
 	preSerialization?(): void
 	serializationForm?(): U
+	postSerialization?(): void
 	deserializationForm?(serializationForm: SerializationForm<U>): Promise<DeserializationForm<T>>
 	postDeserialize?(): void
 }

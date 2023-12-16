@@ -16,7 +16,7 @@ export default class ArmyEntity extends Entity {
         const camera = game.camera;
         const worldSizeToCanvasFactor = camera.worldSizeToCanvasFactor();
         const radius = this.getRadius();
-        const selected = game.selectedEnts.has(this);
+        const selected = game.isSelected(this);
         if (selected) {
             ctx.save();
             ctx.strokeStyle = "#0F0";

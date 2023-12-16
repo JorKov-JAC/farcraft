@@ -28,7 +28,7 @@ export default abstract class ArmyEntity extends Entity {
 
 		const radius = this.getRadius()
 
-		const selected = game.selectedEnts.has(this)
+		const selected = game.isSelected(this)
 
 		// Selection circle behind
 		if (selected) {
