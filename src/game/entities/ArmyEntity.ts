@@ -23,15 +23,32 @@ export default abstract class ArmyEntity extends Entity {
 
 	override baseRender(): void {
 		const game = current(Game)
+		const camera = game.camera
+		const worldSizeToCanvasFactor = camera.worldSizeToCanvasFactor()
 
-		const sprite = this.getCurrentSprite()
+		const radius = this.getRadius()
 
 		const selected = game.selectedEnts.has(this)
 
+		// Selection circle behind
 		if (selected) {
 			ctx.save()
-			ctx.translate(this.sprite
-			ctx.arc
+			ctx.strokeStyle = "#0F0"
+			ctx.translate(...camera.worldPosToCanvas(this.pos).lock())
+			ctx.scale(1, .5)
+			ctx.arc(0, 0, radius * worldSizeToCanvasFactor, 0, Math.PI, true)
+			ctx.restore()
+		}
+
+		this.renderImpl()
+
+		// Selection circle in front
+		if (selected) {
+			ctx.save()
+			ctx.strokeStyle = "#0F0"
+			ctx.translate(...camera.worldPosToCanvas(this.pos).lock())
+			ctx.scale(1, .5)
+			ctx.arc(0, 0, radius * worldSizeToCanvasFactor, 0, Math.PI, false)
 			ctx.restore()
 		}
 	}

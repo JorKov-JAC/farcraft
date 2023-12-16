@@ -20,6 +20,9 @@ export class Sprite {
         this.size = size.slice();
     }
     render(x, y, maxBaseLen = this.size.max()) {
+        ctx.drawImage(this.bitmap, x + this.offset[0], y + this.offset[1], ...this.sizeWithin(maxBaseLen).lock());
+    }
+    sizeWithin(maxBaseLen) {
         const ratio = this.size[0] / this.size[1];
         let w, h;
         if (ratio > 1) {
@@ -32,7 +35,7 @@ export class Sprite {
         }
         w = this.bitmap.width * w / this.size[0];
         h = this.bitmap.height * h / this.size[1];
-        ctx.drawImage(this.bitmap, x + this.offset[0], y + this.offset[1], w, h);
+        return v2(w, h).mut();
     }
 }
 async function createSpriteInfo(image, imageAsset) {

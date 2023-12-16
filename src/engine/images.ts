@@ -28,6 +28,10 @@ export class Sprite {
 	}
 
 	render(x: number, y: number, maxBaseLen = this.size.max()) {
+		ctx.drawImage(this.bitmap, x + this.offset[0], y + this.offset[1], ...this.sizeWithin(maxBaseLen).lock())
+	}
+
+	sizeWithin(maxBaseLen: number): MutV2 {
 		const ratio = this.size[0] / this.size[1]
 
 		let w, h
@@ -43,7 +47,7 @@ export class Sprite {
 		w = this.bitmap.width * w / this.size[0]
 		h = this.bitmap.height * h / this.size[1]
 
-		ctx.drawImage(this.bitmap, x + this.offset[0], y + this.offset[1], w, h)
+		return v2(w, h).mut()
 	}
 }
 

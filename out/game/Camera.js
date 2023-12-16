@@ -48,6 +48,9 @@ export default class Camera {
         const tileLen = vMin / this.minLen;
         return pos.slice().sub(panelPos).mul(1 / tileLen).add(this.worldPos);
     }
+    canvasSizeToWorldFactor() {
+        return 1 / this.worldSizeToCanvasFactor();
+    }
     worldPosToCanvas(pos) {
         const panel = this.game.hud.worldPanel;
         const panelPos = panel.getActualPos();
@@ -55,6 +58,13 @@ export default class Camera {
         const vMin = panelSize.min();
         const tileLen = vMin / this.minLen;
         return pos.slice().sub(this.worldPos).mul(tileLen).add(panelPos);
+    }
+    worldSizeToCanvasFactor() {
+        const panel = this.game.hud.worldPanel;
+        const panelSize = panel.getActualSize();
+        const vMin = panelSize.min();
+        const tileLen = vMin / this.minLen;
+        return tileLen;
     }
     moveToward(v, dt) {
         this.worldPos.mut().add(v.slice().mul(Camera.speed * this.minLen * dt));
