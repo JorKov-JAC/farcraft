@@ -2,6 +2,7 @@ import { rect } from "../engine/vector.js";
 import { images } from "../global.js";
 import { ctx } from "../context.js";
 import assets from "../assets.js";
+import Unit from "./entities/Unit.js";
 async function loadTilemapData(path) {
     const response = await fetch(path);
     return response.json();
@@ -182,6 +183,15 @@ export default class World {
                 return true;
         }
         return false;
+    }
+    unitsWithinInclusive(x, y, w, h) {
+        const bounds = rect(x, y, w, h);
+        return this.ents.filter(e => {
+            if (!(e instanceof Unit))
+                return false;
+            const r = e.radius;
+            return bounds.iAabb4(e.pos[0] - r, e.pos[1] - r, e.pos[0] + r, e.pos[1] + r);
+        });
     }
     classId() {
         return 1;

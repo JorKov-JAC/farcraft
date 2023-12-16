@@ -1,6 +1,6 @@
 import Entity from "../Entity.js";
 
-const enum Owner {
+export const enum Owner {
 	PLAYER,
 	ENEMY,
 	RESCUABLE

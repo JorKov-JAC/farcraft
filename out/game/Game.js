@@ -10,6 +10,7 @@ export default class Game {
     world;
     camera;
     ongoingDrag = null;
+    selectedEnts = [];
     constructor(world) {
         this.camera = new Camera(this, v2(0, 0), 10);
         this.world = world;
@@ -41,6 +42,12 @@ export default class Game {
         this.ongoingDrag = this.camera.canvasPosToWorld(pos);
     }
     stopDrag(pos) {
+        if (!this.ongoingDrag)
+            return;
+        const endPos = this.camera.canvasPosToWorld(pos).lock();
+        this.selectedEnts = this.world
+            .unitsWithinInclusive(...this.ongoingDrag, ...endPos)
+            .filter(e => e.owner === 0);
         this.ongoingDrag = null;
     }
     classId() {

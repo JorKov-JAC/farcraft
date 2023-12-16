@@ -6,6 +6,8 @@ import Direction from "../engine/Direction.js"
 import Serializable from "./Serializable.js"
 import SerializableId from "./SerializableId.js"
 import Entity from "./Entity.js"
+import ArmyEntity from "./entities/ArmyEntity.js"
+import Unit from "./entities/Unit.js"
 
 interface TilemapData {
 	width: number
@@ -253,6 +255,16 @@ export default class World implements Serializable<World, { mapName: string }> {
 		}
 
 		return false
+	}
+
+	unitsWithinInclusive(x: number, y: number, w: number, h: number): Unit[] {
+		const bounds = rect(x, y, w, h)
+
+		return this.ents.filter(e => {
+			if (!(e instanceof Unit)) return false
+			const r = e.radius
+			return bounds.iAabb4(e.pos[0] - r, e.pos[1] - r, e.pos[0] + r, e.pos[1] + r)
+		}) as Unit[]
 	}
 
 	classId(): SerializableId {

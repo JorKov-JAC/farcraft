@@ -98,6 +98,10 @@ Array.prototype.floor = function () {
     this[1] = Math.floor(this[1]);
     return this;
 };
+Array.prototype.iAabb4 = function (x, y, w, h) {
+    return x + w >= this[0] && x <= this[0] + this[2]
+        && y + h >= this[1] && y <= this[1] + this[3];
+};
 Array.prototype.iAabbV2 = function (v) {
     return v[0] >= this[0] && v[0] <= this[0] + this[2]
         && v[1] >= this[1] && v[1] <= this[1] + this[3];

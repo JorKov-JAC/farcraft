@@ -7,6 +7,7 @@ import Camera from "./Camera.js";
 import Serializable from "./Serializable.js";
 import SerializableId from "./SerializableId.js";
 import World from "./World.js";
+import ArmyEntity, { Owner } from "./entities/ArmyEntity.js";
 import Hud from "./ui/Hud.js";
 
 export default class Game implements Serializable<Game, {world: World, camera: Camera}> {
@@ -15,6 +16,8 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 	camera: Camera
 
 	ongoingDrag: V2 | null = null
+
+	selectedEnts: ArmyEntity[] = []
 
 	private constructor(world: World) {
 		this.camera = new Camera(this, v2(0, 0), 10)
@@ -59,6 +62,13 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 	}
 
 	stopDrag(pos: V2) {
+		if (!this.ongoingDrag) return
+
+		const endPos = this.camera.canvasPosToWorld(pos).lock()
+
+		this.selectedEnts = this.world
+			.unitsWithinInclusive(...this.ongoingDrag, ...endPos)
+			.filter(e => e.owner === Owner.PLAYER)
 		this.ongoingDrag = null
 	}
 
