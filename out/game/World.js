@@ -78,10 +78,8 @@ export default class World {
     }
     pathfind(a, b) {
         try {
-            a[0] = Math.floor(a[0]);
-            a[1] = Math.floor(a[1]);
-            b[0] = Math.floor(b[0]);
-            b[1] = Math.floor(b[1]);
+            a = a.slice().floor();
+            b = b.slice().floor();
             const width = this.tilemap.width;
             const distAtExploredTile = [];
             const startNode = {
@@ -161,6 +159,29 @@ export default class World {
             console.groupEnd();
             return null;
         }
+    }
+    isRayObstructed(a, b) {
+        if (this.isSolid(...a) || this.isSolid(...b))
+            return true;
+        const tile = a.slice().floor();
+        const goalTile = b.slice().floor().lock();
+        const pos = a.slice();
+        const norm = b.slice().sub(a).normOr(1, 1).lock();
+        while (!tile.equals(goalTile)) {
+            const distToNextX = norm[0] === 0 ? Number.MAX_SAFE_INTEGER : Math.max(0, (norm[0] >= 0 ? 1 - (pos[0] - tile[0]) : -(pos[0] - tile[0])) / norm[0]);
+            const distToNextY = norm[1] === 0 ? Number.MAX_SAFE_INTEGER : Math.max(0, (norm[1] >= 0 ? 1 - (pos[1] - tile[1]) : -(pos[1] - tile[1])) / norm[1]);
+            if (distToNextX < distToNextY && norm[0] !== 0 || norm[1] === 0) {
+                tile[0] += norm[0] > 0 ? 1 : -1;
+                pos.add(norm.slice().mul(distToNextX));
+            }
+            else {
+                tile[1] += norm[1] > 0 ? 1 : -1;
+                pos.add(norm.slice().mul(distToNextY));
+            }
+            if (this.isSolid(...tile.lock()))
+                return true;
+        }
+        return false;
     }
     classId() {
         return 1;

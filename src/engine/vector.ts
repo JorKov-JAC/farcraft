@@ -53,6 +53,7 @@ declare global {
 		rectArea(this: V2): number
 		min(this: V2): number
 		max(this: V2): number
+		floor(this: MutV2): MutV2
 
 		iAabbV2(this: Rect, v: V2): boolean
 	}
@@ -175,6 +176,13 @@ Array.prototype.min = function() {
 
 Array.prototype.max = function() {
 	return Math.max(this[0], this[1])
+}
+
+Array.prototype.floor = function() {
+	this[0] = Math.floor(this[0])
+	this[1] = Math.floor(this[1])
+
+	return this
 }
 
 Array.prototype.iAabbV2 = function(v) {

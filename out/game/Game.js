@@ -32,14 +32,10 @@ export default class Game {
             ctx.strokeStyle = "#0F0B";
             ctx.beginPath();
             ctx.rect(...canvasDragStart, ...mousePos.slice().sub(canvasDragStart).lock());
-            console.log(this.ongoingDrag, mousePos);
             ctx.fill();
             ctx.stroke();
         }
         ctx.restore();
-    }
-    hudCoordsToGameCoords(hudCoord) {
-        this.hud.worldPanel;
     }
     startDrag(pos) {
         this.ongoingDrag = this.camera.canvasPosToWorld(pos);

@@ -48,15 +48,10 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 			ctx.strokeStyle = "#0F0B"
 			ctx.beginPath()
 			ctx.rect(...canvasDragStart, ...mousePos.slice().sub(canvasDragStart).lock())
-			console.log(this.ongoingDrag, mousePos)
 			ctx.fill()
 			ctx.stroke()
 		}
 		ctx.restore()
-	}
-
-	hudCoordsToGameCoords(hudCoord: V2) {
-		this.hud.worldPanel
 	}
 
 	startDrag(pos: V2) {

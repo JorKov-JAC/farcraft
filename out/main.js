@@ -8,6 +8,7 @@ import TextButton from "./game/ui/buttons/TextButton.js";
 import Game from "./game/Game.js";
 import { v2 } from "./engine/vector.js";
 import { deserialize, serialize } from "./game/Serialize.js";
+import { rangeArray } from "./engine/util.js";
 const MAX_UPDATE_DT = 1 / 15;
 uiSounds.playSoundtrackUntilStopped(["music_aStepCloser", "music_darkfluxxTheme"]);
 const clock = new UiClock();
@@ -53,6 +54,9 @@ console.log(serialized);
 console.dir(await deserialize(serialized));
 console.dir(game.world.pathfind(v2(6, 9), v2(6, 5)));
 ui.panels.push(game.hud);
+for (let y = -1; y < 18; ++y) {
+    console.log(rangeArray(-1, 18).map(x => game.world.isRayObstructed(v2(0, 2), v2(x + .5, y + .5))));
+}
 function tick(dt) {
     ui.update(dt);
     ctx.clearRect(0, 0, ...ScreenCoord.rect(1, 1).canvasSize);
@@ -62,6 +66,7 @@ function tick(dt) {
     ctx.fillStyle = "#F00";
     ctx.fillRect(a.x, a.y, a.sub.w, a.sub.h);
     ctx.drawImage(mapTiles[currentTile].bitmap, 20, 200);
+    console.log(game.world.isRayObstructed(game.camera.worldPos, game.camera.canvasPosToWorld(mousePos)));
     ui.render();
     if (captureInput) {
         images.getAnim("cursor", "default").frames[0].render(...mousePos);

@@ -93,6 +93,11 @@ Array.prototype.min = function () {
 Array.prototype.max = function () {
     return Math.max(this[0], this[1]);
 };
+Array.prototype.floor = function () {
+    this[0] = Math.floor(this[0]);
+    this[1] = Math.floor(this[1]);
+    return this;
+};
 Array.prototype.iAabbV2 = function (v) {
     return v[0] >= this[0] && v[0] <= this[0] + this[2]
         && v[1] >= this[1] && v[1] <= this[1] + this[3];
