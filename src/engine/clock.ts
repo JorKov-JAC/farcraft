@@ -2,10 +2,14 @@ import Serializable from "../game/Serializable.js"
 import SerializableCallback from "../game/SerializableCallback.js"
 import SerializableId from "../game/SerializableId.js"
 
-type CanBeTweenTarget<T> = T extends number ? true : T extends object ? (true extends CanBeTweenTarget<T[keyof T]> ? true : never) : never
+// type CanBeTweenTarget<T> = T extends number ? true : T extends object ? (true extends CanBeTweenTarget<T[keyof T]> ? true : never) : never
+type CanBeTweenTarget<T> = T extends number ? true : T extends object ? true : never
 
+// export type TweenTarget<T> = RemoveNever<{
+// 	[K in keyof T]?: true extends CanBeTweenTarget<T[K]> ? (T[K] extends number ? number : TweenTarget<T[K]>) : never
+// }>
 export type TweenTarget<T> = RemoveNever<{
-	[K in keyof T]?: true extends CanBeTweenTarget<T[K]> ? (T[K] extends number ? number : TweenTarget<T[K]>) : never
+	[K in keyof T]?: true extends CanBeTweenTarget<T[K]> ? (T[K] extends number ? number : Partial<T[K]>) : never
 }>
 
 export class Tween implements Serializable {
