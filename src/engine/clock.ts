@@ -140,6 +140,8 @@ export class UiClock {
 
 		return this.wait(duration, timeOffset)
 	}
+
+	getTime() { return this.time }
 }
 
 export class SerializableClock implements Serializable {
@@ -180,6 +182,8 @@ export class SerializableClock implements Serializable {
 
 		this.wait(duration, timeOffset, serializableCallback)
 	}
+
+	getTime() { return this.time }
 
 	classId(): SerializableId {
 		return SerializableId.CLOCK

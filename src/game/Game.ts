@@ -1,21 +1,25 @@
 import assets from "../assets.js";
 import { ctx } from "../context.js";
 import { provide } from "../engine/Provider.js";
+import { SerializableClock } from "../engine/clock.js";
 import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
 import { v2 } from "../engine/vector.js";
-import { mousePos } from "../global.js";
+import { gameStateManager, mousePos } from "../global.js";
 import Camera from "./Camera.js";
 import Serializable from "./Serializable.js";
 import SerializableId from "./SerializableId.js";
 import World from "./World.js";
 import ArmyEntity, { Owner } from "./entities/ArmyEntity.js";
 import Unit from "./entities/Unit.js";
+import ScoreScreenState from "./gameStates/ScoreScreenState.js";
 import Hud from "./ui/Hud.js";
 
 export default class Game implements Serializable<Game, {world: World, camera: Camera}> {
 	hud: Hud
 	world: World
 	camera: Camera
+
+	clock = new SerializableClock()
 
 	ongoingDrag: V2 | null = null
 
@@ -35,6 +39,8 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 	}
 
 	update(dt: number) {
+		this.clock.update(dt)
+
 		provide(Game, this, () => {
 			this.camera.update(dt)
 			this.world.update(dt)
@@ -42,6 +48,16 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 
 		for (const e of this.selectedEnts.values()) {
 			if (e.health <= 0) this.selectedEnts.delete(e)
+		}
+
+		// Check for end of game
+		if (
+			!this.world.ents.find(e => e instanceof Unit && e.owner === Owner.PLAYER)
+			|| !this.world.ents.find(e => e instanceof Unit && e.owner === Owner.ENEMY)
+		) {
+			const remainingUnits = this.world.ents.filter(e => e instanceof Unit && e.owner === Owner.PLAYER) as Unit<any>[]
+			const timeTaken = this.clock.getTime()
+			void gameStateManager.switch(Promise.resolve(new ScoreScreenState(remainingUnits, timeTaken)))
 		}
 	}
 

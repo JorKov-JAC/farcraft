@@ -1,6 +1,6 @@
 import assets from "../../assets.js";
 import FactoryBuilder from "../../engine/Factory.js";
-import { GameState } from "../../engine/GameState.js";
+import GameState from "../../engine/GameState.js";
 import UiTree from "../../engine/ui/UiTree.js";
 import { replaceUi, uiSounds } from "../../global.js";
 import Game from "../Game.js";

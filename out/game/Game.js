@@ -1,16 +1,19 @@
 import { ctx } from "../context.js";
 import { provide } from "../engine/Provider.js";
+import { SerializableClock } from "../engine/clock.js";
 import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
 import { v2 } from "../engine/vector.js";
-import { mousePos } from "../global.js";
+import { gameStateManager, mousePos } from "../global.js";
 import Camera from "./Camera.js";
 import World from "./World.js";
 import Unit from "./entities/Unit.js";
+import ScoreScreenState from "./gameStates/ScoreScreenState.js";
 import Hud from "./ui/Hud.js";
 export default class Game {
     hud;
     world;
     camera;
+    clock = new SerializableClock();
     ongoingDrag = null;
     selectedEnts = new Set();
     constructor(world) {
@@ -24,6 +27,7 @@ export default class Game {
         return new Game(world);
     }
     update(dt) {
+        this.clock.update(dt);
         provide(Game, this, () => {
             this.camera.update(dt);
             this.world.update(dt);
@@ -31,6 +35,12 @@ export default class Game {
         for (const e of this.selectedEnts.values()) {
             if (e.health <= 0)
                 this.selectedEnts.delete(e);
+        }
+        if (!this.world.ents.find(e => e instanceof Unit && e.owner === 0)
+            || !this.world.ents.find(e => e instanceof Unit && e.owner === 1)) {
+            const remainingUnits = this.world.ents.filter(e => e instanceof Unit && e.owner === 0);
+            const timeTaken = this.clock.getTime();
+            void gameStateManager.switch(Promise.resolve(new ScoreScreenState(remainingUnits, timeTaken)));
         }
     }
     render(x, y, w, h) {

@@ -68,6 +68,7 @@ export class UiClock {
         tweenRecursive(this.tweens, this.time, obj, target, duration, timeOffset);
         return this.wait(duration, timeOffset);
     }
+    getTime() { return this.time; }
 }
 export class SerializableClock {
     time = 0;
@@ -97,6 +98,7 @@ export class SerializableClock {
         tweenRecursive(this.tweens, this.time, obj, target, duration, timeOffset);
         this.wait(duration, timeOffset, serializableCallback);
     }
+    getTime() { return this.time; }
     classId() {
         return 3;
     }

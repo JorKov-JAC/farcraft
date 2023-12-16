@@ -1,5 +1,5 @@
 import { canvas, ctx } from "../../context.js";
-import { GameState } from "../../engine/GameState.js";
+import GameState from "../../engine/GameState.js";
 
 export default class LoadingState extends GameState {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

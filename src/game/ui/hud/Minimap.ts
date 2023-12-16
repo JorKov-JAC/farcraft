@@ -12,8 +12,10 @@ export default class Minimap extends TechPanel {
 		this.children.push(new TextButton(
 			"Save",
 			() => {
-				const gameplayState = gameStateManager.state as GameplayState
-				gameplayState.saveGame()
+				const gameplayState = gameStateManager.state
+				if (gameplayState instanceof GameplayState) {
+					gameplayState.saveGame()
+				}
 			},
 			ScreenCoord.rect(.2, .7),
 			ScreenCoord.rect(.6, .2)

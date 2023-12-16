@@ -1,6 +1,6 @@
 import assets from "./assets.js";
 import { canvas } from "./context.js";
-import GameStateManager from "./engine/GameState.js";
+import GameStateManager from "./engine/GameStateManager.js";
 import { SoundManager } from "./engine/audio.js";
 import { UiClock } from "./engine/clock.js";
 import { ImageManager } from "./engine/images.js";

@@ -9,7 +9,7 @@ import { captureInput, images, keys, mousePos, ui, uiClock } from "./global.js"
 const MAX_UPDATE_DT = 1/15
 
 const gameStateManager = (await import("./global.js")).gameStateManager
-void gameStateManager.switch(MainMenuState.create())
+void gameStateManager.switch(Promise.resolve(new MainMenuState()))
 
 /** Performs a single tick (update, render) */
 function tick(dt: number) {
