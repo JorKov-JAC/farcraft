@@ -205,7 +205,7 @@ const assets = {
                             typeId: 6,
                             instanceArgs: [
                                 {
-                                    pos: [10.5, 16.5]
+                                    pos: [10.5, 16.75]
                                 },
                                 {
                                     pos: [2.5, 16.25]
@@ -222,6 +222,20 @@ const assets = {
                                 {
                                     pos: [30, 6.5]
                                 },
+                            ]
+                        },
+                        {
+                            typeId: 7,
+                            instanceArgs: [
+                                {
+                                    pos: [5.5, 16.5]
+                                },
+                                {
+                                    pos: [27, 5]
+                                },
+                                {
+                                    pos: [19.75, 9]
+                                }
                             ]
                         }
                     ]

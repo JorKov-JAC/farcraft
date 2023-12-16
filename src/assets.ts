@@ -287,7 +287,7 @@ const assets = {
 							typeId: SerializableId.MARINE,
 							instanceArgs: [
 								{
-									pos: [10.5, 16.5]
+									pos: [10.5, 16.75]
 								},
 								{
 									pos: [2.5, 16.25]
@@ -305,8 +305,22 @@ const assets = {
 									pos: [30, 6.5]
 								},
 							]
-						} 
-					] satisfies UnitInfo<typeof Marine>[]
+						} satisfies UnitInfo<typeof Marine>,
+						{
+							typeId: SerializableId.SARGE,
+							instanceArgs: [
+								{
+									pos: [5.5, 16.5]
+								},
+								{
+									pos: [27, 5]
+								},
+								{
+									pos: [19.75, 9]
+								}
+							]
+						} satisfies UnitInfo<typeof Sarge>
+					]
 				}
 			]
 		}
