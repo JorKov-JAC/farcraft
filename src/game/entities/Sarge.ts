@@ -50,7 +50,7 @@ export default class Marine extends Unit<"sarge"> {
 		return 1
 	}
 	override getAttackSounds(): (keyof (typeof assets)["sounds"])[] {
-		return ["pulseRifle1", "pulseRifle2"]
+		return ["laserCannon1", "laserCannon2"]
 	}
 	override getRadius(): number {
 		return .5
