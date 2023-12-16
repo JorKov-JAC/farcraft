@@ -6,7 +6,8 @@ import { ImageManager } from "./engine/images.js";
 import { GameMouseEvent } from "./engine/ui/GameMouseEvent.js";
 import UiTree from "./engine/ui/UiTree.js";
 import { v2 } from "./engine/vector.js";
-import GameplayState from "./game/gameStates/GameplayState.js";
+import LoadingState from "./game/gameStates/LoadingState.js";
+export const gameStateManager = new GameStateManager(() => new LoadingState());
 export let mousePos = v2(canvas.width / 2, canvas.height / 2);
 export let captureInput = false;
 const techFont = new FontFace("tech", "url(assets/fonts/orbitron.ttf)");
@@ -24,7 +25,6 @@ export function replaceUi(newUi) {
     uiSounds.stopMusic();
     ui = newUi;
 }
-export const gameStateManager = new GameStateManager(await GameplayState.newGame());
 export const keys = Object.create(null);
 canvas.addEventListener("keydown", e => {
     if (captureInput) {
