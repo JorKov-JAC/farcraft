@@ -63,7 +63,12 @@ export default class Unit extends ArmyEntity {
         if (this.target) {
             const dist = this.pos.dist(this.target.pos);
             if (dist > attackRange || world.isRayObstructed(this.pos, this.target.pos)) {
-                this.commandAttackMoveTo(this.target.pos, world, Math.random());
+                if (this.command === 0) {
+                    this.commandAttackMoveTo(this.target.pos, world, Math.random());
+                }
+                else {
+                    this.target = null;
+                }
             }
             else {
                 if (this.attackCooldown <= 0) {
