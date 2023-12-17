@@ -23,10 +23,12 @@ export default class Unit extends ArmyEntity {
         const speed = this.getSpeed();
         const radius = this.getRadius();
         const aabb = rect(this.pos[0] - radius, this.pos[1] - radius, this.pos[0] + radius, this.pos[1] + radius);
+        let collidedWithWall = false;
         for (let y = Math.floor(this.pos[1] - radius); y < Math.ceil(this.pos[1] + radius); ++y) {
             for (let x = Math.floor(this.pos[0] - radius); x < Math.ceil(this.pos[0] + radius); ++x) {
                 if (!world.isSolid(x, y))
                     continue;
+                collidedWithWall = true;
                 if (aabb.iAabb4(x, y, 1, 1)) {
                     const inLeft = x + 1 - this.pos[0] + radius;
                     const inRight = this.pos[0] + radius - x;
@@ -74,8 +76,12 @@ export default class Unit extends ArmyEntity {
                 }
             }
         }
+        const centerTileCheckingPos = this.pos.slice().add2(-.5, -.5).lock();
         if (this.pathBackward.length > 0
-            && this.pos.slice().add2(-.5, -.5).sub(this.pathBackward[this.pathBackward.length - 1]).mag() <= radius)
+            && (centerTileCheckingPos.slice().sub(this.pathBackward[this.pathBackward.length - 1]).mag() <= radius
+                || collidedWithWall
+                    && this.pathBackward.length === 1
+                    && centerTileCheckingPos.slice().floor().equals(this.pathBackward[0].slice().floor())))
             this.pathBackward.pop();
         const velTowardNode = v2(0, 0).mut();
         if (this.attackCooldown <= 0) {
@@ -115,13 +121,16 @@ export default class Unit extends ArmyEntity {
         this.pos.mut().add(this.vel.slice().mul(dt));
     }
     startMovingTo(dest, world, commandId, commandType) {
-        this.pathBackward = world.pathfindBackward(this.pos, dest) ?? [];
-        if (this.pathBackward) {
+        const pathBackward = world.pathfindBackward(this.pos, dest);
+        if (pathBackward) {
+            this.pathBackward = pathBackward;
             this.pathBackward.pop();
+            this.pathBackward.splice(0, 0, dest.slice().add2(-.5, -.5));
             this.lastCommandId = commandId;
             this.command = commandType;
         }
         else {
+            this.pathBackward = [];
             this.lastCommandId = 0;
             this.command = 0;
         }

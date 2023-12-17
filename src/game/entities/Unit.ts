@@ -51,9 +51,12 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 		const aabb = rect(this.pos[0] - radius, this.pos[1] - radius, this.pos[0] + radius, this.pos[1] + radius)
 
 		// Wall collisions
+		let collidedWithWall = false
 		for (let y = Math.floor(this.pos[1] - radius); y < Math.ceil(this.pos[1] + radius); ++y) {
 			for (let x = Math.floor(this.pos[0] - radius); x < Math.ceil(this.pos[0] + radius); ++x) {
 				if (!world.isSolid(x, y)) continue
+
+				collidedWithWall = true
 
 				if (aabb.iAabb4(x, y, 1, 1)) {
 					const inLeft = x + 1 - this.pos[0] + radius
@@ -107,8 +110,17 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 		}
 
 		// Move along path
+		const centerTileCheckingPos = this.pos.slice().add2(-.5, -.5).lock()
 		if (this.pathBackward.length > 0
-			&& this.pos.slice().add2(-.5, -.5).sub(this.pathBackward[this.pathBackward.length - 1]!).mag() <= radius) this.pathBackward.pop()
+			&& (
+				// We're close enough to our destination to stop
+				centerTileCheckingPos.slice().sub(this.pathBackward[this.pathBackward.length - 1]!).mag() <= radius
+				// We're in the destination tile and we hit a wall, so stop
+				|| collidedWithWall
+					&& this.pathBackward.length === 1
+					&& centerTileCheckingPos.slice().floor().equals(this.pathBackward[0]!.slice().floor())
+			)
+		) this.pathBackward.pop()
 
 		const velTowardNode = v2(0, 0).mut()
 		if (this.attackCooldown <= 0) {
@@ -157,14 +169,18 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 	}
 
 	private startMovingTo(dest: V2, world: World, commandId: number, commandType: CommandType) {
-		this.pathBackward = world.pathfindBackward(this.pos, dest) ?? []
+		const pathBackward = world.pathfindBackward(this.pos, dest)
 
-		if (this.pathBackward) {
+		if (pathBackward) {
+			this.pathBackward = pathBackward
 			// First tile is current tile, get rid of it:
 			this.pathBackward.pop()
+			// Set final position to be sub-tile position:
+			this.pathBackward.splice(0, 0, dest.slice().add2(-.5, -.5))
 			this.lastCommandId = commandId
 			this.command = commandType
 		} else {
+			this.pathBackward = []
 			this.lastCommandId = 0
 			this.command = CommandType.IDLE
 		}
