@@ -27,7 +27,8 @@ export default class GameplayState extends GameState {
             for (const unitTypeGroup of ownersUnits.units) {
                 const constructor = serializableIdToClass(unitTypeGroup.typeId);
                 for (const args of unitTypeGroup.instanceArgs) {
-                    const factory = ownerFb.with(args).forClass(constructor);
+                    const factory = ownerFb.with(JSON.parse(JSON.stringify(args)))
+                        .forClass(constructor);
                     game.world.ents.push(factory.spawn());
                 }
             }

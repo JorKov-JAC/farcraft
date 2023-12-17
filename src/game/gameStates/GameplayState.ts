@@ -36,8 +36,9 @@ export default class GameplayState extends GameState {
 				const constructor = serializableIdToClass(unitTypeGroup.typeId)
 
 				for (const args of unitTypeGroup.instanceArgs) {
+					const factory = ownerFb.with(JSON.parse(JSON.stringify(args)))
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-					const factory = ownerFb.with(args).forClass<any>(constructor as any)
+						.forClass<any>(constructor as any)
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 					game.world.ents.push(factory.spawn())
 				}
