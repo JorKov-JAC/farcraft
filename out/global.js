@@ -27,6 +27,10 @@ export function replaceUi(newUi) {
     uiSounds.stopMusic();
     ui = newUi;
 }
+export let currentCursor = "default";
+export function setCursor(cursor) {
+    currentCursor = cursor;
+}
 export const keys = Object.create(null);
 canvas.addEventListener("keydown", e => {
     if (captureInput) {

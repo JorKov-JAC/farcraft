@@ -1,7 +1,7 @@
 import type Game from "./Game.js"
 import Serializable from "./Serializable.js"
 import SerializableId from "./SerializableId.js"
-import { captureInput, keys, mousePos } from "../global.js"
+import { CursorAnim, captureInput, keys, mousePos, setCursor } from "../global.js"
 import { canvas } from "../context.js"
 import { v2 } from "../engine/vector.js"
 
@@ -48,6 +48,7 @@ export default class Camera implements Serializable {
 		}
 
 		this.moveToward(moveVec, dt)
+		this.updateCursor(moveVec)
 
 		// Clamp position
 		const actualSize = this.game.hud.worldPanel.getActualSize()
@@ -58,6 +59,26 @@ export default class Camera implements Serializable {
 
 		this.worldPos[0] = Math.min(Math.max(0, this.worldPos[0]), tilemap.width - actualSize[0] * scale)
 		this.worldPos[1] = Math.min(Math.max(0, this.worldPos[1]), tilemap.height - actualSize[1] * scale * (1 - this.extraYMult))
+	}
+
+	private updateCursor(moveVec: V2) {
+		const orderedCursors: (CursorAnim|null)[] = [
+			null,
+			"left",
+			"right",
+			"up",
+			"upLeft",
+			"upRight",
+			"down",
+			"downLeft",
+			"downRight"
+		]
+
+		const idx = 3 * (moveVec[1] > 0 ? 2 : moveVec[1] < 0 ? 1: 0)
+			+ (moveVec[0] > 0 ? 2 : moveVec[0] < 0 ? 1: 0)
+
+		const cursor = orderedCursors[idx]
+		if (cursor) setCursor(cursor)
 	}
 
 	canvasPosToWorld(pos: V2) {

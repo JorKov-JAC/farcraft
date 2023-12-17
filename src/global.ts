@@ -39,6 +39,12 @@ export function replaceUi(newUi: UiTree) {
 	ui = newUi
 }
 
+export type CursorAnim = keyof (typeof assets)["images"]["cursor"]["anims"]
+export let currentCursor: CursorAnim = "default"
+export function setCursor(cursor: CursorAnim) {
+	currentCursor = cursor
+}
+
 export const keys: Record<string, { justPressed: boolean }> = Object.create(null)
 canvas.addEventListener("keydown", e => {
 	if (captureInput) {

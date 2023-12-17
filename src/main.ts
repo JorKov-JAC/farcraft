@@ -3,7 +3,7 @@ import { ScreenCoord } from "./engine/ui/ScreenCoord.js"
 import "./engine/vector.js"
 import GameplayState from "./game/gameStates/GameplayState.js"
 import MainMenuState from "./game/gameStates/MainMenuState.js"
-import { captureInput, images, keys, mousePos, ui, uiClock } from "./global.js"
+import { captureInput, currentCursor, images, keys, mousePos, setCursor, ui, uiClock } from "./global.js"
 
 /** The max delta time for updates (for stability). */
 const MAX_UPDATE_DT = 1/15
@@ -13,6 +13,7 @@ void gameStateManager.switch(Promise.resolve(new MainMenuState()))
 
 /** Performs a single tick (update, render) */
 function tick(dt: number) {
+	setCursor("default")
 	ctx.clearRect(0, 0, canvas.width, canvas.height)
 
 	uiClock.update(dt)
@@ -23,7 +24,7 @@ function tick(dt: number) {
 
 	// Render cursor on top of everything else
 	if (captureInput) {
-		images.getAnim("cursor", "default").frames[0]!.render(...mousePos, ScreenCoord.sq(.1, 0).canvasSize[0])
+		images.getAnim("cursor", currentCursor).frames[0]!.render(...mousePos, ScreenCoord.sq(.1, 0).canvasSize[0])
 	}
 }
 

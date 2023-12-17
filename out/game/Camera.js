@@ -1,4 +1,4 @@
-import { captureInput, keys, mousePos } from "../global.js";
+import { captureInput, keys, mousePos, setCursor } from "../global.js";
 import { canvas } from "../context.js";
 import { v2 } from "../engine/vector.js";
 export default class Camera {
@@ -33,12 +33,31 @@ export default class Camera {
                 moveVec[1] += 1;
         }
         this.moveToward(moveVec, dt);
+        this.updateCursor(moveVec);
         const actualSize = this.game.hud.worldPanel.getActualSize();
         const vMin = Math.min(actualSize[0], actualSize[1]);
         const scale = this.minLen / vMin;
         const tilemap = this.game.world.tilemap;
         this.worldPos[0] = Math.min(Math.max(0, this.worldPos[0]), tilemap.width - actualSize[0] * scale);
         this.worldPos[1] = Math.min(Math.max(0, this.worldPos[1]), tilemap.height - actualSize[1] * scale * (1 - this.extraYMult));
+    }
+    updateCursor(moveVec) {
+        const orderedCursors = [
+            null,
+            "left",
+            "right",
+            "up",
+            "upLeft",
+            "upRight",
+            "down",
+            "downLeft",
+            "downRight"
+        ];
+        const idx = 3 * (moveVec[1] > 0 ? 2 : moveVec[1] < 0 ? 1 : 0)
+            + (moveVec[0] > 0 ? 2 : moveVec[0] < 0 ? 1 : 0);
+        const cursor = orderedCursors[idx];
+        if (cursor)
+            setCursor(cursor);
     }
     canvasPosToWorld(pos) {
         const panel = this.game.hud.worldPanel;
