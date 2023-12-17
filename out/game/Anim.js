@@ -1,4 +1,4 @@
-import { mod } from "../engine/util.js";
+import { clamp, mod } from "../engine/util.js";
 import { images } from "../global.js";
 export default class Anim {
     groupName;
@@ -13,6 +13,9 @@ export default class Anim {
         this.frameTime += dFrameTime;
         this.frameTime = mod(this.frameTime, this.getDuration());
     }
+    setNorm(fraction) {
+        this.frameTime = clamp(fraction, 0, 1 - Number.EPSILON * .5) * this.getDuration();
+    }
     getAnim() {
         return images.getAnim(this.groupName, this.animationName);
     }
@@ -25,7 +28,7 @@ export default class Anim {
     }
     getSprite() {
         const anim = this.getAnim();
-        const idx = Math.floor(this.frameTime / this.getDuration() * anim.frames.length);
+        const idx = Math.min(Math.floor(this.frameTime / this.getDuration() * anim.frames.length), anim.frames.length - 1);
         return anim.frames[idx];
     }
     classId() {

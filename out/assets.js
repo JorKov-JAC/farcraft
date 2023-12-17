@@ -1,4 +1,4 @@
-import { spanArray } from "./engine/util.js";
+import { repeat, spanArray } from "./engine/util.js";
 const images = {
     marine: {
         path: "sprites/infantry.png",
@@ -43,7 +43,7 @@ const images = {
             },
             "shoot": {
                 duration: 1,
-                frames: spanArray(9, 4)
+                frames: [...repeat(spanArray(9, 4), 2).flat(), ...repeat(12, 12)]
             },
             "die": {
                 duration: 1,
@@ -94,7 +94,7 @@ const images = {
             },
             "shoot": {
                 duration: 1,
-                frames: spanArray(5, 4)
+                frames: [...spanArray(5, 4), ...repeat(8, 4)]
             },
             "die": {
                 duration: 1,

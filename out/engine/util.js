@@ -31,6 +31,15 @@ export function rangeArray(a, b, step = 1) {
 export function spanArray(start, length) {
     return rangeArray(start, start + length, length < 0 ? -1 : 1);
 }
+export function repeat(val, times) {
+    const res = [];
+    for (let i = 0; i < times; ++i)
+        res.push(val);
+    return res;
+}
+export function clamp(val, min, max) {
+    return Math.min(Math.max(min, val), max);
+}
 export function raise(error) {
     throw error;
 }

@@ -35,6 +35,16 @@ export function spanArray(start: number, length: number): number[] {
 	return rangeArray(start, start + length, length < 0 ? -1 : 1)
 }
 
+export function repeat<T>(val: T, times: number): T[] {
+	const res = []
+	for (let i = 0; i < times; ++i) res.push(val)
+	return res
+}
+
+export function clamp(val: number, min: number, max: number): number {
+	return Math.min(Math.max(min, val), max)
+}
+
 /** Allows throw to be used as an expression. */
 export function raise(error: Error): never {
 	throw error

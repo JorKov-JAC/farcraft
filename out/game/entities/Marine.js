@@ -14,7 +14,7 @@ export default class Marine extends Unit {
                 this.anim = new Anim("marine", "shoot");
             }
             else {
-                this.anim.advance(dt / this.getAttackTime());
+                this.anim.setNorm(1 - this.attackCooldown / this.getAttackTime());
             }
         }
         else if (this.vel.mag() > maxSpeed * .1) {
