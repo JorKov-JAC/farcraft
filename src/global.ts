@@ -103,8 +103,8 @@ canvas.addEventListener("mouseup", e => {
 canvas.addEventListener("pointermove", e => {
 	if (captureInput) {
 		mousePos.mut().add2(e.movementX, e.movementY)
-		mousePos[0] = Math.min(Math.max(0, mousePos[0]), canvas.width-1)
-		mousePos[1] = Math.min(Math.max(0, mousePos[1]), canvas.height-1)
+		mousePos[0] = Math.min(Math.max(0, mousePos[0]), canvas.width * (1 - Number.EPSILON*.5))
+		mousePos[1] = Math.min(Math.max(0, mousePos[1]), canvas.height * (1 - Number.EPSILON*.5))
 	} else {
 		mousePos = v2(e.offsetX, e.offsetY)
 	}
