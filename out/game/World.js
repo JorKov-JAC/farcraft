@@ -240,9 +240,9 @@ export default class World {
             ents: this.ents
         };
     }
-    async deserializationForm(serializable) {
-        const world = await World.create(serializable.mapName);
-        world.ents = serializable.ents;
+    async customDForm(dForm) {
+        const world = await World.create(dForm.mapName);
+        world.ents = dForm.ents;
         return world;
     }
 }

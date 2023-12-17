@@ -39,7 +39,7 @@ export function serialize(root) {
         const idx = instances.length;
         instanceToIdx.set(oldVal, idx);
         instances.push(newVal);
-        return { _: idx };
+        return [idx];
     }
     function recurse(oldVal) {
         const type = typeof oldVal;
@@ -49,11 +49,11 @@ export function serialize(root) {
         const proto = Object.getPrototypeOf(oldVal);
         const existingIdx = instanceToIdx.get(oldVal);
         if (existingIdx !== undefined)
-            return { _: existingIdx };
+            return [existingIdx];
         if (proto === Array.prototype) {
             const ref = addInstance(oldVal, null);
             const newVal = oldVal.map(e => recurse(e));
-            instances[ref._] = newVal;
+            instances[ref[0]] = newVal;
             return ref;
         }
         if (proto !== Object.prototype && !classToId.has(proto)) {
@@ -85,26 +85,35 @@ export function serialize(root) {
 export async function deserialize(json) {
     const obj = JSON.parse(json);
     const classIds = obj[0];
-    const serializationInstances = obj[1];
+    const dFormInstances = obj[1];
     const instances = [];
+    const symbolsToRefs = new Map();
     for (let i = 0; i < classIds.length; ++i) {
-        const serializationInstance = serializationInstances[i];
+        const dFormInstance = dFormInstances[i];
+        for (const key in dFormInstance) {
+            const val = dFormInstance[key];
+            if (val instanceof Array) {
+                const symbol = Symbol();
+                symbolsToRefs.set(symbol, val[0]);
+                dFormInstance[key] = symbol;
+            }
+        }
         const id = classIds[i];
         if (id === -1) {
-            instances.push(serializationInstance);
+            instances.push(dFormInstance);
             continue;
         }
         const proto = serializableIdToClass(id).prototype;
-        if (proto.deserializationForm) {
-            instances[i] = await proto.deserializationForm(serializationInstance);
+        if (proto.customDForm) {
+            instances[i] = await proto.customDForm(dFormInstance);
             continue;
         }
-        Object.setPrototypeOf(serializationInstance, proto);
-        instances[i] = serializationInstance;
+        Object.setPrototypeOf(dFormInstance, proto);
+        instances[i] = dFormInstance;
     }
     for (const instance of instances) {
         for (const key in instance) {
-            const ref = instance[key]?._;
+            const ref = symbolsToRefs.get(instance[key]);
             if (ref !== undefined) {
                 instance[key] = instances[ref];
             }

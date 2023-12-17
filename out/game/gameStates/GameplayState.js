@@ -6,7 +6,7 @@ import { replaceUi, uiSounds } from "../../global.js";
 import Game from "../Game.js";
 import { deserialize, serializableIdToClass, serialize } from "../Serialize.js";
 export default class GameplayState extends GameState {
-    static SAVE_LOCAL_STORAGE_KEY = "save";
+    static SAVE_LOCAL_STORAGE_KEY = "FarCraft_save";
     game;
     constructor(game) {
         super();
@@ -40,7 +40,7 @@ export default class GameplayState extends GameState {
     }
     static async tryLoadGame() {
         try {
-            const game = await deserialize(localStorage.getItem("save"));
+            const game = await deserialize(localStorage.getItem(this.SAVE_LOCAL_STORAGE_KEY));
             if (!(game instanceof Game)) {
                 console.groupCollapsed("Deserialized successfully, but wasn't a game");
                 console.dir(game);

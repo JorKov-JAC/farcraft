@@ -3,7 +3,7 @@ import { gameSounds, images } from "../global.js"
 import { ctx } from "../context.js"
 import assets, { ImageGroupName } from "../assets.js"
 import Direction from "../engine/Direction.js"
-import Serializable from "./Serializable.js"
+import Serializable, { CustomDForm, CustomDFormOf, DForm } from "./Serializable.js"
 import SerializableId from "./SerializableId.js"
 import Entity from "./Entity.js"
 import ArmyEntity from "./entities/ArmyEntity.js"
@@ -38,7 +38,7 @@ class Tilemap {
 	}
 }
 
-export default class World implements Serializable<World, { mapName: string }> {
+export default class World implements Serializable<World, { mapName: string, ents: Entity[] }> {
 	// Needed for serialization:
 	mapDefName: string
 
@@ -321,10 +321,10 @@ export default class World implements Serializable<World, { mapName: string }> {
 			ents: this.ents
 		}
 	}
-	async deserializationForm(serializable: { mapName: string, ents: Entity[] }) {
+	async customDForm(this: never, dForm: DForm<{ mapName: string; ents: Entity[] }>): Promise<CustomDForm<{ mapName: string; ents: Entity[] }>> {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-		const world = await World.create(serializable.mapName as any)
-		world.ents = serializable.ents
+		const world = await World.create(dForm.mapName as any) as unknown as CustomDFormOf<World>
+		world.ents = dForm.ents
 		return world
 	}
 }

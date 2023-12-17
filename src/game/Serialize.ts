@@ -36,7 +36,7 @@ export function serializableIdToClass(id: SerializableId): unknown {
 	throw Error("Invalid serializable ID")
 }
 
-export type SerializationSafe = number|string|boolean|{_:number}|undefined|null
+export type SerializationSafe = number|string|boolean|[number]|undefined|null
 
 export function serialize(root: Serializable<any> | Array<any>): string {
 	const classToId = new Map();
@@ -48,11 +48,11 @@ export function serialize(root: Serializable<any> | Array<any>): string {
 
 	const instances: any[] = [];
 
-	function addInstance(oldVal: unknown, newVal: unknown): {_: number} {
+	function addInstance(oldVal: unknown, newVal: unknown): [number] {
 		const idx = instances.length
 		instanceToIdx.set(oldVal, idx)
 		instances.push(newVal)
-		return {_: idx}
+		return [idx]
 	}
 
 	function recurse(oldVal: unknown): SerializationSafe {
@@ -64,13 +64,13 @@ export function serialize(root: Serializable<any> | Array<any>): string {
 		const proto = Object.getPrototypeOf(oldVal);
 
 		const existingIdx = instanceToIdx.get(oldVal)
-		if (existingIdx !== undefined) return {_: existingIdx}
+		if (existingIdx !== undefined) return [existingIdx]
 
 		if (proto === Array.prototype) {
 			// Add to the instances before we're done actually recursing it
 			const ref = addInstance(oldVal, null)
 			const newVal = (oldVal as Array<unknown>).map(e => recurse(e))
-			instances[ref._] = newVal
+			instances[ref[0]] = newVal
 			return ref
 		}
 
@@ -130,33 +130,45 @@ export async function deserialize(json: string): Promise<object | unknown[]> {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 	const classIds = obj[0] as number[]
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-	const serializationInstances = obj[1] as SerializationSafe[]
+	const dFormInstances = obj[1] as Record<string|number, SerializationSafe | symbol>[]
 
 	const instances = [] as any[]
 
+	const symbolsToRefs: Map<symbol, number> = new Map()
+
 	for (let i = 0; i < classIds.length; ++i) {
-		const serializationInstance = serializationInstances[i]!
+		const dFormInstance = dFormInstances[i]!
+		for (const key in dFormInstance) {
+			const val = dFormInstance[key]
+			if (val instanceof Array) {
+				const symbol = Symbol()
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+				symbolsToRefs.set(symbol, val[0])
+				dFormInstance[key] = symbol
+			}
+		}
+
 		const id = classIds[i]!
 
 		if (id === -1) {
-			instances.push(serializationInstance)
+			instances.push(dFormInstance)
 			continue
 		}
 
 		const proto = (serializableIdToClass(id) as Newable).prototype as Serializable<any>
-		if (proto.deserializationForm) {
-			instances[i] = await proto.deserializationForm(serializationInstance)
+		if (proto.customDForm) {
+			instances[i] = await proto.customDForm(dFormInstance)
 			continue
 		}
 
-		Object.setPrototypeOf(serializationInstance, proto)
-		instances[i] = serializationInstance
+		Object.setPrototypeOf(dFormInstance, proto)
+		instances[i] = dFormInstance
 	}
 
 	for (const instance of instances) {
 		for (const key in instance) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			const ref = instance[key]?._
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+			const ref = symbolsToRefs.get(instance[key])
 			if (ref !== undefined) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				instance[key] = instances[ref]
