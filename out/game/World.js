@@ -105,8 +105,10 @@ export default class World {
         ctx.restore();
     }
     isSolid(x, y) {
+        x = Math.floor(x);
+        y = Math.floor(y);
         return !rect(0, 0, this.tilemap.width - 1, this.tilemap.height - 1).iAabbV2([x, y])
-            || this.collisionGrid[Math.floor(y) * this.tilemap.width + Math.floor(x)];
+            || this.collisionGrid[y * this.tilemap.width + x];
     }
     pathfindBackward(a, b) {
         try {

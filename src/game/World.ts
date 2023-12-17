@@ -9,7 +9,6 @@ import Entity from "./Entity.js"
 import ArmyEntity from "./entities/ArmyEntity.js"
 import Unit from "./entities/Unit.js"
 import Corpse from "./entities/Corpse.js"
-import Anim from "./Anim.js"
 
 interface TilemapData {
 	width: number
@@ -168,8 +167,10 @@ export default class World implements Serializable<World, { mapName: string }> {
 	}
 
 	isSolid(x: number, y: number): boolean {
+		x = Math.floor(x)
+		y = Math.floor(y)
 		return !rect(0, 0, this.tilemap.width-1, this.tilemap.height-1).iAabbV2([x, y])
-			|| this.collisionGrid[Math.floor(y) * this.tilemap.width + Math.floor(x)]!
+			|| this.collisionGrid[y * this.tilemap.width + x]!
 	}
 
 	pathfindBackward(a: V2, b: V2): V2[] | null {
