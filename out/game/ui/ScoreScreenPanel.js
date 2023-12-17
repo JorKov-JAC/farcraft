@@ -27,7 +27,8 @@ export default class ScoreScreenPanel extends TechPanel {
         ctx.fillText(titleText, ...ScreenCoord.rect(.5, .2).canvasPos);
         ctx.font = ScreenCoord.sq(0, .05).canvasSize[1] + "px tech";
         ctx.fillText("Total Remaining Health: " + remainingHealth, ...ScreenCoord.rect(.5, .35).canvasPos);
-        ctx.fillText(`Time Taken: ${Math.floor(timeTaken / 60)}:${Math.ceil(timeTaken % 60)}`, ...ScreenCoord.rect(.5, .5).canvasPos);
+        const timeStr = `Time Taken: ${Math.floor(timeTaken / 60)}:${Math.ceil(timeTaken % 60).toString().padStart(2, "0")}`;
+        ctx.fillText(timeStr, ...ScreenCoord.rect(.5, .5).canvasPos);
         ctx.fillText("Points: " + points, ...ScreenCoord.rect(.5, .65).canvasPos);
         ctx.restore();
     }
