@@ -133,8 +133,9 @@ export default class World {
                     continue;
                 }
                 const newNodePos = currentNode.pos.slice();
-                const zigzagDirection = (currentNode.currDirection
-                    + currentNode.traveled % 2) % 4;
+                const zigzagDirection = currentNode.traveled % 2
+                    ? (4 - 1 - currentNode.currDirection)
+                    : currentNode.currDirection;
                 switch (zigzagDirection) {
                     case 0:
                         newNodePos.add2(1, 0);

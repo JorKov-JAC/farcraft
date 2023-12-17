@@ -200,10 +200,9 @@ export default class World implements Serializable<World, { mapName: string, ent
 				}
 
 				const newNodePos = currentNode.pos.slice()
-				const zigzagDirection = (
-						currentNode.currDirection
-						+ currentNode.traveled % 2
-					) % Direction.SIZE as Direction
+				const zigzagDirection = currentNode.traveled % 2
+					? (Direction.SIZE - 1 - currentNode.currDirection) as Direction
+					: currentNode.currDirection
 				switch (zigzagDirection) {
 					case Direction.RIGHT:
 						newNodePos.add2(1, 0)
