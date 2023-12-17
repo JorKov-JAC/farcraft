@@ -8,7 +8,7 @@ export default class Unit extends ArmyEntity {
     vel = v2(0, 0);
     angle = 0;
     pathBackward = [];
-    lastDestination = this.pos.slice();
+    lastCommandId = 0;
     target = null;
     attackCooldown = 0;
     command = 0;
@@ -58,7 +58,7 @@ export default class Unit extends ArmyEntity {
         if (target) {
             const dist = this.pos.dist(target.pos);
             if (dist > attackRange || world.isRayObstructed(this.pos, target.pos)) {
-                this.commandAttackMoveTo(target.pos, world);
+                this.commandAttackMoveTo(target.pos, world, Math.random());
             }
             else {
                 if (this.attackCooldown <= 0) {
@@ -100,8 +100,7 @@ export default class Unit extends ArmyEntity {
             pushVel.add(away
                 .mul(speed * pushFactor)
                 .add(away.slice().rot90().mul(jiggle)));
-            const dest = this.pathBackward[0];
-            if (pushFactor > .25 && dest && e.pathBackward.length === 0 && dest.dist(e.lastDestination) < .1) {
+            if (pushFactor > .75 && this.pathBackward.length > 0 && e.pathBackward.length === 0 && this.lastCommandId === e.lastCommandId) {
                 this.pathBackward.length = 0;
                 velTowardNode.set(0, 0);
                 this.command = 0;
@@ -112,23 +111,23 @@ export default class Unit extends ArmyEntity {
             this.vel.mut().normOr(0, 0).mul(speed);
         this.pos.mut().add(this.vel.slice().mul(dt));
     }
-    startMovingTo(dest, world) {
+    startMovingTo(dest, world, commandId, commandType) {
         this.pathBackward = world.pathfindBackward(this.pos, dest) ?? [];
         if (this.pathBackward) {
             this.pathBackward.pop();
-            this.lastDestination = dest.slice();
+            this.lastCommandId = commandId;
+            this.command = commandType;
         }
         else {
-            this.lastDestination = this.pos.slice();
+            this.lastCommandId = 0;
+            this.command = 0;
         }
     }
-    commandMoveTo(dest, world) {
-        this.startMovingTo(dest, world);
-        this.command = 1;
+    commandMoveTo(dest, world, commandId) {
+        this.startMovingTo(dest, world, commandId, 1);
     }
-    commandAttackMoveTo(dest, world) {
-        this.startMovingTo(dest, world);
-        this.command = 2;
+    commandAttackMoveTo(dest, world, commandId) {
+        this.startMovingTo(dest, world, commandId, 2);
     }
     renderImpl() {
         ctx.save();

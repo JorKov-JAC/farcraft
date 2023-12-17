@@ -77,17 +77,19 @@ export default class Game {
         this.ongoingDrag = null;
     }
     orderMove(pos) {
+        const commandId = Math.random();
         for (const e of this.selectedEnts.values()) {
             if (!(e instanceof Unit))
                 continue;
-            e.commandMoveTo(pos, this.world);
+            e.commandMoveTo(pos, this.world, commandId);
         }
     }
     orderAttackMove(pos) {
+        const commandId = Math.random();
         for (const e of this.selectedEnts.values()) {
             if (!(e instanceof Unit))
                 continue;
-            e.commandAttackMoveTo(pos, this.world);
+            e.commandAttackMoveTo(pos, this.world, commandId);
         }
     }
     isSelected(e) {

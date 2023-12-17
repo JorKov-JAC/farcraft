@@ -21,7 +21,7 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 	angle: number = 0
 
 	pathBackward: V2[] = []
-	lastDestination: V2 = this.pos.slice()
+	lastCommandId: number = 0
 
 	target: Unit<any> | null = null
 	attackCooldown = 0
@@ -90,7 +90,7 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 		if (target) {
 			const dist = this.pos.dist(target.pos)
 			if (dist > attackRange || world.isRayObstructed(this.pos, target.pos)) {
-				this.commandAttackMoveTo(target.pos, world)
+				this.commandAttackMoveTo(target.pos, world, Math.random())
 			} else {
 				if (this.attackCooldown <= 0) {
 					target.health -= this.getAttackDamage()
@@ -139,10 +139,9 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 				.add(away.slice().rot90().mul(jiggle))
 			)
 
-			const dest = this.pathBackward[0]
 			// We've collided with someone headed to the same place who stopped;
 			// consider our journey complete.
-			if (pushFactor > .25 && dest && e.pathBackward.length === 0 && dest.dist(e.lastDestination) < .1) {
+			if (pushFactor > .75 && this.pathBackward.length > 0 && e.pathBackward.length === 0 && this.lastCommandId === e.lastCommandId) {
 				this.pathBackward.length = 0
 				velTowardNode.set(0, 0)
 				this.command = CommandType.IDLE
@@ -154,26 +153,26 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 		this.pos.mut().add(this.vel.slice().mul(dt))
 	}
 
-	private startMovingTo(dest: V2, world: World) {
+	private startMovingTo(dest: V2, world: World, commandId: number, commandType: CommandType) {
 		this.pathBackward = world.pathfindBackward(this.pos, dest) ?? []
 
 		if (this.pathBackward) {
 			// First tile is current tile, get rid of it:
 			this.pathBackward.pop()
-			this.lastDestination = dest.slice()
+			this.lastCommandId = commandId
+			this.command = commandType
 		} else {
-			this.lastDestination = this.pos.slice()
+			this.lastCommandId = 0
+			this.command = CommandType.IDLE
 		}
 	}
 
-	commandMoveTo(dest: V2, world: World) {
-		this.startMovingTo(dest, world)
-		this.command = CommandType.MOVE
+	commandMoveTo(dest: V2, world: World, commandId: number) {
+		this.startMovingTo(dest, world, commandId, CommandType.MOVE)
 	}
 
-	commandAttackMoveTo(dest: V2, world: World) {
-		this.startMovingTo(dest, world)
-		this.command = CommandType.ATTACK_MOVE
+	commandAttackMoveTo(dest: V2, world: World, commandId: number) {
+		this.startMovingTo(dest, world, commandId, CommandType.ATTACK_MOVE)
 	}
 
 	override renderImpl() {
