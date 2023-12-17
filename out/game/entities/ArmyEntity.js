@@ -46,5 +46,8 @@ export default class ArmyEntity extends Entity {
     getCurrentSprite() {
         return this.anim.getSprite();
     }
+    takeDamage(amount, _source) {
+        this.health -= amount;
+    }
 }
 //# sourceMappingURL=ArmyEntity.js.map

@@ -42,7 +42,6 @@ const images = {
                 frames: spanArray(5, 4)
             },
             "shoot": {
-                duration: 1,
                 frames: [...repeat(spanArray(9, 4), 2).flat(), ...repeat(12, 12)]
             },
             "die": {
@@ -93,7 +92,6 @@ const images = {
                 frames: spanArray(1, 4)
             },
             "shoot": {
-                duration: 1,
                 frames: [...spanArray(5, 4), ...repeat(8, 4)]
             },
             "die": {

@@ -25,9 +25,6 @@ export default class Anim<T extends ImageGroupName> implements Serializable {
 	 * clamped, not looped.
 	 */
 	setNorm(fraction: number) {
-		// TODO It is possible to end up with a frameTime of exactly duration
-		// this way. The fact that this interacts weirdly with advance hints
-		// that this should be another class.
 		this.frameTime = clamp(fraction, 0, 1 - Number.EPSILON * .5) * this.getDuration()
 	}
 

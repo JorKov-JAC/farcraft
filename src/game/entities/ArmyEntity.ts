@@ -72,6 +72,12 @@ export default abstract class ArmyEntity<AnimGroupName extends ImageGroupName> e
 	getCurrentSprite() {
 		return this.anim.getSprite()
 	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	takeDamage(amount: number, _source: ArmyEntity<any>) {
+		this.health -= amount
+	}
+
 	abstract getRadius(): number
 	abstract getMaxHealth(): number
 }

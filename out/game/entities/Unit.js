@@ -12,12 +12,16 @@ export default class Unit extends ArmyEntity {
     target = null;
     attackCooldown = 0;
     command = 0;
+    takeDamage(amount, source) {
+        super.takeDamage(amount, source);
+        if (!this.target)
+            this.target = source;
+    }
     updateImpl(dt) {
         this.attackCooldown -= dt;
         const world = current(Game).world;
         const speed = this.getSpeed();
         const radius = this.getRadius();
-        const path = this.pathBackward;
         const aabb = rect(this.pos[0] - radius, this.pos[1] - radius, this.pos[0] + radius, this.pos[1] + radius);
         for (let y = Math.floor(this.pos[1] - radius); y < Math.ceil(this.pos[1] + radius); ++y) {
             for (let x = Math.floor(this.pos[0] - radius); x < Math.ceil(this.pos[0] + radius); ++x) {
@@ -54,16 +58,15 @@ export default class Unit extends ArmyEntity {
         }
         if (this.command === 1)
             this.target = null;
-        const target = this.target;
-        if (target) {
-            const dist = this.pos.dist(target.pos);
-            if (dist > attackRange || world.isRayObstructed(this.pos, target.pos)) {
-                this.commandAttackMoveTo(target.pos, world, Math.random());
+        if (this.target) {
+            const dist = this.pos.dist(this.target.pos);
+            if (dist > attackRange || world.isRayObstructed(this.pos, this.target.pos)) {
+                this.commandAttackMoveTo(this.target.pos, world, Math.random());
             }
             else {
                 if (this.attackCooldown <= 0) {
-                    target.health -= this.getAttackDamage();
-                    this.angle = target.pos.slice().sub(this.pos).radians();
+                    this.target.takeDamage(this.getAttackDamage(), this);
+                    this.angle = this.target.pos.slice().sub(this.pos).radians();
                     this.attackCooldown = this.getAttackTime();
                     const attackSounds = this.getAttackSounds();
                     const sound = attackSounds[Math.floor(Math.random() * attackSounds.length)];
@@ -71,13 +74,13 @@ export default class Unit extends ArmyEntity {
                 }
             }
         }
-        if (path.length > 0
-            && this.pos.slice().add2(-.5, -.5).sub(path[path.length - 1]).mag() <= radius)
-            path.pop();
+        if (this.pathBackward.length > 0
+            && this.pos.slice().add2(-.5, -.5).sub(this.pathBackward[this.pathBackward.length - 1]).mag() <= radius)
+            this.pathBackward.pop();
         const velTowardNode = v2(0, 0).mut();
         if (this.attackCooldown <= 0) {
             if (this.pathBackward.length > 0) {
-                const targetNode = path[path.length - 1];
+                const targetNode = this.pathBackward[this.pathBackward.length - 1];
                 velTowardNode.set(...targetNode.slice().add2(.5, .5).sub(this.pos).normOr(0, 0).mul(speed).lock());
                 this.angle = this.vel.radians();
             }
