@@ -1,4 +1,4 @@
-import assets from "../../assets.js";
+import assets, { SoundName } from "../../assets.js";
 import Anim from "../Anim.js";
 import SerializableId from "../SerializableId.js";
 import { ArmyEntityArgs } from "./ArmyEntity.js";
@@ -51,6 +51,9 @@ export default class Marine extends Unit<"marine"> {
 	}
 	override getAttackSounds(): (keyof (typeof assets)["sounds"])[] {
 		return ["pulseRifle1", "pulseRifle2"]
+	}
+	override getDeathSound(): SoundName {
+		return "marineDeath"
 	}
 	override getRadius(): number {
 		return .4

@@ -1,4 +1,4 @@
-import { ImageGroupName } from "../../assets.js";
+import assets, { ImageGroupName, SoundName } from "../../assets.js";
 import { ctx } from "../../context.js";
 import { current } from "../../engine/Provider.js";
 import Anim from "../Anim.js";
@@ -80,4 +80,5 @@ export default abstract class ArmyEntity<AnimGroupName extends ImageGroupName> e
 
 	abstract getRadius(): number
 	abstract getMaxHealth(): number
+	abstract getDeathSound(): SoundName
 }

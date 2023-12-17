@@ -49,6 +49,9 @@ export default class Marine extends Unit {
     getAttackSounds() {
         return ["pulseRifle1", "pulseRifle2"];
     }
+    getDeathSound() {
+        return "marineDeath";
+    }
     getRadius() {
         return .4;
     }

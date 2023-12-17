@@ -79,12 +79,11 @@ export default class World implements Serializable<World, { mapName: string, ent
 			ent.baseUpdate(dt)
 		}
 
-		let entDied = false
 		const newCorpses: Corpse<any>[] = []
 		this.ents = this.ents.filter(e => {
 			if (e instanceof Unit) {
 				if (e.health > 0) return true
-				entDied = true
+				void gameSounds.playSound(e.getDeathSound())
 				const animGroupName = e.anim.groupName as ImageGroupName
 				const anims = assets.images[animGroupName].anims
 				if ("death" in anims) {
@@ -97,10 +96,6 @@ export default class World implements Serializable<World, { mapName: string, ent
 		})
 
 		this.ents.push(...newCorpses)
-
-		if (entDied) {
-			void gameSounds.playSound("death")
-		}
 
 		this.ents = this.ents.filter(e => !e.shouldCleanUp())
 	}

@@ -47,13 +47,12 @@ export default class World {
         for (const ent of this.ents) {
             ent.baseUpdate(dt);
         }
-        let entDied = false;
         const newCorpses = [];
         this.ents = this.ents.filter(e => {
             if (e instanceof Unit) {
                 if (e.health > 0)
                     return true;
-                entDied = true;
+                void gameSounds.playSound(e.getDeathSound());
                 const animGroupName = e.anim.groupName;
                 const anims = assets.images[animGroupName].anims;
                 if ("death" in anims) {
@@ -63,9 +62,6 @@ export default class World {
             return true;
         });
         this.ents.push(...newCorpses);
-        if (entDied) {
-            void gameSounds.playSound("death");
-        }
         this.ents = this.ents.filter(e => !e.shouldCleanUp());
     }
     render(startX, startY, w, h, startTileX, startTileY, tiles) {

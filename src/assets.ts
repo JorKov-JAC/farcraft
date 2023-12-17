@@ -285,7 +285,8 @@ const maps = {
 const assets = {
 	images,
 	sounds: {
-		death: "sounds/death.mp3",
+		marineDeath: "sounds/marineDeath.mp3",
+		sargeDeath: "sounds/sargeDeath.mp3",
 		pulseRifle1: "sounds/pulseRifle1.mp3",
 		pulseRifle2: "sounds/pulseRifle2.mp3",
 		laserCannon1: "sounds/laserCannon1.mp3",
@@ -382,5 +383,6 @@ const assets = {
 
 export type ImageGroupName = Exclude<keyof (typeof assets)["images"], symbol>
 export type AnimName<T extends ImageGroupName> = Exclude<keyof (typeof assets)["images"][T]["anims"], symbol>
+export type SoundName = keyof (typeof assets)["sounds"]
 
 export default assets
