@@ -5,10 +5,8 @@ import Game from "../Game.js";
 export default class ArmyEntity extends Entity {
     health = this.getMaxHealth();
     owner;
-    pos;
-    anim;
     constructor(args) {
-        super();
+        super(args);
         this.owner = args.owner;
         this.pos = args.pos;
         this.anim = args.initialAnimation;
@@ -42,9 +40,6 @@ export default class ArmyEntity extends Entity {
             ctx.stroke();
             ctx.restore();
         }
-    }
-    getCurrentSprite() {
-        return this.anim.getSprite();
     }
     takeDamage(amount, _source) {
         this.health -= amount;

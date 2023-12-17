@@ -2,7 +2,7 @@ import assets, { ImageGroupName, SoundName } from "../../assets.js";
 import { ctx } from "../../context.js";
 import { current } from "../../engine/Provider.js";
 import Anim from "../Anim.js";
-import Entity from "../Entity.js";
+import Entity, { EntityArgs } from "../Entity.js";
 import Game from "../Game.js";
 
 export const enum Owner {
@@ -12,20 +12,16 @@ export const enum Owner {
 	NEUTRAL
 }
 
-export type ArmyEntityArgs<AnimGroupName extends ImageGroupName> = {
+export type ArmyEntityArgs<AnimGroupName extends ImageGroupName> = EntityArgs<AnimGroupName> & {
 	owner: Owner,
-	pos: V2,
-	initialAnimation: Anim<AnimGroupName>
 }
 
-export default abstract class ArmyEntity<AnimGroupName extends ImageGroupName> extends Entity {
+export default abstract class ArmyEntity<AnimGroupName extends ImageGroupName> extends Entity<AnimGroupName> {
 	health: number = this.getMaxHealth()
 	owner: Owner
-	pos: V2
-	anim: Anim<AnimGroupName>
 
 	constructor(args: ArmyEntityArgs<AnimGroupName>) {
-		super()
+		super(args)
 		this.owner = args.owner
 		this.pos = args.pos
 		this.anim = args.initialAnimation
@@ -69,16 +65,11 @@ export default abstract class ArmyEntity<AnimGroupName extends ImageGroupName> e
 		}
 	}
 
-	getCurrentSprite() {
-		return this.anim.getSprite()
-	}
-
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	takeDamage(amount: number, _source: ArmyEntity<any>) {
 		this.health -= amount
 	}
 
-	abstract getRadius(): number
 	abstract getMaxHealth(): number
 	abstract getDeathSound(): SoundName
 }
