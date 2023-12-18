@@ -100,6 +100,11 @@ export default class Game {
     isSelected(e) {
         return this.selectedEnts.has(e);
     }
+    setSelectedEnts(ents) {
+        this.selectedEnts.clear();
+        for (const e of ents)
+            this.selectedEnts.add(e);
+    }
     getSelectedEnts() {
         return this.selectedEnts.keys();
     }

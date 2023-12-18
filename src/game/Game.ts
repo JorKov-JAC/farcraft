@@ -132,6 +132,10 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 	isSelected(e: ArmyEntity<any>) {
 		return this.selectedEnts.has(e)
 	}
+	setSelectedEnts(ents: Iterable<ArmyEntity<any>>) {
+		this.selectedEnts.clear()
+		for (const e of ents) this.selectedEnts.add(e)
+	}
 	getSelectedEnts(): Iterable<ArmyEntity<any>> {
 		return this.selectedEnts.keys()
 	}
