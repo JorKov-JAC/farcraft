@@ -23,17 +23,19 @@ export default class Camera {
         if (keys["ArrowDown"])
             moveVec[1] += 1;
         if (captureInput) {
+            const mouseMoveVec = v2(0, 0).mut();
             if (mousePos[0] <= 3)
-                moveVec[0] -= 1;
+                mouseMoveVec[0] -= 1;
             if (mousePos[0] >= canvas.width - 3)
-                moveVec[0] += 1;
+                mouseMoveVec[0] += 1;
             if (mousePos[1] <= 3)
-                moveVec[1] -= 1;
+                mouseMoveVec[1] -= 1;
             if (mousePos[1] >= canvas.height - 3)
-                moveVec[1] += 1;
+                mouseMoveVec[1] += 1;
+            moveVec.add(mouseMoveVec);
+            this.updateCursor(mouseMoveVec);
         }
         this.moveToward(moveVec, dt);
-        this.updateCursor(moveVec);
         const actualSize = this.game.hud.worldPanel.getActualSize();
         const vMin = Math.min(actualSize[0], actualSize[1]);
         const scale = this.minLen / vMin;

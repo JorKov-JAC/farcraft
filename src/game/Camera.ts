@@ -41,14 +41,18 @@ export default class Camera implements Serializable {
 		if (keys["ArrowDown"]) moveVec[1] += 1
 
 		if (captureInput) {
-			if (mousePos[0] <= 3) moveVec[0] -= 1
-			if (mousePos[0] >= canvas.width - 3) moveVec[0] += 1
-			if (mousePos[1] <= 3) moveVec[1] -= 1
-			if (mousePos[1] >= canvas.height - 3) moveVec[1] += 1
+			const mouseMoveVec = v2(0, 0).mut()
+			if (mousePos[0] <= 3) mouseMoveVec[0] -= 1
+			if (mousePos[0] >= canvas.width - 3) mouseMoveVec[0] += 1
+			if (mousePos[1] <= 3) mouseMoveVec[1] -= 1
+			if (mousePos[1] >= canvas.height - 3) mouseMoveVec[1] += 1
+
+			moveVec.add(mouseMoveVec)
+
+			this.updateCursor(mouseMoveVec)
 		}
 
 		this.moveToward(moveVec, dt)
-		this.updateCursor(moveVec)
 
 		// Clamp position
 		const actualSize = this.game.hud.worldPanel.getActualSize()
