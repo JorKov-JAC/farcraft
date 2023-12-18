@@ -3,7 +3,7 @@ import { provide } from "../engine/Provider.js";
 import { SerializableClock } from "../engine/clock.js";
 import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
 import { v2 } from "../engine/vector.js";
-import { gameStateManager, mousePos } from "../global.js";
+import { gameStateManager, keys, mousePos } from "../global.js";
 import Camera from "./Camera.js";
 import World from "./World.js";
 import Unit from "./entities/Unit.js";
@@ -73,7 +73,8 @@ export default class Game {
             .unitsWithinBoundsInclusive(...this.ongoingDrag, ...endPos)
             .filter(e => e.owner === 0);
         if (selected.length > 0) {
-            this.selectedEnts.clear();
+            if (!keys["Shift"])
+                this.selectedEnts.clear();
             for (const ent of selected) {
                 this.selectedEnts.add(ent);
             }

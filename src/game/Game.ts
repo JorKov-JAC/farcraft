@@ -4,7 +4,7 @@ import { provide } from "../engine/Provider.js";
 import { SerializableClock } from "../engine/clock.js";
 import { ScreenCoord } from "../engine/ui/ScreenCoord.js";
 import { v2 } from "../engine/vector.js";
-import { gameStateManager, mousePos } from "../global.js";
+import { gameStateManager, keys, mousePos } from "../global.js";
 import Camera from "./Camera.js";
 import Serializable from "./Serializable.js";
 import SerializableId from "./SerializableId.js";
@@ -102,7 +102,7 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 			.filter(e => e.owner === Owner.PLAYER)
 
 		if (selected.length > 0) {
-			this.selectedEnts.clear()
+			if (!keys["Shift"]) this.selectedEnts.clear()
 			for (const ent of selected) {
 				this.selectedEnts.add(ent)
 			}
