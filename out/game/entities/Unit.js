@@ -110,10 +110,11 @@ export default class Unit extends ArmyEntity {
                 .slice()
                 .sub(e.pos)
                 .normOr(Math.random(), Math.random());
+            const pushSpeed = speed * pushFactor;
             pushVel.add(away
-                .mul(speed * pushFactor)
+                .mul(pushSpeed)
                 .add(away.slice().rot90().mul(jiggle)));
-            if (pushFactor > .75 && this.pathBackward.length > 0 && e.pathBackward.length === 0 && this.lastCommandId === e.lastCommandId) {
+            if (pushSpeed * -pushVel.dot(velTowardNode) >= speed && this.pathBackward.length > 0 && e.pathBackward.length === 0 && this.lastCommandId === e.lastCommandId) {
                 this.pathBackward.length = 0;
                 velTowardNode.set(0, 0);
                 this.command = 0;
