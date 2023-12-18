@@ -29,6 +29,13 @@ export class ScreenCoord {
     copy() {
         return new ScreenCoord(this.rootRect, this.rootSq, this.rect, this.sq);
     }
+    reset() {
+        this.rootRect.mut().set(0, 0);
+        this.rootSq.mut().set(0, 0);
+        this.rect.mut().set(0, 0);
+        this.sq.mut().set(0, 0);
+        return this;
+    }
     addRootRect(x, y) {
         this.rootRect.mut().add2(x, y);
         return this;

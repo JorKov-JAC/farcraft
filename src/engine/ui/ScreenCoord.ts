@@ -54,6 +54,15 @@ export class ScreenCoord {
 		return new ScreenCoord(this.rootRect, this.rootSq, this.rect, this.sq) as Mut<ScreenCoord>
 	}
 
+	reset(this: Mut<ScreenCoord>): Mut<ScreenCoord> {
+		this.rootRect.mut().set(0, 0)
+		this.rootSq.mut().set(0, 0)
+		this.rect.mut().set(0, 0)
+		this.sq.mut().set(0, 0)
+
+		return this
+	}
+
 	addRootRect(this: Mut<ScreenCoord>, x: number, y: number): Mut<ScreenCoord> {
 		this.rootRect.mut().add2(x, y);
 		return this;

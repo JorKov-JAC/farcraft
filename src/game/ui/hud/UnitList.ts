@@ -6,6 +6,9 @@ import TechPanel from "../TechPanel.js";
 import ArmyEntityCard from "./ArmyEntityCard.js";
 
 export default class UnitList extends TechPanel {
+	static COLUMNS = 6
+	static MIN_ROWS = 2
+
 	currentCards: Map<ArmyEntity<any>, ArmyEntityCard> = new Map()
 
 	override baseUpdate(dt: number): void {
@@ -14,7 +17,11 @@ export default class UnitList extends TechPanel {
 		super.baseUpdate(dt)
 	}
 
-	updateCards(ents: Iterable<ArmyEntity<any>>) {
+	updateCards(entsIter: Iterable<ArmyEntity<any>>) {
+		const ents = Array.from(entsIter)
+
+		const rows = Math.max(UnitList.MIN_ROWS, Math.ceil(ents.length / UnitList.COLUMNS))
+
 		const missingEnts = new Set(this.currentCards.keys())
 		for (const e of ents) {
 			if (missingEnts.delete(e)) continue
@@ -27,6 +34,13 @@ export default class UnitList extends TechPanel {
 			const card = this.currentCards.get(e)!
 			this.currentCards.delete(e)
 			this.removeChild(card)
+		}
+
+		const cards = Array.from(this.currentCards.values())
+		for (let i = 0; i < cards.length; ++i) {
+			const card = cards[i]!
+			card.pos.mut().reset().addRect(i % UnitList.COLUMNS / UnitList.COLUMNS, Math.floor(i / UnitList.COLUMNS) / rows)
+			card.size.mut().reset().addRect(1 / UnitList.COLUMNS, 1 / rows)
 		}
 	}
 }

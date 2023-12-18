@@ -12,8 +12,8 @@ export class Panel {
 	private actualPos: V2 = v2(0, 0);
 	private actualSize: V2 = v2(0, 0);
 
-	pos: ScreenCoord;
-	size: ScreenCoord;
+	readonly pos: ScreenCoord;
+	readonly size: ScreenCoord;
 
 	protected readonly _trueChildren: Panel[] = [];
 
