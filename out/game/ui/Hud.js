@@ -15,9 +15,9 @@ export default class Hud extends Panel {
         this.game = game;
         game.camera.extraYMult = .05 / .8;
         this.worldPanel = new WorldPanel(ScreenCoord.rect(0, 0), ScreenCoord.rect(1, .8), game);
-        const minimap = new Minimap(ScreenCoord.rect(0, 1).setSq(-.25, -.25), ScreenCoord.sq(.25, .25));
-        const commandMap = new CommandMap(ScreenCoord.rect(1, 1).setSq(0, -.25), ScreenCoord.sq(.25, .25));
-        const unitList = new UnitList(ScreenCoord.rect(0, 1).setSq(.25, 0), ScreenCoord.rect(1, .2).setSq(-.5, 0));
+        const minimap = new Minimap(ScreenCoord.rect(0, 1).addSq(-.25, -.25), ScreenCoord.sq(.25, .25));
+        const commandMap = new CommandMap(ScreenCoord.rect(1, 1).addSq(0, -.25), ScreenCoord.sq(.25, .25));
+        const unitList = new UnitList(ScreenCoord.rect(0, 1).addSq(.25, 0), ScreenCoord.rect(1, .2).addSq(-.5, 0));
         void uiClock.tween(minimap, { pos: { rect: [0, 1], sq: [0, -.25] } }, 1);
         void uiClock.tween(commandMap, { pos: { sq: [-.25] } }, 1);
         void uiClock.tween(unitList, { pos: { rect: { 1: .8 } } }, 1);
@@ -27,7 +27,7 @@ export default class Hud extends Panel {
             commandMap,
             unitList
         ];
-        this.children.push(...children);
+        this.addChildren(...children);
     }
     baseUpdate(dt) {
         provide(Game, this.game, () => {

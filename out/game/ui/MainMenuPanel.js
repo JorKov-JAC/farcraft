@@ -9,7 +9,7 @@ export default class MainMenuPanel extends TechPanel {
         super(pos, size);
         let triedToLoad = false;
         if (GameplayState.saveExists()) {
-            this.children.push(new TextButton("Continue", () => {
+            this.addChildren(new TextButton("Continue", () => {
                 if (triedToLoad)
                     return;
                 triedToLoad = true;
@@ -21,7 +21,7 @@ export default class MainMenuPanel extends TechPanel {
                 })();
             }, ScreenCoord.rect(.2, .6), ScreenCoord.rect(.6, .1)));
         }
-        this.children.push(new TextButton("New Game", () => {
+        this.addChildren(new TextButton("New Game", () => {
             void gameStateManager.switch(GameplayState.newGame());
         }, ScreenCoord.rect(.2, .8), ScreenCoord.rect(.6, .1)));
     }

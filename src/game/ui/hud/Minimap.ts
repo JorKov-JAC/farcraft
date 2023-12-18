@@ -9,7 +9,7 @@ export default class Minimap extends TechPanel {
 	constructor(pos: ScreenCoord, size: ScreenCoord) {
 		super(pos, size)
 
-		this.children.push(new TextButton(
+		this.addChildren(new TextButton(
 			"Save",
 			() => {
 				const gameplayState = gameStateManager.state

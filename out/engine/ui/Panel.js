@@ -9,7 +9,7 @@ export class Panel {
     actualSize = v2(0, 0);
     pos;
     size;
-    children = [];
+    _trueChildren = [];
     constructor(pos, size) {
         this.pos = pos;
         this.size = size;
@@ -24,7 +24,7 @@ export class Panel {
                 this.renderImpl();
             });
         });
-        this.children.forEach(e => { e.baseRender(); });
+        this._trueChildren.forEach(e => { e.baseRender(); });
         ctx.restore();
     }
     baseUpdate(dt) {
@@ -35,13 +35,13 @@ export class Panel {
         this.actualSize = this.size.canvasSize;
         provide(containerPosKey, this.actualPos, () => {
             provide(containerSizeKey, this.actualSize, () => {
-                this.children.forEach(e => { e.baseUpdate(dt); });
+                this._trueChildren.forEach(e => { e.baseUpdate(dt); });
             });
         });
     }
     *descendantsBackward() {
-        for (let i = this.children.length; i-- > 0;) {
-            const child = this.children[i];
+        for (let i = this._trueChildren.length; i-- > 0;) {
+            const child = this._trueChildren[i];
             yield* child.descendantsBackward();
         }
         yield this;
@@ -52,6 +52,23 @@ export class Panel {
     getActualSize() {
         return this.actualSize;
     }
+    getPublicChildren() {
+        return this._trueChildren;
+    }
+    getChildren() {
+        return this.getPublicChildren();
+    }
+    addChildren(...children) {
+        this.getPublicChildren().push(...children);
+    }
+    removeChild(child) {
+        const publicChildren = this.getPublicChildren();
+        const idx = publicChildren.indexOf(child);
+        if (idx >= 0) {
+            publicChildren.splice(idx, 1);
+        }
+    }
+    renderImpl() { }
     updateImpl(_dt) { }
     onPress(_pos) { }
     onUnpress(_pos) { }

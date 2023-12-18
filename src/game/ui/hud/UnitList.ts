@@ -1,3 +1,12 @@
+import { ScreenCoord } from "../../../engine/ui/ScreenCoord.js";
 import TechPanel from "../TechPanel.js";
+import ArmyEntityCard from "./ArmyEntityCard.js";
 
-export default TechPanel
+export default class UnitList extends TechPanel {
+	constructor(pos: ScreenCoord, size: ScreenCoord) {
+		super(pos, size)
+		this.addChildren(
+			new ArmyEntityCard(ScreenCoord.rect(0, 0), ScreenCoord.rect(1, 1), null)
+		)
+	}
+}

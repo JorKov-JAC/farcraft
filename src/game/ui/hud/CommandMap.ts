@@ -6,7 +6,7 @@ export default class Minimap extends TechPanel {
 	// constructor(pos: ScreenCoord, size: ScreenCoord) {
 	// 	super(pos, size)
 
-	// 	this.children.push(new TechPanel(ScreenCoord.rect(0, 0), ScreenCoord.rect(1, 1)))
+	// 	this.addChildren(new TechPanel(ScreenCoord.rect(0, 0), ScreenCoord.rect(1, 1)))
 	// }
 
 	override renderImpl(): void {

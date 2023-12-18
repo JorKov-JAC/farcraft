@@ -7,7 +7,7 @@ import GameplayState from "../../gameStates/GameplayState.js";
 export default class Minimap extends TechPanel {
     constructor(pos, size) {
         super(pos, size);
-        this.children.push(new TextButton("Save", () => {
+        this.addChildren(new TextButton("Save", () => {
             const gameplayState = gameStateManager.state;
             if (gameplayState instanceof GameplayState) {
                 gameplayState.saveGame();

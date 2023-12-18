@@ -15,57 +15,62 @@ export class ScreenCoord {
 	 * and 0..height. Because width and height likely differ, this will give
 	 * rectangular coordinates.
 	 */
-	private rootRect = v2(0, 0);
+	private rootRect: V2
 	/**
 	 * A position in normalized screen space, where 0..1 maps to
 	 * 0..min(width, height). This maintains a 1:1 aspect ratio (hence square).
 	 */
-	private rootSq = v2(0, 0);
+	private rootSq: V2
 
 	/** Like {@link rootRect}, but relative to the current container. */
-	private rect = v2(0, 0);
+	private rect: V2
 	/** Like {@link rootSq}, but relative to the current container. */
-	private sq = v2(0, 0);
+	private sq: V2
 
-	private constructor() { }
+	private constructor(rootRect: V2, rootSq: V2, rect: V2, sq: V2) {
+		this.rootRect = rootRect
+		this.rootSq = rootSq
+		this.rect = rect
+		this.sq = sq
+	}
 
 	static rootRect(x: number, y: number): Mut<ScreenCoord> {
-		const pos = new ScreenCoord() as Mut<ScreenCoord>;
-		return pos.setRootRect(x, y);
+		return new ScreenCoord(v2(x, y), v2(0,0), v2(0,0), v2(0,0)) as Mut<ScreenCoord>;
 	}
 
 	static rootSq(x: number, y: number): Mut<ScreenCoord> {
-		const pos = new ScreenCoord() as Mut<ScreenCoord>;
-		return pos.setRootSq(x, y);
+		return new ScreenCoord(v2(0, 0), v2(x, y), v2(0, 0), v2(0, 0)) as Mut<ScreenCoord>;
 	}
 
 	static rect(x: number, y: number): Mut<ScreenCoord> {
-		const pos = new ScreenCoord() as Mut<ScreenCoord>;
-		return pos.setRect(x, y);
+		return new ScreenCoord(v2(0, 0), v2(0, 0), v2(x, y), v2(0, 0)) as Mut<ScreenCoord>;
 	}
 
 	static sq(x: number, y: number): Mut<ScreenCoord> {
-		const pos = new ScreenCoord() as Mut<ScreenCoord>;
-		return pos.setSq(x, y);
+		return new ScreenCoord(v2(0, 0), v2(0, 0), v2(0, 0), v2(x, y)) as Mut<ScreenCoord>;
 	}
 
-	setRootRect(this: Mut<ScreenCoord>, x: number, y: number): Mut<ScreenCoord> {
-		this.rootRect.mut().set(x, y);
+	copy(): Mut<ScreenCoord> {
+		return new ScreenCoord(this.rootRect, this.rootSq, this.rect, this.sq) as Mut<ScreenCoord>
+	}
+
+	addRootRect(this: Mut<ScreenCoord>, x: number, y: number): Mut<ScreenCoord> {
+		this.rootRect.mut().add2(x, y);
 		return this;
 	}
 
-	setRootSq(this: Mut<ScreenCoord>, x: number, y: number): Mut<ScreenCoord> {
-		this.rootSq.mut().set(x, y);
+	addRootSq(this: Mut<ScreenCoord>, x: number, y: number): Mut<ScreenCoord> {
+		this.rootSq.mut().add2(x, y);
 		return this;
 	}
 
-	setRect(this: Mut<ScreenCoord>, x: number, y: number): Mut<ScreenCoord> {
-		this.rect.mut().set(x, y);
+	addRect(this: Mut<ScreenCoord>, x: number, y: number): Mut<ScreenCoord> {
+		this.rect.mut().add2(x, y);
 		return this;
 	}
 
-	setSq(this: Mut<ScreenCoord>, x: number, y: number): Mut<ScreenCoord> {
-		this.sq.mut().set(x, y);
+	addSq(this: Mut<ScreenCoord>, x: number, y: number): Mut<ScreenCoord> {
+		this.sq.mut().add2(x, y);
 		return this;
 	}
 
@@ -79,10 +84,15 @@ export class ScreenCoord {
 
 		const minRootDimension = Math.min(canvas.width, canvas.height);
 
-		return this.rootRect.slice().mul2(canvas.width, canvas.height)
+		const res = this.rootRect.slice().mul2(canvas.width, canvas.height)
 			.add(this.rootSq.slice().mul(minRootDimension))
 			.add(this.rect.slice().mulV2(containerSize))
 			.add(this.sq.slice().mul(containerSize.min()));
+
+		res[0] = Math.max(0, res[0])
+		res[1] = Math.max(0, res[1])
+
+		return res
 	}
 
 	get canvasPos(): V2 {

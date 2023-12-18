@@ -9,7 +9,7 @@ export default class ScoreScreenPanel extends TechPanel {
     constructor(pos, size, scoreScreenState) {
         super(pos, size);
         this.scoreScreenState = scoreScreenState;
-        this.children.push(new TextButton("Done", () => {
+        this.addChildren(new TextButton("Done", () => {
             void gameStateManager.switch(Promise.resolve(new MainMenuState()));
         }, ScreenCoord.rect(.2, .8), ScreenCoord.rect(.6, .1)));
     }

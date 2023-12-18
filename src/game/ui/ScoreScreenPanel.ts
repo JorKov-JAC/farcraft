@@ -14,7 +14,7 @@ export default class ScoreScreenPanel extends TechPanel {
 
 		this.scoreScreenState = scoreScreenState
 
-		this.children.push(
+		this.addChildren(
 			new TextButton(
 				"Done",
 				() => {

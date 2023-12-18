@@ -8,14 +8,14 @@ import { ScreenCoord } from "./ScreenCoord.js";
 export const containerPosKey = createProviderKey(v2(0, 0));
 export const containerSizeKey = createProviderKey(v2(canvas.width, canvas.height))
 
-export abstract class Panel {
+export class Panel {
 	private actualPos: V2 = v2(0, 0);
 	private actualSize: V2 = v2(0, 0);
 
 	pos: ScreenCoord;
 	size: ScreenCoord;
 
-	children: Panel[] = [];
+	protected readonly _trueChildren: Panel[] = [];
 
 	constructor(pos: ScreenCoord, size: ScreenCoord) {
 		this.pos = pos;
@@ -34,7 +34,7 @@ export abstract class Panel {
 			});
 		});
 
-		this.children.forEach(e => { e.baseRender(); });
+		this._trueChildren.forEach(e => { e.baseRender(); });
 		ctx.restore();
 	}
 
@@ -52,14 +52,14 @@ export abstract class Panel {
 		// Update children
 		provide(containerPosKey, this.actualPos, () => {
 			provide(containerSizeKey, this.actualSize, () => {
-				this.children.forEach(e => { e.baseUpdate(dt); });
+				this._trueChildren.forEach(e => { e.baseUpdate(dt); });
 			});
 		});
 	}
 
 	*descendantsBackward(): Generator<Panel> {
-		for (let i = this.children.length; i-- > 0;) {
-			const child = this.children[i]!;
+		for (let i = this._trueChildren.length; i-- > 0;) {
+			const child = this._trueChildren[i]!;
 			yield* child.descendantsBackward();
 		}
 		yield this;
@@ -72,7 +72,29 @@ export abstract class Panel {
 		return this.actualSize
 	}
 
-	abstract renderImpl(): void;
+	/**
+	 * Generally use {@link getChildren} instead unless you want to forward this
+	 * panel's children array.
+	 */
+	getPublicChildren(): Panel[] {
+		return this._trueChildren
+	}
+
+	getChildren(): ReadonlyArray<Panel> {
+		return this.getPublicChildren()
+	}
+	addChildren(...children: Panel[]) {
+		this.getPublicChildren().push(...children)
+	}
+	removeChild(child: Panel) {
+		const publicChildren = this.getPublicChildren()
+		const idx = publicChildren.indexOf(child)
+		if (idx >= 0) {
+			publicChildren.splice(idx, 1)
+		}
+	}
+
+	renderImpl(): void { }
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	updateImpl(_dt: number): void { }
@@ -91,5 +113,6 @@ export abstract class Panel {
 	onClick(_pos: V2) { }
 
 	/** Like {@link onPress}, but for the right mouse button. */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onRightPress(_pos: V2) { }
 }

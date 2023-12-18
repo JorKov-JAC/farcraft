@@ -12,7 +12,7 @@ export default class MainMenuPanel extends TechPanel {
 		let triedToLoad = false
 
 		if (GameplayState.saveExists()) {
-			this.children.push(
+			this.addChildren(
 				new TextButton(
 					"Continue",
 					() => {
@@ -30,7 +30,7 @@ export default class MainMenuPanel extends TechPanel {
 			)
 		}
 
-		this.children.push(
+		this.addChildren(
 			new TextButton(
 				"New Game",
 				() => {
