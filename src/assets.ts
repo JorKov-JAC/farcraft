@@ -308,19 +308,24 @@ const assets = {
 							typeId: SerializableId.MARINE,
 							instanceArgs: [
 								{
-									pos: [2.5, 3.5]
+									pos: [2.5, 3.5],
+									angle: 0
 								},
 								{
-									pos: [2.5, 4.5]
+									pos: [2.5, 4.5],
+									angle: 0
 								},
 								{
-									pos: [2.5, 5.5]
+									pos: [2.5, 5.5],
+									angle: 0
 								},
 								{
-									pos: [3.5, 4]
+									pos: [3.5, 4],
+									angle: 0
 								},
 								{
-									pos: [3.5, 5]
+									pos: [3.5, 5],
+									angle: 0
 								},
 							]
 						} satisfies UnitInfo<typeof Marine>,
@@ -328,7 +333,8 @@ const assets = {
 							typeId: SerializableId.SARGE,
 							instanceArgs: [
 								{
-									pos: [5, 4.5]
+									pos: [5, 4.5],
+									angle: 0
 								}
 							]
 						} satisfies UnitInfo<typeof Sarge>
@@ -341,22 +347,28 @@ const assets = {
 							typeId: SerializableId.MARINE,
 							instanceArgs: [
 								{
-									pos: [10.5, 16.75]
+									pos: [10.5, 16.75],
+									angle: 0
 								},
 								{
-									pos: [2.5, 16.25]
+									pos: [2.5, 16.25],
+									angle: 0
 								},
 								{
-									pos: [29.5, 4.5]
+									pos: [29.5, 4.5],
+									angle: Math.PI
 								},
 								{
-									pos: [25, 5.5]
+									pos: [25, 5.5],
+									angle: Math.PI
 								},
 								{
-									pos: [29, 12.5]
+									pos: [29, 12.5],
+									angle: 0
 								},
 								{
-									pos: [30, 6.5]
+									pos: [30, 6.5],
+									angle: Math.PI
 								},
 							]
 						} satisfies UnitInfo<typeof Marine>,
@@ -364,13 +376,16 @@ const assets = {
 							typeId: SerializableId.SARGE,
 							instanceArgs: [
 								{
-									pos: [5.5, 16.5]
+									pos: [5.5, 16.5],
+									angle: 0
 								},
 								{
-									pos: [27, 5]
+									pos: [27, 5],
+									angle: Math.PI
 								},
 								{
-									pos: [19.75, 9]
+									pos: [19.75, 9],
+									angle: Math.PI
 								}
 							]
 						} satisfies UnitInfo<typeof Sarge>
