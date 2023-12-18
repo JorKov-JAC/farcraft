@@ -116,7 +116,7 @@ export default class World {
                 dist: a.taxiDist(b),
                 traveled: 0,
                 from: null,
-                pos: a,
+                pos: a.slice(),
                 currDirection: 0
             };
             const nodes = [startNode];

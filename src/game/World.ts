@@ -168,30 +168,30 @@ export default class World implements Serializable<World, { mapName: string, ent
 			|| this.collisionGrid[y * this.tilemap.width + x]!
 	}
 
-	pathfindBackward(a: V2, b: V2): V2[] | null {
+	pathfindBackward(a: V2, b: V2): MutV2[] | null {
 		try {
 			a = a.slice().floor()
 			b = b.slice().floor()
 
 			const width = this.tilemap.width
 
-			type Node = {dist: number, traveled: number, from: Node|null, pos: V2, currDirection: Direction}
+			type Node = {dist: number, traveled: number, from: Node|null, pos: MutV2, currDirection: Direction}
 			const distAtExploredTile: number[] = []
 
 			const startNode: Node = {
 				dist: a.taxiDist(b),
 				traveled: 0,
 				from: null,
-				pos: a,
+				pos: a.slice(),
 				currDirection: 0 as Direction
 			}
 
 			const nodes: Node[] = [startNode]
 			distAtExploredTile[a[1] * width + a[0]] = startNode.dist
 
-			let currentNode: Node
+			let currentNode: Node | undefined | null
 			while (true) {
-				currentNode = nodes[nodes.length - 1]!
+				currentNode = nodes[nodes.length - 1]
 				if (!currentNode) return null
 				if (currentNode.pos.equals(b)) break
 				if (currentNode.currDirection >= Direction.SIZE) {
@@ -250,10 +250,10 @@ export default class World implements Serializable<World, { mapName: string, ent
 				nodes.splice(insertion, 0, newNode)
 			}
 
-			const path: V2[] = []
+			const path: MutV2[] = []
 			while (currentNode) {
 				path.push(currentNode.pos)
-				currentNode = currentNode.from!
+				currentNode = currentNode.from
 			}
 
 			return path

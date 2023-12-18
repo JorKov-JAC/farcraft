@@ -114,15 +114,14 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 		}
 
 		// Move along path
-		const centerTileCheckingPos = this.pos.slice().add2(-.5, -.5).lock()
 		if (this.pathBackward.length > 0
 			&& (
 				// We're close enough to our destination to stop
-				centerTileCheckingPos.slice().sub(this.pathBackward[this.pathBackward.length - 1]!).mag() <= radius
+				this.pos.slice().sub(this.pathBackward[this.pathBackward.length - 1]!).mag() <= radius
 				// We're in the destination tile and we hit a wall, so stop
 				|| collidedWithWall
 					&& this.pathBackward.length === 1
-					&& centerTileCheckingPos.slice().floor().equals(this.pathBackward[0]!.slice().floor())
+					&& this.pos.slice().floor().equals(this.pathBackward[0]!.slice().floor())
 			)
 		) this.pathBackward.pop()
 
@@ -130,7 +129,7 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 		if (this.attackCooldown <= 0) {
 			if (this.pathBackward.length > 0) {
 				const targetNode = this.pathBackward[this.pathBackward.length - 1]!
-				velTowardNode.set(...targetNode.slice().add2(.5, .5).sub(this.pos).normOr(0, 0).mul(speed).lock())
+				velTowardNode.set(...targetNode.slice().sub(this.pos).normOr(0, 0).mul(speed).lock())
 				this.angle = this.vel.radians()
 			} else {
 				this.command = CommandType.IDLE
@@ -176,11 +175,14 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 		const pathBackward = world.pathfindBackward(this.pos, dest)
 
 		if (pathBackward) {
-			this.pathBackward = pathBackward
 			// First tile is current tile, get rid of it:
-			this.pathBackward.pop()
+			pathBackward.pop()
+			// Go to the center of each tile
+			pathBackward.forEach(e => e.add2(.5, .5))
 			// Set final position to be sub-tile position:
-			this.pathBackward.splice(0, 0, dest.slice().add2(-.5, -.5))
+			pathBackward.splice(0, 0, dest.slice())
+
+			this.pathBackward = pathBackward
 			this.lastCommandId = commandId
 			this.command = commandType
 		} else {

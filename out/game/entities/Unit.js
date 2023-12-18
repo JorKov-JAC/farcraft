@@ -81,18 +81,17 @@ export default class Unit extends ArmyEntity {
                 }
             }
         }
-        const centerTileCheckingPos = this.pos.slice().add2(-.5, -.5).lock();
         if (this.pathBackward.length > 0
-            && (centerTileCheckingPos.slice().sub(this.pathBackward[this.pathBackward.length - 1]).mag() <= radius
+            && (this.pos.slice().sub(this.pathBackward[this.pathBackward.length - 1]).mag() <= radius
                 || collidedWithWall
                     && this.pathBackward.length === 1
-                    && centerTileCheckingPos.slice().floor().equals(this.pathBackward[0].slice().floor())))
+                    && this.pos.slice().floor().equals(this.pathBackward[0].slice().floor())))
             this.pathBackward.pop();
         const velTowardNode = v2(0, 0).mut();
         if (this.attackCooldown <= 0) {
             if (this.pathBackward.length > 0) {
                 const targetNode = this.pathBackward[this.pathBackward.length - 1];
-                velTowardNode.set(...targetNode.slice().add2(.5, .5).sub(this.pos).normOr(0, 0).mul(speed).lock());
+                velTowardNode.set(...targetNode.slice().sub(this.pos).normOr(0, 0).mul(speed).lock());
                 this.angle = this.vel.radians();
             }
             else {
@@ -128,9 +127,10 @@ export default class Unit extends ArmyEntity {
     startMovingTo(dest, world, commandId, commandType) {
         const pathBackward = world.pathfindBackward(this.pos, dest);
         if (pathBackward) {
+            pathBackward.pop();
+            pathBackward.forEach(e => e.add2(.5, .5));
+            pathBackward.splice(0, 0, dest.slice());
             this.pathBackward = pathBackward;
-            this.pathBackward.pop();
-            this.pathBackward.splice(0, 0, dest.slice().add2(-.5, -.5));
             this.lastCommandId = commandId;
             this.command = commandType;
         }
