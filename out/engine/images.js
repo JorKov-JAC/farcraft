@@ -101,6 +101,9 @@ export class ImageManager {
     getImage(name) {
         return this.namesToSpriteInfos[name].image;
     }
+    hasAnim(spriteName, animName) {
+        return animName in this.namesToSpriteInfos[spriteName].animFrames;
+    }
     getAnim(spriteName, animName) {
         return this.namesToSpriteInfos[spriteName].animFrames[animName];
     }

@@ -6,6 +6,7 @@ export const enum SerializableId {
 	CLOCK,
 	TWEEN,
 	ANIMATION,
+	CORPSE,
 	MARINE,
 	SARGE,
 	_SIZE

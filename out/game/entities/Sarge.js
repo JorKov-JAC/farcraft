@@ -59,7 +59,7 @@ export default class Marine extends Unit {
         return 60;
     }
     classId() {
-        return 7;
+        return 8;
     }
 }
 //# sourceMappingURL=Sarge.js.map

@@ -8,6 +8,7 @@ import Serializable from "./Serializable.js";
 import { SerializableClock, Tween } from "../engine/clock.js";
 import Anim from "./Anim.js";
 import Sarge from "./entities/Sarge.js";
+import Corpse from "./entities/Corpse.js";
 
 
 export function serializableIdToClass(id: SerializableId): unknown {
@@ -29,6 +30,8 @@ export function serializableIdToClass(id: SerializableId): unknown {
 			return Tween
 		case SerializableId.ANIMATION:
 			return Anim
+		case SerializableId.CORPSE:
+			return Corpse
 		case SerializableId._SIZE:
 			throw Error("Tried to serialize 1 past the number of IDs")
 	}

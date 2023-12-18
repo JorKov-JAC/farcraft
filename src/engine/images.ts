@@ -1,4 +1,4 @@
-import { ImageAsset, ImageAssets } from "../assets.js"
+import { AnyAnimName, ImageAsset, ImageAssets } from "../assets.js"
 import { ctx } from "../context.js"
 import { raise } from "./util.js"
 import { v2 } from "./vector.js"
@@ -174,6 +174,14 @@ export class ImageManager<T extends ImageAssets> {
 		return this.namesToSpriteInfos[name].image
 	}
 
+	hasAnim<SpriteK extends keyof T, K extends AnyAnimName>
+	(spriteName: SpriteK, animName: K): animName is K & keyof T[SpriteK]["anims"] {
+		return animName in this.namesToSpriteInfos[spriteName].animFrames
+	}
+
+	/**
+	 * @returns Undefined if the animation doesn't exist in the sprite.
+	 */
 	getAnim<SpriteK extends keyof T, AnimK extends keyof T[SpriteK]["anims"]>
 	(spriteName: SpriteK, animName: AnimK): AnimFrames<T[SpriteK]>[AnimK] {
 		return this.namesToSpriteInfos[spriteName].animFrames[animName]

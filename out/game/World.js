@@ -2,8 +2,8 @@ import { rect } from "../engine/vector.js";
 import { gameSounds, images } from "../global.js";
 import { ctx } from "../context.js";
 import assets from "../assets.js";
-import ArmyEntity from "./entities/ArmyEntity.js";
 import Unit from "./entities/Unit.js";
+import Corpse from "./entities/Corpse.js";
 async function loadTilemapData(path) {
     const response = await fetch(path);
     return response.json();
@@ -55,7 +55,8 @@ export default class World {
                 void gameSounds.playSound(e.getDeathSound());
                 const animGroupName = e.anim.groupName;
                 const anims = assets.images[animGroupName].anims;
-                if ("death" in anims) {
+                if ("die" in anims) {
+                    newCorpses.push(new Corpse(e));
                 }
                 return false;
             }
@@ -93,10 +94,10 @@ export default class World {
                 }
             }
         }
-        const armyEnts = this.ents.filter(e => e instanceof ArmyEntity);
-        armyEnts.sort((a, b) => a.pos[1] - b.pos[1]);
-        for (const armyEnt of armyEnts) {
-            armyEnt.baseRender();
+        const entsByY = this.ents.slice();
+        entsByY.sort((a, b) => a.pos[1] - b.pos[1]);
+        for (const e of entsByY) {
+            e.baseRender();
         }
         ctx.restore();
     }

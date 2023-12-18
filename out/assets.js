@@ -45,7 +45,7 @@ const images = {
                 frames: [...repeat(spanArray(9, 4), 2).flat(), ...repeat(12, 12)]
             },
             "die": {
-                duration: 1,
+                duration: .25,
                 frames: spanArray(3, -4)
             },
         }
@@ -95,7 +95,7 @@ const images = {
                 frames: [...spanArray(5, 4), ...repeat(8, 4)]
             },
             "die": {
-                duration: 1,
+                duration: .5,
                 frames: spanArray(9, 7)
             },
         }
@@ -214,7 +214,7 @@ const assets = {
                     owner: 0,
                     units: [
                         {
-                            typeId: 6,
+                            typeId: 7,
                             instanceArgs: [
                                 {
                                     pos: [2.5, 3.5],
@@ -239,7 +239,7 @@ const assets = {
                             ]
                         },
                         {
-                            typeId: 7,
+                            typeId: 8,
                             instanceArgs: [
                                 {
                                     pos: [5, 4.5],
@@ -253,7 +253,7 @@ const assets = {
                     owner: 1,
                     units: [
                         {
-                            typeId: 6,
+                            typeId: 7,
                             instanceArgs: [
                                 {
                                     pos: [10.5, 16.75],
@@ -282,7 +282,7 @@ const assets = {
                             ]
                         },
                         {
-                            typeId: 7,
+                            typeId: 8,
                             instanceArgs: [
                                 {
                                     pos: [5.5, 16.5],

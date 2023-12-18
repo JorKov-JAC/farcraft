@@ -1,7 +1,7 @@
 import { rect } from "../engine/vector.js"
 import { gameSounds, images } from "../global.js"
 import { ctx } from "../context.js"
-import assets, { ImageGroupName } from "../assets.js"
+import assets, { AnyAnimName, ImageGroupName } from "../assets.js"
 import Direction from "../engine/Direction.js"
 import Serializable, { CustomDForm, CustomDFormOf, DForm } from "./Serializable.js"
 import SerializableId from "./SerializableId.js"
@@ -38,15 +38,15 @@ class Tilemap {
 	}
 }
 
-export default class World implements Serializable<World, { mapName: string, ents: Entity[] }> {
+export default class World implements Serializable<World, { mapName: string, ents: Entity<any>[] }> {
 	// Needed for serialization:
 	mapDefName: string
 
 	tilemap: Tilemap
 	collisionGrid: boolean[]
-	ents: Entity[]
+	ents: Entity<any>[]
 
-	private constructor(mapDefName: string, tilemap: Tilemap, collisionGrid: boolean[], ents: Entity[]) {
+	private constructor(mapDefName: string, tilemap: Tilemap, collisionGrid: boolean[], ents: Entity<any>[]) {
 		this.mapDefName = mapDefName
 		this.tilemap = tilemap
 		this.collisionGrid = collisionGrid
@@ -86,8 +86,8 @@ export default class World implements Serializable<World, { mapName: string, ent
 				void gameSounds.playSound(e.getDeathSound())
 				const animGroupName = e.anim.groupName as ImageGroupName
 				const anims = assets.images[animGroupName].anims
-				if ("death" in anims) {
-					// newCorpses.push(new Corpse(e.pos, e.getRadius(), new Anim(animGroupName, "death")))
+				if ("die" satisfies AnyAnimName in anims) {
+					newCorpses.push(new Corpse(e))
 				}
 				return false
 			}
@@ -152,10 +152,10 @@ export default class World implements Serializable<World, { mapName: string, ent
 			}
 		}
 
-		const armyEnts = this.ents.filter(e => e instanceof ArmyEntity) as ArmyEntity<any>[]
-		armyEnts.sort((a, b) => a.pos[1] - b.pos[1])
-		for (const armyEnt of armyEnts) {
-			armyEnt.baseRender()
+		const entsByY = this.ents.slice()
+		entsByY.sort((a, b) => a.pos[1] - b.pos[1])
+		for (const e of entsByY) {
+			e.baseRender()
 		}
 
 		ctx.restore()
@@ -315,7 +315,7 @@ export default class World implements Serializable<World, { mapName: string, ent
 			ents: this.ents
 		}
 	}
-	async customDForm(this: never, dForm: DForm<{ mapName: string; ents: Entity[] }>): Promise<CustomDForm<{ mapName: string; ents: Entity[] }>> {
+	async customDForm(this: never, dForm: DForm<{ mapName: string; ents: Entity<any>[] }>): Promise<CustomDForm<{ mapName: string; ents: Entity[] }>> {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		const world = await World.create(dForm.mapName as any) as unknown as CustomDFormOf<World>
 		world.ents = dForm.ents

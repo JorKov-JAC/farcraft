@@ -15,6 +15,8 @@ import ScoreScreenState from "./gameStates/ScoreScreenState.js";
 import Hud from "./ui/Hud.js";
 
 export default class Game implements Serializable<Game, {world: World, camera: Camera}> {
+	static GAME_END_DELAY = 1
+
 	hud: Hud
 	world: World
 	camera: Camera
@@ -55,10 +57,14 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 			!this.world.ents.find(e => e instanceof Unit && e.owner === Owner.PLAYER)
 			|| !this.world.ents.find(e => e instanceof Unit && e.owner === Owner.ENEMY)
 		) {
-			const remainingUnits = this.world.ents.filter(e => e instanceof Unit && e.owner === Owner.PLAYER) as Unit<any>[]
-			const timeTaken = this.clock.getTime()
-			void gameStateManager.switch(Promise.resolve(new ScoreScreenState(remainingUnits, timeTaken)))
+			this.clock.wait(Game.GAME_END_DELAY, 0, [this, "endGame"])
 		}
+	}
+
+	endGame() {
+		const remainingUnits = this.world.ents.filter(e => e instanceof Unit && e.owner === Owner.PLAYER) as Unit<any>[]
+		const timeTaken = this.clock.getTime()
+		void gameStateManager.switch(Promise.resolve(new ScoreScreenState(remainingUnits, timeTaken)))
 	}
 
 	render(x: number, y: number, w: number, h: number) {

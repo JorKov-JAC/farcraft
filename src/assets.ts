@@ -119,7 +119,7 @@ const images = {
 				frames: [...repeat(spanArray(9, 4), 2).flat(), ...repeat(12, 12)]
 			},
 			"die": {
-				duration: 1,
+				duration: .25,
 				frames: spanArray(3, -4)
 			},
 		}
@@ -169,7 +169,7 @@ const images = {
 				frames: [...spanArray(5, 4), ...repeat(8, 4)]
 			},
 			"die": {
-				duration: 1,
+				duration: .5,
 				frames: spanArray(9, 7)
 			},
 		}
@@ -396,8 +396,9 @@ const assets = {
 	} satisfies Record<string, LevelDef>
 }
 
-export type ImageGroupName = Exclude<keyof (typeof assets)["images"], symbol>
-export type AnimName<T extends ImageGroupName> = Exclude<keyof (typeof assets)["images"][T]["anims"], symbol>
+export type ImageGroupName = keyof (typeof assets)["images"]
+export type AnyAnimName = keyof Intersection<(typeof assets)["images"][keyof (typeof assets)["images"]]["anims"]>
+export type AnimName<T extends ImageGroupName> = keyof (typeof assets)["images"][T]["anims"]
 export type SoundName = keyof (typeof assets)["sounds"]
 
 export default assets

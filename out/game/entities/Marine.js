@@ -59,7 +59,7 @@ export default class Marine extends Unit {
         return 40;
     }
     classId() {
-        return 6;
+        return 7;
     }
 }
 //# sourceMappingURL=Marine.js.map

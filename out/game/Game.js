@@ -10,6 +10,7 @@ import Unit from "./entities/Unit.js";
 import ScoreScreenState from "./gameStates/ScoreScreenState.js";
 import Hud from "./ui/Hud.js";
 export default class Game {
+    static GAME_END_DELAY = 1;
     hud;
     world;
     camera;
@@ -38,10 +39,13 @@ export default class Game {
         }
         if (!this.world.ents.find(e => e instanceof Unit && e.owner === 0)
             || !this.world.ents.find(e => e instanceof Unit && e.owner === 1)) {
-            const remainingUnits = this.world.ents.filter(e => e instanceof Unit && e.owner === 0);
-            const timeTaken = this.clock.getTime();
-            void gameStateManager.switch(Promise.resolve(new ScoreScreenState(remainingUnits, timeTaken)));
+            this.clock.wait(Game.GAME_END_DELAY, 0, [this, "endGame"]);
         }
+    }
+    endGame() {
+        const remainingUnits = this.world.ents.filter(e => e instanceof Unit && e.owner === 0);
+        const timeTaken = this.clock.getTime();
+        void gameStateManager.switch(Promise.resolve(new ScoreScreenState(remainingUnits, timeTaken)));
     }
     render(x, y, w, h) {
         provide(Game, this, () => {
