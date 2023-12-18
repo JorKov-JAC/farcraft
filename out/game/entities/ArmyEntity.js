@@ -8,8 +8,6 @@ export default class ArmyEntity extends Entity {
     constructor(args) {
         super(args);
         this.owner = args.owner;
-        this.pos = args.pos;
-        this.anim = args.initialAnimation;
     }
     baseRender() {
         const game = current(Game);

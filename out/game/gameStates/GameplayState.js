@@ -23,7 +23,7 @@ export default class GameplayState extends GameState {
         const game = await Game.create(levelDef.mapName);
         game.camera.worldPos.mut().set(...levelDef.cameraUpperLeft);
         for (const ownersUnits of levelDef.units) {
-            const ownerFb = new FactoryBuilder({ owner: ownersUnits.owner });
+            const ownerFb = new FactoryBuilder({ owner: ownersUnits.owner, angle: 0 });
             for (const unitTypeGroup of ownersUnits.units) {
                 const constructor = serializableIdToClass(unitTypeGroup.typeId);
                 for (const args of unitTypeGroup.instanceArgs) {

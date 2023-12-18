@@ -1,5 +1,4 @@
 import assets, { ImageGroupName } from "../../assets.js";
-import { ctx } from "../../context.js";
 import { current } from "../../engine/Provider.js";
 import { rect, v2 } from "../../engine/vector.js";
 import { gameSounds } from "../../global.js";
@@ -17,8 +16,6 @@ const enum CommandType {
 
 export default abstract class Unit<AnimGroupName extends ImageGroupName> extends ArmyEntity<AnimGroupName> {
 	readonly vel: V2 = v2(0, 0)
-
-	angle: number = 0
 
 	pathBackward: V2[] = []
 	lastCommandId: number = 0
@@ -199,32 +196,5 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 
 	commandAttackMoveTo(dest: V2, world: World, commandId: number) {
 		this.startMovingTo(dest, world, commandId, CommandType.ATTACK_MOVE)
-	}
-
-	override renderImpl() {
-		ctx.save()
-
-		const camera = current(Game).camera
-
-		const sprite = this.getCurrentSprite()
-
-		const len = this.getRadius() * 2
-		const spriteSize = sprite.sizeWithin(len)
-		const worldPos = this.pos.slice()
-		const canvasPos = camera.worldPosToCanvas(worldPos).lock()
-
-		ctx.translate(...canvasPos)
-		if (this.angle > Math.PI * .5 && this.angle < Math.PI * 1.5) {
-			ctx.scale(-1, 1)
-			// ctx.rotate((Math.PI - this.angle) * .25)
-		} else {
-			// ctx.rotate(((this.angle + Math.PI * .25) % (2 * Math.PI) - Math.PI * .25) * .25)
-		}
-
-		ctx.translate(...spriteSize.slice().neg().mul(.5 * camera.worldSizeToCanvasFactor()).lock())
-
-		sprite.render(0, 0, len * camera.worldSizeToCanvasFactor())
-
-		ctx.restore()
 	}
 }

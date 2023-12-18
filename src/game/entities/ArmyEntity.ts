@@ -1,7 +1,6 @@
-import assets, { ImageGroupName, SoundName } from "../../assets.js";
+import { ImageGroupName, SoundName } from "../../assets.js";
 import { ctx } from "../../context.js";
 import { current } from "../../engine/Provider.js";
-import Anim from "../Anim.js";
 import Entity, { EntityArgs } from "../Entity.js";
 import Game from "../Game.js";
 
@@ -23,8 +22,6 @@ export default abstract class ArmyEntity<AnimGroupName extends ImageGroupName> e
 	constructor(args: ArmyEntityArgs<AnimGroupName>) {
 		super(args)
 		this.owner = args.owner
-		this.pos = args.pos
-		this.anim = args.initialAnimation
 	}
 
 	override baseRender(): void {

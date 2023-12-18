@@ -1,4 +1,3 @@
-import { ctx } from "../../context.js";
 import { current } from "../../engine/Provider.js";
 import { rect, v2 } from "../../engine/vector.js";
 import { gameSounds } from "../../global.js";
@@ -6,7 +5,6 @@ import Game from "../Game.js";
 import ArmyEntity from "./ArmyEntity.js";
 export default class Unit extends ArmyEntity {
     vel = v2(0, 0);
-    angle = 0;
     pathBackward = [];
     lastCommandId = 0;
     target = null;
@@ -146,24 +144,6 @@ export default class Unit extends ArmyEntity {
     }
     commandAttackMoveTo(dest, world, commandId) {
         this.startMovingTo(dest, world, commandId, 2);
-    }
-    renderImpl() {
-        ctx.save();
-        const camera = current(Game).camera;
-        const sprite = this.getCurrentSprite();
-        const len = this.getRadius() * 2;
-        const spriteSize = sprite.sizeWithin(len);
-        const worldPos = this.pos.slice();
-        const canvasPos = camera.worldPosToCanvas(worldPos).lock();
-        ctx.translate(...canvasPos);
-        if (this.angle > Math.PI * .5 && this.angle < Math.PI * 1.5) {
-            ctx.scale(-1, 1);
-        }
-        else {
-        }
-        ctx.translate(...spriteSize.slice().neg().mul(.5 * camera.worldSizeToCanvasFactor()).lock());
-        sprite.render(0, 0, len * camera.worldSizeToCanvasFactor());
-        ctx.restore();
     }
 }
 //# sourceMappingURL=Unit.js.map
