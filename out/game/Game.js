@@ -100,6 +100,9 @@ export default class Game {
     isSelected(e) {
         return this.selectedEnts.has(e);
     }
+    getSelectedEnts() {
+        return this.selectedEnts.keys();
+    }
     classId() {
         return 0;
     }

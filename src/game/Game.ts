@@ -132,6 +132,9 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 	isSelected(e: ArmyEntity<any>) {
 		return this.selectedEnts.has(e)
 	}
+	getSelectedEnts(): Iterable<ArmyEntity<any>> {
+		return this.selectedEnts.keys()
+	}
 
 	classId(): SerializableId {
 		return SerializableId.GAME
