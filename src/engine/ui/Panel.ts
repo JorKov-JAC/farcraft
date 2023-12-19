@@ -46,8 +46,9 @@ export class Panel {
 		this.updateImpl(dt);
 
 		// Update screen coordinates
-		this.actualPos = this.pos.canvasPos;
-		this.actualSize = this.size.canvasSize;
+		const floatPos = this.pos.canvasPos
+		this.actualPos = floatPos.slice().round()
+		this.actualSize = this.size.canvasSize.mut().add(floatPos).round().sub(this.actualPos)
 
 		// Update children
 		provide(containerPosKey, this.actualPos, () => {

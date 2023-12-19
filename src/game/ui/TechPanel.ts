@@ -3,7 +3,7 @@ import { Panel } from "../../engine/ui/Panel.js";
 import { ctx } from "../../context.js";
 
 export default class TechPanel extends Panel {
-	static INSET = 0.0025
+	static INSET = 0.003
 
 	constructor(pos: ScreenCoord, size: ScreenCoord) {
 		super(pos, size)
@@ -26,13 +26,17 @@ export default class TechPanel extends Panel {
 		gradient.addColorStop(0, "#010")
 		gradient.addColorStop(1, "#000")
 
-		const insetPixels = ScreenCoord.rootSq(TechPanel.INSET, 0).canvasSize[0]
+		const insetPixels = Math.round(ScreenCoord.rootSq(TechPanel.INSET, 0).canvasSize[0])
 		ctx.save()
 		ctx.fillStyle = gradient
 		ctx.strokeStyle = "#0F0"
-		ctx.lineWidth = insetPixels * 2
+		ctx.lineWidth = insetPixels * 4
 		ctx.beginPath()
-		ctx.roundRect(...pos, ...size, insetPixels * 3)
+		ctx.roundRect(
+			...pos.slice().add2(-insetPixels, -insetPixels).lock(),
+			...size.slice().add2(2 * insetPixels, 2 * insetPixels).lock(),
+			insetPixels * 4
+		)
 		ctx.fill()
 		ctx.stroke()
 		ctx.restore()

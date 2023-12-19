@@ -55,6 +55,7 @@ declare global {
 		min(this: V2): number
 		max(this: V2): number
 		floor(this: MutV2): MutV2
+		round(this: MutV2): MutV2
 
 		iAabb4(this: Rect, x: number, y: number, w: number, h: number): boolean
 		iAabbV2(this: Rect, v: V2): boolean
@@ -189,6 +190,13 @@ Array.prototype.max = function() {
 Array.prototype.floor = function() {
 	this[0] = Math.floor(this[0])
 	this[1] = Math.floor(this[1])
+
+	return this
+}
+
+Array.prototype.round = function() {
+	this[0] = Math.round(this[0])
+	this[1] = Math.round(this[1])
 
 	return this
 }

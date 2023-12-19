@@ -31,8 +31,9 @@ export class Panel {
         this.actualPos = this.pos.canvasPos;
         this.actualSize = this.size.canvasSize;
         this.updateImpl(dt);
-        this.actualPos = this.pos.canvasPos;
-        this.actualSize = this.size.canvasSize;
+        const floatPos = this.pos.canvasPos;
+        this.actualPos = floatPos.slice().round();
+        this.actualSize = this.size.canvasSize.mut().add(floatPos).round().sub(this.actualPos);
         provide(containerPosKey, this.actualPos, () => {
             provide(containerSizeKey, this.actualSize, () => {
                 this._trueChildren.forEach(e => { e.baseUpdate(dt); });

@@ -104,6 +104,11 @@ Array.prototype.floor = function () {
     this[1] = Math.floor(this[1]);
     return this;
 };
+Array.prototype.round = function () {
+    this[0] = Math.round(this[0]);
+    this[1] = Math.round(this[1]);
+    return this;
+};
 Array.prototype.iAabb4 = function (x, y, w, h) {
     return x + w >= this[0] && x <= this[0] + this[2]
         && y + h >= this[1] && y <= this[1] + this[3];
