@@ -17,4 +17,10 @@ declare global {
 	 * Converts a union to an intersection.
 	 */
 	type Intersection<U> = (U extends any ? (a: U) => void : never) extends ((a: infer I) => void) ? I : never
+
+	/**
+	 * Converts a type/union to an object containing that type/union. Useful for
+	 * debugging with the ts-type-expand VSCode extension.
+	 */
+	type DebugWrap<T> = T extends any ? {"e": T} : never
 }

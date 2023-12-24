@@ -1,7 +1,7 @@
 import Serializable from "./Serializable.js";
 import { SerializationSafe } from "./Serialize.js";
 
-type SerializableCallback<T extends Serializable<any, any>, Args extends Array<any> = [], Result = void> = [
+type SerializableCallback<T extends Serializable<any, any>, Args extends ReadonlyArray<any> = [], Result = void> = [
 	T,
 	{[K in keyof T]: K extends SerializationSafe
 		? (

@@ -29,7 +29,7 @@ export default class Corpse<T extends ImageGroupName> extends Entity<T> {
 		this.base = base
 		this.done = done
 		this.clock = new SerializableClock()
-		this.clock.wait(anim.getDuration(), 0, [this, "markAsDone"])
+		this.clock.wait(anim.getDuration(), 0, [this as Corpse<T>, "markAsDone"] as const)
 	}
 
 	override updateImpl(dt: number): void {
@@ -50,7 +50,7 @@ export default class Corpse<T extends ImageGroupName> extends Entity<T> {
 		return this.base.getRadius()
 	}
 
-	private markAsDone() {
+	markAsDone() {
 		this.done = true
 	}
 
