@@ -88,15 +88,19 @@ export class ScreenCoord {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 	lock(this: Mut<ScreenCoord>): ScreenCoord { return this as any; }
 
-	get canvasSize(): V2 {
+	private get canvasSpace(): V2 {
 		const containerSize = current(containerSizeKey);
 
 		const minRootDimension = Math.min(canvas.width, canvas.height);
 
-		const res = this.rootRect.slice().mul2(canvas.width, canvas.height)
+		return this.rootRect.slice().mul2(canvas.width, canvas.height)
 			.add(this.rootSq.slice().mul(minRootDimension))
 			.add(this.rect.slice().mulV2(containerSize))
 			.add(this.sq.slice().mul(containerSize.min()));
+	}
+
+	get canvasSize(): V2 {
+		const res = this.canvasSpace
 
 		res[0] = Math.max(0, res[0])
 		res[1] = Math.max(0, res[1])
@@ -106,6 +110,6 @@ export class ScreenCoord {
 
 	get canvasPos(): V2 {
 		const containerPos = current(containerPosKey);
-		return this.canvasSize.mut().add(containerPos);
+		return this.canvasSpace.mut().add(containerPos);
 	}
 }
