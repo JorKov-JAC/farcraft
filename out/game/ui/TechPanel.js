@@ -14,11 +14,11 @@ export default class TechPanel extends Panel {
     renderImpl() {
         const pos = ScreenCoord.rect(0, 0).canvasPos;
         const size = ScreenCoord.rect(1, 1).canvasSize;
+        const insetPixels = Math.round(ScreenCoord.rootSq(TechPanel.INSET, 0).canvasSize[0]);
+        ctx.save();
         const gradient = ctx.createLinearGradient(...pos, pos[0], pos[1] + size[1]);
         gradient.addColorStop(0, "#010");
         gradient.addColorStop(1, "#000");
-        const insetPixels = Math.round(ScreenCoord.rootSq(TechPanel.INSET, 0).canvasSize[0]);
-        ctx.save();
         ctx.fillStyle = gradient;
         ctx.strokeStyle = "#0F0";
         ctx.lineWidth = insetPixels * 4;

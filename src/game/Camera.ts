@@ -11,7 +11,7 @@ export default class Camera implements Serializable {
 	minLen: number
 	extraYMult: number = 0
 
-	/** Scroll speed in minLens per second */
+	/** Scroll speed in minLens per second. */
 	static speed = 1.5
 
 	/**

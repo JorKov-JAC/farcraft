@@ -1,1 +1,0 @@
-{"version":3,"file":"GameMouseEvent.js","sourceRoot":"","sources":["../../src/engine/GameMouseEvent.ts"],"names":[],"mappings":"AAMA,MAAM,OAAO,cAAc;IAC1B,IAAI,CAAgB;IACpB,GAAG,CAAI;IAEP,YAAY,IAAoB,EAAE,GAAO;QACxC,IAAI,CAAC,IAAI,GAAG,IAAI,CAAA;QAChB,IAAI,CAAC,GAAG,GAAG,GAAG,CAAA;IACf,CAAC;CACD"}

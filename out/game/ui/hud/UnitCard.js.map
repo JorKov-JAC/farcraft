@@ -1,1 +1,0 @@
-{"version":3,"file":"UnitCard.js","sourceRoot":"","sources":["../../../../src/game/ui/hud/UnitCard.ts"],"names":[],"mappings":"AAEA,OAAO,SAAS,MAAM,iBAAiB,CAAC;AAExC,MAAM,CAAC,OAAO,OAAO,cAAe,SAAQ,SAAS;IACpD,YAAY,GAAgB,EAAE,IAAiB,EAAE,GAAe;QAC/D,KAAK,CAAC,GAAG,EAAE,IAAI,CAAC,CAAA;IACjB,CAAC;CACD"}

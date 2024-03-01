@@ -1,4 +1,4 @@
-
+/** A serializable class's unique ID. */
 export const enum SerializableId {
 	GAME,
 	WORLD,

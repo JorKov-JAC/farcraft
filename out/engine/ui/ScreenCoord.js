@@ -54,20 +54,23 @@ export class ScreenCoord {
     }
     mut() { return this; }
     lock() { return this; }
-    get canvasSize() {
+    get canvasSpace() {
         const containerSize = current(containerSizeKey);
         const minRootDimension = Math.min(canvas.width, canvas.height);
-        const res = this.rootRect.slice().mul2(canvas.width, canvas.height)
+        return this.rootRect.slice().mul2(canvas.width, canvas.height)
             .add(this.rootSq.slice().mul(minRootDimension))
             .add(this.rect.slice().mulV2(containerSize))
             .add(this.sq.slice().mul(containerSize.min()));
+    }
+    get canvasSize() {
+        const res = this.canvasSpace;
         res[0] = Math.max(0, res[0]);
         res[1] = Math.max(0, res[1]);
         return res;
     }
     get canvasPos() {
         const containerPos = current(containerPosKey);
-        return this.canvasSize.mut().add(containerPos);
+        return this.canvasSpace.mut().add(containerPos);
     }
 }
 //# sourceMappingURL=ScreenCoord.js.map

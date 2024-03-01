@@ -49,10 +49,12 @@ export default class Unit extends ArmyEntity {
         const attackRange = this.getAttackRange();
         if (!this.target && this.command !== 1) {
             for (const e of world.unitsWithinBoundsInclusive(this.pos[0] - attackRange, this.pos[1] - attackRange, this.pos[0] + attackRange, this.pos[1] + attackRange)) {
-                if (this.owner === e.owner || e.owner === 3)
+                if (this.owner === e.owner
+                    || e.owner === 3)
                     continue;
                 if (this.pos.dist(e.pos) <= attackRange && !world.isRayObstructed(this.pos, e.pos)) {
                     this.target = e;
+                    break;
                 }
             }
         }
@@ -118,7 +120,9 @@ export default class Unit extends ArmyEntity {
                 this.command = 0;
             }
         }
-        this.vel.mut().set(...velTowardNode.lock()).add(pushVel);
+        this.vel.mut()
+            .set(...velTowardNode.lock())
+            .add(pushVel);
         if (this.vel.mag() > speed)
             this.vel.mut().normOr(0, 0).mul(speed);
         this.pos.mut().add(this.vel.slice().mul(dt));

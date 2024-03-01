@@ -4,7 +4,8 @@ import SerializableId from "../SerializableId.js";
 import { ArmyEntityArgs } from "./ArmyEntity.js";
 import Unit from "./Unit.js";
 
-export default class Marine extends Unit<"sarge"> {
+/** A heavy infantry unit. */
+export default class Sarge extends Unit<"sarge"> {
 	// eslint-disable-next-line @typescript-eslint/no-useless-constructor
 	constructor(args: Omit<ArmyEntityArgs<"sarge">, "initialAnimation">) {
 		super({...args, initialAnimation: new Anim("sarge", "idle")})
@@ -61,6 +62,8 @@ export default class Marine extends Unit<"sarge"> {
 	override getMaxHealth(): number {
 		return 60
 	}
+
+	// Serialization
 	override classId(): SerializableId {
 		return SerializableId.SARGE
 	}

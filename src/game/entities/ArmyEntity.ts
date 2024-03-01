@@ -4,6 +4,7 @@ import { current } from "../../engine/Provider.js";
 import Entity, { EntityArgs } from "../Entity.js";
 import Game from "../Game.js";
 
+/** An owner of an {@link ArmyEntity}. */
 export const enum Owner {
 	PLAYER,
 	ENEMY,
@@ -11,11 +12,21 @@ export const enum Owner {
 	NEUTRAL
 }
 
+/** Constructor arguments for {@link ArmyEntity}. */
 export type ArmyEntityArgs<AnimGroupName extends ImageGroupName> = EntityArgs<AnimGroupName> & {
 	owner: Owner,
 }
 
+/**
+ * An ownable entity which can participate in combat (though it might not be
+ * able to attack).
+ */
 export default abstract class ArmyEntity<AnimGroupName extends ImageGroupName> extends Entity<AnimGroupName> {
+	/**
+	 * The entity's current health.
+	 * 
+	 * Defaults to the initial value returned by {@link getMaxHealth}.
+	 */
 	health: number = this.getMaxHealth()
 	owner: Owner
 
@@ -62,11 +73,14 @@ export default abstract class ArmyEntity<AnimGroupName extends ImageGroupName> e
 		}
 	}
 
+	/** Damages this entity's {@link health}. */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	takeDamage(amount: number, _source: ArmyEntity<any>) {
 		this.health -= amount
 	}
 
+	/** The typical max and default values of {@link health}. */
 	abstract getMaxHealth(): number
+	/** The sound played when this entity dies. */
 	abstract getDeathSound(): SoundName
 }

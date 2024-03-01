@@ -30,7 +30,12 @@ export default class Entity {
         }
         else {
         }
-        ctx.translate(...spriteSize.slice().neg().mul(.5 * camera.worldSizeToCanvasFactor()).lock());
+        ctx.translate(...spriteSize
+            .slice()
+            .neg()
+            .mul(.5
+            * camera.worldSizeToCanvasFactor())
+            .lock());
         sprite.render(0, 0, len * camera.worldSizeToCanvasFactor());
         ctx.restore();
     }

@@ -14,7 +14,9 @@ import Unit from "./entities/Unit.js";
 import ScoreScreenState from "./gameStates/ScoreScreenState.js";
 import Hud from "./ui/Hud.js";
 
+/** Handles the main game. */
 export default class Game implements Serializable<Game, {world: World, camera: Camera}> {
+	/** Seconds after the game is considered over before it actually ends. */
 	static GAME_END_DELAY = 1
 
 	hud: Hud
@@ -23,7 +25,10 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 
 	clock = new SerializableClock()
 
-	ongoingDrag: V2 | null = null
+	/**
+	 * The starting fractional tile coordinates of a current mouse drag, or null if there is none.
+	 */
+	ongoingDragStart: V2 | null = null
 
 	private selectedEnts: Set<ArmyEntity<any>> = new Set()
 
@@ -35,6 +40,11 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 		this.postDeserialize()
 	}
 
+	/**
+	 * Async constructor.
+	 * 
+	 * @param mapName The name of the map to load.
+	 */
 	static async create(mapName: keyof typeof assets["maps"]) {
 		const world = await World.create(mapName)
 		return new Game(world)
@@ -61,10 +71,11 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 		}
 	}
 
+	/** Ends this game state and switches to another. */
 	endGame() {
-		const remainingUnits = this.world.ents.filter(e => e instanceof Unit && e.owner === Owner.PLAYER) as Unit<any>[]
+		const remainingPlayerUnits = this.world.ents.filter(e => e instanceof Unit && e.owner === Owner.PLAYER) as Unit<any>[]
 		const timeTaken = this.clock.getTime()
-		void gameStateManager.switch(Promise.resolve(new ScoreScreenState(remainingUnits, timeTaken)))
+		void gameStateManager.switch(Promise.resolve(new ScoreScreenState(remainingPlayerUnits, timeTaken)))
 	}
 
 	render(x: number, y: number, w: number, h: number) {
@@ -77,8 +88,8 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 			)
 
 			ctx.save()
-			if (this.ongoingDrag) {
-				const canvasDragStart = this.camera.worldPosToCanvas(this.ongoingDrag).lock()
+			if (this.ongoingDragStart) {
+				const canvasDragStart = this.camera.worldPosToCanvas(this.ongoingDragStart).lock()
 				ctx.fillStyle = "#0F02"
 				ctx.strokeStyle = "#0F0B"
 				ctx.beginPath()
@@ -91,14 +102,14 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 	}
 
 	startDrag(pos: V2) {
-		this.ongoingDrag = pos
+		this.ongoingDragStart = pos
 	}
 
 	stopDrag(endPos: V2) {
-		if (!this.ongoingDrag) return
+		if (!this.ongoingDragStart) return
 
 		const selected = this.world
-			.unitsWithinBoundsInclusive(...this.ongoingDrag, ...endPos)
+			.unitsWithinBoundsInclusive(...this.ongoingDragStart, ...endPos)
 			.filter(e => e.owner === Owner.PLAYER)
 
 		if (selected.length > 0) {
@@ -108,9 +119,10 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 			}
 		}
 
-		this.ongoingDrag = null
+		this.ongoingDragStart = null
 	}
 
+	/** Orders the player's selected units to move to {@link pos}. */
 	orderMove(pos: V2) {
 		const commandId = Math.random()
 		for (const e of this.selectedEnts.values()) {
@@ -120,6 +132,7 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 		}
 	}
 
+	/** Orders the player's selected units to "attack move" to {@link pos}. */
 	orderAttackMove(pos: V2) {
 		const commandId = Math.random()
 		for (const e of this.selectedEnts.values()) {
@@ -129,22 +142,26 @@ export default class Game implements Serializable<Game, {world: World, camera: C
 		}
 	}
 
+	/** Checks if {@link e} is currently selected. */
 	isSelected(e: ArmyEntity<any>) {
 		return this.selectedEnts.has(e)
 	}
+	/** Sets the players selected entities. */
 	setSelectedEnts(ents: Iterable<ArmyEntity<any>>) {
 		this.selectedEnts.clear()
 		for (const e of ents) this.selectedEnts.add(e)
 	}
+	/** Gets the player's selected entities. */
 	getSelectedEnts(): Iterable<ArmyEntity<any>> {
 		return this.selectedEnts.keys()
 	}
 
+	// Serialization
 	classId(): SerializableId {
 		return SerializableId.GAME
 	}
 	preSerialization() {
-		this.ongoingDrag = null
+		this.ongoingDragStart = null
 		
 		this.selectedEnts = Array.from(this.selectedEnts.values()) as any
 	}

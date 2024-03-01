@@ -5,10 +5,12 @@ import Marine from "./game/entities/Marine.js"
 import Sarge from "./game/entities/Sarge.js"
 import Unit from "./game/entities/Unit.js"
 
+/** A collection of {@link ImageAssset}s. */
 export interface ImageAssets {
 	[Name: string]: ImageAsset
 }
 
+/** Defines an image and its related info. */
 export interface ImageAsset {
 	path: string
 	spritesDefs: SpritesDef[]
@@ -20,8 +22,9 @@ export interface ImageAsset {
 	}
 }
 
+/** Defines the sprites of an image. */
 export interface SpritesDef {
-	/** The size of every cell in the grid containing the sprites */
+	/** The size of every cell in the grid containing the sprites. */
 	gridSize: V2
 	/** The offset from the upper-left corner of a grid cell to the
 	 * sprite's upper-left corner. */
@@ -48,11 +51,7 @@ export interface SpritesDef {
 	}>
 }
 
-export interface MapDef {
-	tilemapJsonPath: string
-	tileset: keyof typeof images
-}
-
+/** Contains information which is used to instantiate a unit. */
 export interface UnitInfo<T extends abstract new (a: any) => Unit<any>> {
 	typeId: SerializableId
 	instanceArgs: Omit<ConstructorParameters<T>[0], "owner">[]
@@ -61,8 +60,10 @@ export interface UnitInfo<T extends abstract new (a: any) => Unit<any>> {
 	// }
 }
 
+/** Defines a game level. */
 export interface LevelDef {
 	mapName: keyof typeof maps
+	/** The initial position of the camera's upper-left corner. */
 	cameraUpperLeft: V2
 	units: {
 		owner: Owner
@@ -70,10 +71,14 @@ export interface LevelDef {
 	}[]
 }
 
+/** Defines a level's map. */
+export interface MapDef {
+	tilemapJsonPath: string
+	tileset: keyof typeof images
+}
+
+/** Definitions for the game's image assets. */
 const images = {
-	// bigInfantry: {
-	// 	path: "sprites/bigInfantry.png"
-	// },
 	marine: {
 		path: "sprites/infantry.png",
 		spritesDefs: [
@@ -275,6 +280,7 @@ const images = {
 	// },
 } satisfies ImageAssets
 
+/** Definitions for the game's maps. */
 const maps = {
 	m1: {
 		tilemapJsonPath: "maps/m1.tmj",
@@ -282,6 +288,7 @@ const maps = {
 	}
 } satisfies Record<string, MapDef>
 
+/** All of the game's asset definitions. */
 const assets = {
 	images,
 	sounds: {
@@ -396,9 +403,13 @@ const assets = {
 	} satisfies Record<string, LevelDef>
 }
 
+/** Any image asset name. */
 export type ImageGroupName = keyof (typeof assets)["images"]
+/** Any animation name. */
 export type AnyAnimName = keyof Intersection<(typeof assets)["images"][keyof (typeof assets)["images"]]["anims"]>
+/** Any animation name for a given image asset. */
 export type AnimName<T extends ImageGroupName> = keyof (typeof assets)["images"][T]["anims"]
+/** Any sound asset name. */
 export type SoundName = keyof (typeof assets)["sounds"]
 
 export default assets

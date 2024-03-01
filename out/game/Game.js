@@ -15,7 +15,7 @@ export default class Game {
     world;
     camera;
     clock = new SerializableClock();
-    ongoingDrag = null;
+    ongoingDragStart = null;
     selectedEnts = new Set();
     constructor(world) {
         this.camera = new Camera(this, v2(0, 0), 10);
@@ -43,16 +43,16 @@ export default class Game {
         }
     }
     endGame() {
-        const remainingUnits = this.world.ents.filter(e => e instanceof Unit && e.owner === 0);
+        const remainingPlayerUnits = this.world.ents.filter(e => e instanceof Unit && e.owner === 0);
         const timeTaken = this.clock.getTime();
-        void gameStateManager.switch(Promise.resolve(new ScoreScreenState(remainingUnits, timeTaken)));
+        void gameStateManager.switch(Promise.resolve(new ScoreScreenState(remainingPlayerUnits, timeTaken)));
     }
     render(x, y, w, h) {
         provide(Game, this, () => {
             this.world.render(x, y, w, h, ...this.camera.worldPos, this.camera.minLen);
             ctx.save();
-            if (this.ongoingDrag) {
-                const canvasDragStart = this.camera.worldPosToCanvas(this.ongoingDrag).lock();
+            if (this.ongoingDragStart) {
+                const canvasDragStart = this.camera.worldPosToCanvas(this.ongoingDragStart).lock();
                 ctx.fillStyle = "#0F02";
                 ctx.strokeStyle = "#0F0B";
                 ctx.beginPath();
@@ -64,13 +64,13 @@ export default class Game {
         });
     }
     startDrag(pos) {
-        this.ongoingDrag = pos;
+        this.ongoingDragStart = pos;
     }
     stopDrag(endPos) {
-        if (!this.ongoingDrag)
+        if (!this.ongoingDragStart)
             return;
         const selected = this.world
-            .unitsWithinBoundsInclusive(...this.ongoingDrag, ...endPos)
+            .unitsWithinBoundsInclusive(...this.ongoingDragStart, ...endPos)
             .filter(e => e.owner === 0);
         if (selected.length > 0) {
             if (!keys["Shift"])
@@ -79,7 +79,7 @@ export default class Game {
                 this.selectedEnts.add(ent);
             }
         }
-        this.ongoingDrag = null;
+        this.ongoingDragStart = null;
     }
     orderMove(pos) {
         const commandId = Math.random();
@@ -112,7 +112,7 @@ export default class Game {
         return 0;
     }
     preSerialization() {
-        this.ongoingDrag = null;
+        this.ongoingDragStart = null;
         this.selectedEnts = Array.from(this.selectedEnts.values());
     }
     postSerialization() {

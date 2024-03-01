@@ -1,4 +1,4 @@
-import assets from "../../assets.js";
+import assets, { type LevelDef } from "../../assets.js";
 import FactoryBuilder from "../../engine/Factory.js";
 import GameState from "../../engine/GameState.js";
 import UiTree from "../../engine/ui/UiTree.js";
@@ -6,7 +6,9 @@ import { replaceUi, uiSounds } from "../../global.js";
 import Game from "../Game.js";
 import { deserialize, serializableIdToClass, serialize } from "../Serialize.js";
 
+/** State machine state for the main game. */
 export default class GameplayState extends GameState {
+	/** The key in localStorage for saved game data. */
 	static SAVE_LOCAL_STORAGE_KEY = "FarCraft_save"
 
 	game: Game
@@ -23,12 +25,18 @@ export default class GameplayState extends GameState {
 		uiSounds.playSoundtrackUntilStopped(["music_aStepCloser", "music_darkfluxxTheme"])
 	}
 
+	/**
+	 * Starts a new game.
+	 * 
+	 * @return Resolves to the new game state.
+	 */
 	static async newGame() {
-		const levelDef = assets.levels.level1
+		const levelDef = assets.levels.level1 as LevelDef
 
 		const game = await Game.create(levelDef.mapName)
 		game.camera.worldPos.mut().set(...levelDef.cameraUpperLeft)
 
+		// Instantiate units using the factory pattern
 		for (const ownersUnits of levelDef.units) {
 			const ownerFb = new FactoryBuilder({owner: ownersUnits.owner, angle: 0})
 
@@ -48,10 +56,16 @@ export default class GameplayState extends GameState {
 		return new GameplayState(game)
 	}
 
+	/** Checks if there is save data for a saved game. */
 	static saveExists() {
 		return localStorage.getItem(GameplayState.SAVE_LOCAL_STORAGE_KEY) !== null
 	}
 
+	/**
+	 * Attempts to load the saved game.
+	 * 
+	 * @return Resolves to the loaded game, or null if it could not be loaded.
+	 */
 	static async tryLoadGame(): Promise<GameplayState | null> {
 		try {
 			const game = await deserialize(localStorage.getItem(this.SAVE_LOCAL_STORAGE_KEY) as string) as unknown as Game
@@ -75,6 +89,9 @@ export default class GameplayState extends GameState {
 		this.game.update(dt)
 	}
 
+	/**
+	 * Saves the game so that it can later be loaded with {@link tryLoadGame}.
+	 */
 	saveGame(): boolean {
 		try {
 			localStorage.setItem(GameplayState.SAVE_LOCAL_STORAGE_KEY, serialize(this.game))

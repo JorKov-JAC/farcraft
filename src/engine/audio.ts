@@ -1,30 +1,52 @@
+// HACK This is kinda gross; buffers from different contexts are lumped together
+//      based on which context decoded them first.
+/** A cache which maps sound names to their AudioBuffer (or a promise thereof). */
 const loadedSounds: Record<string, AudioBuffer|Promise<AudioBuffer>> = Object.create(null)
 
+/**
+ * Loads a sound.
+ * 
+ * @param audioContext The context to use for decoding the sound.
+ * See {@link https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData}.
+ * @param src The URI of the sound.
+ */
 export async function loadSound(audioContext: AudioContext, src: string) {
+	// Check if we need to load the sound rather than use it from the cache:
 	if (!loadedSounds[src]) {
+		// Create a promise and store its resolve function
 		let resolver
 		loadedSounds[src] = new Promise(resolve => resolver = resolve)
 
+		// Fetch sound
 		const response = await fetch(src)
 		const buffer = await response.arrayBuffer()
 		
+		// Begin decoding data in the audio context
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 		resolver!(audioContext.decodeAudioData(buffer))
 	}
+
 	return loadedSounds[src]!
 }
 
+/** Information for a playing sound within a {@link SoundManager}. */
 interface SoundEntry {
 	sound: AudioBufferSourceNode
 	totallyPlayedPromise: Promise<void>
 	resolveTotallyPlayedPromise: (() => void) | null
 }
 
+/**
+ * Manages the playing of sounds.
+ * 
+ * @template T A record of sound names to URIs relative to the assets folder.
+ */
 export class SoundManager<T extends Record<string, string>> {
 	audioContext: AudioContext
-	private namesToSounds: Map<keyof T, AudioBuffer>
 
+	private namesToSounds: Map<keyof T, AudioBuffer>
 	private namesToOngoingSounds: Map<keyof T, SoundEntry[]> = new Map()
+	/** Currently playing music. */
 	private music: SoundEntry | null = null
 
 	private constructor(audioContext: AudioContext, namesToSounds: Map<keyof T, AudioBuffer>) {
@@ -32,12 +54,20 @@ export class SoundManager<T extends Record<string, string>> {
 		this.namesToSounds = namesToSounds
 	}
 
+	/**
+	 * Async constructor.
+	 * 
+	 * @param soundAssets A record of sound names to URIs relative to the assets
+	 * folder.
+	 */
 	static async create<T extends Record<string, string>>(soundAssets: T): Promise<SoundManager<T>> {
 		const audioContext = new AudioContext()
 
+		// Load all sounds
 		const names: string[] = []
 		const promises: Promise<AudioBuffer>[] = []
 
+		// Load all sounds in parallel:
 		for (const assetName in soundAssets) {
 			names.push(assetName)
 			const path = "assets/" + soundAssets[assetName]!
@@ -53,12 +83,13 @@ export class SoundManager<T extends Record<string, string>> {
 		return new SoundManager(audioContext, namesToSounds)
 	}
 
+	/** Sets up a {@link SoundEntry}. */
 	private soundNode(name: keyof T, options?: Omit<AudioBufferSourceOptions, "buffer">): SoundEntry {
+		// Create buffer source node
 		const buffer = this.namesToSounds.get(name)!
-
-		// const soundEntry: Partial<SoundEntry> = {}
-
 		const sound = new AudioBufferSourceNode(this.audioContext, { ...options, buffer })
+
+		// Setup up promise
 		let resolveTotallyPlayedPromise: (() => void) | null = null
 		const totallyPlayedPromise = new Promise<void>(resolve => {
 			resolveTotallyPlayedPromise = resolve

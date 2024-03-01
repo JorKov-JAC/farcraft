@@ -1,6 +1,6 @@
 import Anim from "../Anim.js";
 import Unit from "./Unit.js";
-export default class Marine extends Unit {
+export default class Sarge extends Unit {
     constructor(args) {
         super({ ...args, initialAnimation: new Anim("sarge", "idle") });
     }

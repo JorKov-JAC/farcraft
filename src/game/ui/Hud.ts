@@ -8,6 +8,7 @@ import Minimap from "./hud/Minimap.js";
 import UnitList from "./hud/UnitList.js";
 import WorldPanel from "./hud/WorldPanel.js";
 
+/** UI which displays gameplay and a HUD to the user. */
 export default class Hud extends Panel {
 	game: Game
 	worldPanel: WorldPanel
@@ -19,14 +20,13 @@ export default class Hud extends Panel {
 		game.camera.extraYMult = .05 / .8
 		this.worldPanel = new WorldPanel(ScreenCoord.rect(0, 0), ScreenCoord.rect(1, .8), game)
 
-		// const commandMap = new CommandMap(ScreenCoord.rect(1, 1).setSq(-.25, -.25), ScreenCoord.sq(.25, .25))
-		// const unitList = new UnitList(ScreenCoord.rect(0, .8).setSq(.25, 0), ScreenCoord.rect(1, .2).setSq(-.5, 0))
-
 		const minimap = new Minimap(ScreenCoord.rect(0, 1).addSq(-.25, -.25), ScreenCoord.sq(.25, .25))
 		const commandMap = new CommandMap(ScreenCoord.rect(1, 1).addSq(0, -.25), ScreenCoord.sq(.25, .25))
 		const unitList = new UnitList(ScreenCoord.rect(0, 1).addSq(.25, 0), ScreenCoord.rect(1, .2).addSq(-.5, 0))
 
-		void uiClock.tween(minimap, {pos: {rect: [0, 1], sq: [0, -.25]}}, 1)
+		// Tween in the HUD components
+		// HACK Tween things we aren't supposed to access
+		void uiClock.tween(minimap, {pos: {sq: [0]}}, 1)
 		void uiClock.tween(commandMap, {pos: {sq: [-.25]}}, 1)
 		void uiClock.tween(unitList, {pos: {rect: {1: .8}}}, 1)
 
@@ -40,12 +40,14 @@ export default class Hud extends Panel {
 	}
 	
 	override baseUpdate(dt: number) {
+		// Provide the game to child components
 		provide(Game, this.game, () => {
 			super.baseUpdate(dt)
 		})
 	}
 
 	override baseRender() {
+		// Provide the game to child components
 		provide(Game, this.game, () => {
 			super.baseRender()
 		})

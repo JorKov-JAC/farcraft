@@ -6,38 +6,56 @@ import Game from "../Game.js";
 import World from "../World.js";
 import ArmyEntity, { ArmyEntityArgs, Owner } from "./ArmyEntity.js";
 
+/** Constructor arguments for {@link Unit}. */
 export type UnitArgs<AnimGroupName extends ImageGroupName> = ArmyEntityArgs<AnimGroupName>
 
+/** Type of command that can be issued to a {@link Unit}. */
 const enum CommandType {
 	IDLE,
 	MOVE,
 	ATTACK_MOVE
 }
 
+/** A unit which can be commanded. */
 export default abstract class Unit<AnimGroupName extends ImageGroupName> extends ArmyEntity<AnimGroupName> {
 	readonly vel: V2 = v2(0, 0)
 
+	/** The unit's current path backward from its destination. */
 	pathBackward: V2[] = []
+	/**
+	 * A unique ID for the command last given to this unit (the unit may still
+	 * be trying to fulfill this command).
+	 */
 	lastCommandId: number = 0
 
+	/** The unit's current attack target. */
 	target: ArmyEntity<any> | null = null
+	/** How many seconds until the unit can attack again. */
 	attackCooldown = 0
 
+	/** The unit's current command. */
 	command: CommandType = CommandType.IDLE
 
-
+	/** Gets this unit's max speed in tiles per second. */
 	abstract getSpeed(): number
+	/** Gets how far this unit's attacks reach in tiles. */
 	abstract getAttackRange(): number
+	/** Gets the number of seconds between attacks. */
 	abstract getAttackTime(): number
+	/** Gets how much damage an attack deals. */
 	abstract getAttackDamage(): number
+	/** Gets the names of the sounds used for an attack. */
 	abstract getAttackSounds(): (keyof (typeof assets)["sounds"])[]
 
 	override takeDamage(amount: number, source: ArmyEntity<any>) {
 		super.takeDamage(amount, source)
+
+		// Get angry at the attacker if we don't have a target:
 		if (!this.target) this.target = source
 	}
 
 	override updateImpl(dt: number): void {
+		// Recover from previous attack:
 		this.attackCooldown -= dt
 
 		const world = current(Game).world
@@ -56,6 +74,9 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 				collidedWithWall = true
 
 				if (aabb.iAabb4(x, y, 1, 1)) {
+					// We're inside a wall, find the axis which would require
+					// the least movement to leave the wall and go that way.
+
 					const inLeft = x + 1 - this.pos[0] + radius
 					const inRight = this.pos[0] + radius - x
 					const inUp = y + 1 - this.pos[1] + radius
@@ -71,8 +92,9 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 		}
 
 
-		// Try to find a target
+		// Lose target if it is dead
 		if (this.target && this.target.health <= 0) this.target = null
+		// Try to find a new target
 		const attackRange = this.getAttackRange()
 		if (!this.target && this.command !== CommandType.MOVE) {
 			for (const e of world.unitsWithinBoundsInclusive(
@@ -81,28 +103,45 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 				this.pos[0] + attackRange,
 				this.pos[1] + attackRange
 			)) {
-				if (this.owner === e.owner || e.owner === Owner.NEUTRAL) continue
+				if (
+					// Don't target own units:
+					this.owner === e.owner
+					// Don't target neutral units:
+					|| e.owner === Owner.NEUTRAL
+				) continue
+
+				// Check if our attacks could reach the target
 				if (this.pos.dist(e.pos) <= attackRange && !world.isRayObstructed(this.pos, e.pos)) {
 					this.target = e
+					break
 				}
 			}
 		}
 
-		// Try to attack target
+		// Stop fighting if we've been told to move:
 		if (this.command === CommandType.MOVE) this.target = null
+
+		// Try to attack target
 		if (this.target) {
 			const dist = this.pos.dist(this.target.pos)
+			// Check if our attacks can reach the target
 			if (dist > attackRange || world.isRayObstructed(this.pos, this.target.pos)) {
 				if (this.command === CommandType.IDLE) {
+					// Can't access the target and we have nothing better to do,
+					// attack move toward it:
 					this.commandAttackMoveTo(this.target.pos, world, Math.random())
 				} else {
+					// Give up and continue what we were doing:
 					this.target = null
 				}
 			} else {
 				if (this.attackCooldown <= 0) {
+					// Attack the target
 					this.target.takeDamage(this.getAttackDamage(), this)
 					this.angle = this.target.pos.slice().sub(this.pos).radians()
 					this.attackCooldown = this.getAttackTime()
+
+					// Play a random attack sound
 					const attackSounds = this.getAttackSounds()
 					const sound = attackSounds[Math.floor(Math.random() * attackSounds.length)]!
 					void gameSounds.playSound(sound)
@@ -123,12 +162,15 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 		) this.pathBackward.pop()
 
 		const velTowardNode = v2(0, 0).mut()
+		// Don't try to move if we're recovering from our attack:
 		if (this.attackCooldown <= 0) {
 			if (this.pathBackward.length > 0) {
+				// Move toward the next node
 				const targetNode = this.pathBackward[this.pathBackward.length - 1]!
 				velTowardNode.set(...targetNode.slice().sub(this.pos).normOr(0, 0).mul(speed).lock())
 				this.angle = this.vel.radians()
 			} else {
+				// We aren't trying to go anywhere, become idle:
 				this.command = CommandType.IDLE
 			}
 		}
@@ -142,8 +184,10 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 			const otherRadius = e.getRadius()
 			const pushFactor = Math.max(0, 1 - (dist - otherRadius) / radius)
 
+			// Add random jiggle to collisions to avoid getting stuck:
 			const jiggle = Math.random() * .0001
 
+			// Vector away from the colliding unit:
 			const away = this.pos
 				.slice()
 				.sub(e.pos)
@@ -152,11 +196,14 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 			const pushSpeed = speed * pushFactor
 			pushVel.add(away
 				.mul(pushSpeed)
+				// Add jiggle perpendicular to the collision:
 				.add(away.slice().rot90().mul(jiggle))
 			)
 
-			// We've collided with someone headed to the same place who stopped;
-			// consider our journey complete.
+			// We've collided with someone headed to the same place as we are,
+			// but they stopped; to avoid every unit in a group struggling to
+			// reach the exact same point, consider our (collective) journey
+			// complete:
 			if (pushSpeed * -pushVel.dot(velTowardNode) >= speed && this.pathBackward.length > 0 && e.pathBackward.length === 0 && this.lastCommandId === e.lastCommandId) {
 				this.pathBackward.length = 0
 				velTowardNode.set(0, 0)
@@ -164,8 +211,14 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 			}
 		}
 
-		this.vel.mut().set(...velTowardNode.lock()).add(pushVel)
+		this.vel.mut()
+			// Velocity toward our next node:
+			.set(...velTowardNode.lock())
+			// Velocity from getting pushed around:
+			.add(pushVel)
+		// Cap our velocity to our max speed:
 		if (this.vel.mag() > speed) this.vel.mut().normOr(0, 0).mul(speed)
+		// Move:
 		this.pos.mut().add(this.vel.slice().mul(dt))
 	}
 
@@ -190,10 +243,24 @@ export default abstract class Unit<AnimGroupName extends ImageGroupName> extends
 		}
 	}
 
+	/**
+	 * Commands this unit to move to the given position.
+	 * 
+	 * @param dest The destination in fractional tiles.
+	 * @param world The world which the unit is in.
+	 * @param commandId The unique ID for this command.
+	 */
 	commandMoveTo(dest: V2, world: World, commandId: number) {
 		this.startMovingTo(dest, world, commandId, CommandType.MOVE)
 	}
 
+	/**
+	 * Commands this unit to "attack move" to the given position.
+	 * 
+	 * @param dest The destination in fractional tiles.
+	 * @param world The world which the unit is in.
+	 * @param commandId The unique ID for this command.
+	 */
 	commandAttackMoveTo(dest: V2, world: World, commandId: number) {
 		this.startMovingTo(dest, world, commandId, CommandType.ATTACK_MOVE)
 	}
